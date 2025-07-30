@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Foreign key to users table
             $table->foreignId('internship_program_id')->constrained('internship_programs')->onDelete('cascade'); // Foreign key to internship_programs table
             $table->foreignId('school_id')->constrained('schools')->onDelete('cascade'); // Foreign key to schools table
-            $table->foreignId('school_supervisor_id')->constrained('school_supervisors')->onDelete('cascade'); // Foreign key to school_supervisors table
+            $table->foreignId('school_supervisor_id')->constrained('school_supervisors')->onDelete('cascade')->nullable(); // Nullable Foreign key to school_supervisors table
             $table->string('nis', 20)->unique(); // Unique NIS for students
             $table->string('class', 30)->nullable(); // Nullable Class for students
             $table->text('address')->nullable(); // Nullable Address for students
