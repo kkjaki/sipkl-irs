@@ -41,23 +41,23 @@ class School extends Model
     |--------------------------------------------------------------------------
     */
 
-    // /**
-    //  * Get the parent that owns the School
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    //  */
-    // public function parent(): BelongsTo
-    // {
-    //     return $this->belongsTo(Parent::class, 'foreign_key', 'owner_key');
-    // }
+    /**
+     * Get the parent that owns the School
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class, 'industry_id', 'id ');
+    }
 
-    // /**
-    //  * Get all of the children for the School
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function children(): HasMany
-    // {
-    //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
-    // }
+    /**
+     * Get all of the children for the School
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function student(): HasMany
+    {
+        return $this->hasMany(Student::class, 'school_id', 'id');
+    }
 }

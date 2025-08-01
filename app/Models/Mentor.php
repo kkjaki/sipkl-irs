@@ -40,15 +40,15 @@ class Mentor extends Model
     |--------------------------------------------------------------------------
     */
 
-    // /**
-    //  * Get the parent that owns the Mentor
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    //  */
-    // public function parent(): BelongsTo
-    // {
-    //     return $this->belongsTo(Parent::class, 'foreign_key', 'owner_key');
-    // }
+    /**
+     * Get the parent that owns the Mentor
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
     // /**
     //  * Get all of the children for the Mentor

@@ -46,15 +46,15 @@ class Internship_program extends Model
     |--------------------------------------------------------------------------
     */
 
-    // /**
-    //  * Get the parent that owns the Internship_program
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    //  */
-    // public function parent(): BelongsTo
-    // {
-    //     return $this->belongsTo(Parent::class, 'foreign_key', 'owner_key');
-    // }
+    /**
+     * Get the parent that owns the Internship_program
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class, 'industry_id', 'id');
+    }
 
     // /**
     //  * Get all of the children for the Internship_program

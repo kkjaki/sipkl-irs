@@ -34,23 +34,27 @@ class Industry extends Model
     |--------------------------------------------------------------------------
     */
 
-    // /**
-    //  * Get the parent that owns the Industry
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    //  */
-    // public function parent(): BelongsTo
-    // {
-    //     return $this->belongsTo(Parent::class, 'foreign_key', 'owner_key');
-    // }
+    /**
+     * Get the parent that owns the Industry
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
 
-    // /**
-    //  * Get all of the children for the Industry
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function children(): HasMany
-    // {
-    //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
-    // }
+    /**
+     * Get all of the children for the Industry
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function internship_programs(): HasMany
+    {
+        return $this->hasMany(Internship_program::class, 'industry_id', 'id');
+    }
+
+    public function school(): HasMany{
+        return $this->hasMany(School::class, 'industry_id', 'id');
+    }
 }
