@@ -45,4 +45,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the industry associated with the user.
+     */
+    public function industry()
+    {
+        return $this->hasOne(Industry::class, 'owner_id');
+    }
 }

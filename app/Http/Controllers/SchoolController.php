@@ -56,9 +56,18 @@ class SchoolController extends BaseController
      */
     public function store(StoreSchoolRequest $request)
     {
+        $user = Auth::user();
+
+        // Ensure the authenticated user is an owner
+        if ($user->role !== 'owner') {
+            abort(403, 'Unauthorized action.');
+        }
         $validatedData = $request->validated();
+        // Add the industry_id from the authenticated user's industry
+        $validatedData['industry_id'] = $user->industry->id;
         // Create a new school record
         School::create($validatedData);
+        // dd($validatedData);
 
         // Redirect or return a response
         return redirect()->route('schools.index')->with('success', 'School created successfully.');
@@ -102,6 +111,7 @@ class SchoolController extends BaseController
         // Update the school record
         $school->update($validatedData);
 
+        // dd($validatedData);
         // Redirect or return a response
         return redirect()->route('schools.index')->with('success', 'School updated successfully.');
     }
