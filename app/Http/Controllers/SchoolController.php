@@ -67,7 +67,6 @@ class SchoolController extends BaseController
         $validatedData['industry_id'] = $user->industry->id;
         // Create a new school record
         School::create($validatedData);
-        // dd($validatedData);
 
         // Redirect or return a response
         return redirect()->route('schools.index')->with('success', 'School created successfully.');
@@ -107,11 +106,14 @@ class SchoolController extends BaseController
     public function update(UpdateSchoolRequest $request, School $school)
     {
         $validatedData = $request->validated();
-
+        // Ensure the owner can only update schools in their industry
+        $user = Auth::user();
+        if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
+        }
         // Update the school record
         $school->update($validatedData);
 
-        // dd($validatedData);
         // Redirect or return a response
         return redirect()->route('schools.index')->with('success', 'School updated successfully.');
     }

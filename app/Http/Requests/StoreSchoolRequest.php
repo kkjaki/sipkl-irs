@@ -31,4 +31,20 @@ class StoreSchoolRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:20'],
         ];
     }
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param  \Illuminate\Contracts\Validation\Validator  $validator
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        session()->flash('error', 'Data gagal disimpan karena data yang dimasukkan tidak valid.');
+
+        throw (new \Illuminate\Validation\ValidationException($validator))
+                    ->errorBag($this->errorBag)
+                    ->redirectTo($this->getRedirectUrl());
+    }
 }
