@@ -13,6 +13,7 @@ class School_supervisor extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -23,6 +24,7 @@ class School_supervisor extends Model
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -42,8 +44,6 @@ class School_supervisor extends Model
 
     /**
      * Get the parent that owns the School_supervisor
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function school(): BelongsTo
     {

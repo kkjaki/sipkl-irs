@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Internship_program;
 use App\Http\Requests\StoreInternshipProgramRequest;
 use App\Http\Requests\UpdateInternshipProgramRequest;
+use App\Models\Internship_program;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +18,7 @@ class InternshipProgramController extends BaseController
         // Redirects to login page if user is not authenticated.
         $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -32,6 +33,7 @@ class InternshipProgramController extends BaseController
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
+
         return view('internship_programs.index', compact('internshipPrograms'));
     }
 
@@ -62,6 +64,7 @@ class InternshipProgramController extends BaseController
         $validatedData = $request->validated();
         $validatedData['industry_id'] = $user->industry->id; // Set industry_id from the authenticated user's industry
         Internship_program::create($validatedData);
+
         return redirect()->route('internship_programs.index')->with('success', 'Program magang berhasil dibuat.');
     }
 
@@ -75,6 +78,7 @@ class InternshipProgramController extends BaseController
         if ($user->role !== 'owner' || $internship_program->industry_id !== $user->industry->id) {
             abort(403, 'Unauthorized action.');
         }
+
         return view('internship_programs.show', compact('internship_program'));
     }
 
@@ -104,6 +108,7 @@ class InternshipProgramController extends BaseController
         }
 
         $internship_program->update($request->validated());
+
         return redirect()->route('internship_programs.index')->with('success', 'Program magang berhasil diperbarui.');
     }
 
@@ -119,6 +124,7 @@ class InternshipProgramController extends BaseController
         }
 
         $internship_program->delete();
+
         return redirect()->route('internship_programs.index')->with('success', 'Program magang berhasil dihapus.');
     }
 }

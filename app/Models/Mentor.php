@@ -13,16 +13,18 @@ class Mentor extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
         'user_id', // Foreign key to users table
         'industry_id', // Foreign key to industries table
-        'position'
+        'position',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -42,8 +44,6 @@ class Mentor extends Model
 
     /**
      * Get the parent that owns the Mentor
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('invitation_code')->unique(); // Unique invitation code for the internship program
             $table->boolean('is_active')->default(true); // Active status of the internship program
             $table->timestamps();
-            
+
             // Additional indexes for better performance
             $table->index(['industry_id', 'is_active']);
             $table->index(['start_date', 'end_date']);

@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSchoolRequest;
 use App\Http\Requests\UpdateSchoolRequest;
 use App\Models\School;
-use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class SchoolController extends BaseController
 {

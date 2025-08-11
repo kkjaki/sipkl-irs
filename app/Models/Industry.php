@@ -13,17 +13,19 @@ class Industry extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 
-        'address', 
-        'phone',  
-        'owner_id'
+        'name',
+        'address',
+        'phone',
+        'owner_id',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -36,8 +38,6 @@ class Industry extends Model
 
     /**
      * Get the parent that owns the Industry
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -46,15 +46,14 @@ class Industry extends Model
 
     /**
      * Get all of the children for the Industry
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function internship_programs(): HasMany
     {
         return $this->hasMany(Internship_program::class, 'industry_id', 'id');
     }
 
-    public function school(): HasMany{
+    public function school(): HasMany
+    {
         return $this->hasMany(School::class, 'industry_id', 'id');
     }
 }

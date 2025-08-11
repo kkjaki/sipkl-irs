@@ -13,17 +13,19 @@ class School extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
         'industry_id', // Foreign key to industries table
-        'name', 
-        'address', 
-        'phone'
+        'name',
+        'address',
+        'phone',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -43,8 +45,6 @@ class School extends Model
 
     /**
      * Get the parent that owns the School
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function industry(): BelongsTo
     {
@@ -53,8 +53,6 @@ class School extends Model
 
     /**
      * Get all of the children for the School
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function student(): HasMany
     {
