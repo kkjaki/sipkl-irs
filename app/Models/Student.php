@@ -13,6 +13,7 @@ class Student extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -29,6 +30,7 @@ class Student extends Model
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -48,13 +50,11 @@ class Student extends Model
 
     /**
      * Get the parent that owns the Student
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
-    }   
+    }
 
     // /**
     //  * Get all of the children for the Student

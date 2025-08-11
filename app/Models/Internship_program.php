@@ -13,19 +13,21 @@ class Internship_program extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
         'industry_id', // Foreign key to industries table
-        'name', 
-        'start_date', 
-        'end_date', 
-        'invitation_code', 
+        'name',
+        'start_date',
+        'end_date',
+        'invitation_code',
         'is_active',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -48,8 +50,6 @@ class Internship_program extends Model
 
     /**
      * Get the parent that owns the Internship_program
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function industry(): BelongsTo
     {

@@ -15,6 +15,7 @@ class StoreSchoolRequest extends FormRequest
         if ($this->user() && $this->user()->role === 'owner') {
             return true;
         }
+
         return false;
     }
 
@@ -31,10 +32,10 @@ class StoreSchoolRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:20'],
         ];
     }
+
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -44,7 +45,7 @@ class StoreSchoolRequest extends FormRequest
         session()->flash('error', 'Data gagal disimpan karena data yang dimasukkan tidak valid.');
 
         throw (new \Illuminate\Validation\ValidationException($validator))
-                    ->errorBag($this->errorBag)
-                    ->redirectTo($this->getRedirectUrl());
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 }

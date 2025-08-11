@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSchoolRequest;
 use App\Http\Requests\UpdateSchoolRequest;
 use App\Models\School;
-use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class SchoolController extends BaseController
 {
@@ -18,6 +17,21 @@ class SchoolController extends BaseController
     {
         // Redirects to login page if user is not authenticated.
         $this->middleware('auth');
+    }
+
+    public function management()
+    {
+        // Ensure the user is authenticated and has the 'owner' role
+        $user = Auth::user();
+        if ($user->role !== 'owner') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $schools = School::where('industry_id', $user->industry->id)->get();
+
+
+        // Return the management view for the owner
+        return view('schools.management', compact('schools'));
     }
 
     /**

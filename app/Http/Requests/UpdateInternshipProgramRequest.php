@@ -14,6 +14,7 @@ class UpdateInternshipProgramRequest extends FormRequest
         if ($this->user() && $this->user()->role === 'owner') {
             return true;
         }
+
         return false;
     }
 
@@ -36,7 +37,6 @@ class UpdateInternshipProgramRequest extends FormRequest
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -46,7 +46,7 @@ class UpdateInternshipProgramRequest extends FormRequest
         session()->flash('error', 'Data gagal diubah karena data yang dimasukkan tidak valid.');
 
         throw (new \Illuminate\Validation\ValidationException($validator))
-                    ->errorBag($this->errorBag)
-                    ->redirectTo($this->getRedirectUrl());
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 }

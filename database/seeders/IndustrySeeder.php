@@ -1,10 +1,8 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\Industry;
 
-use Illuminate\Container\Attributes\DB;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Industry;
 use Illuminate\Database\Seeder;
 
 class IndustrySeeder extends Seeder
@@ -14,7 +12,7 @@ class IndustrySeeder extends Seeder
      */
     public function run(): void
     {
-       Industry::create([
+        Industry::create([
             'id' => 1,
             'owner_id' => 2, // Assuming the owner ID is 2
             'name' => 'PT. Education',

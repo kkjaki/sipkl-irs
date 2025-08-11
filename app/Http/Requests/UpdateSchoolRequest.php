@@ -37,7 +37,6 @@ class UpdateSchoolRequest extends FormRequest
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
      * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -47,7 +46,7 @@ class UpdateSchoolRequest extends FormRequest
         session()->flash('error', 'Data gagal disimpan karena data yang dimasukkan tidak valid.');
 
         throw (new \Illuminate\Validation\ValidationException($validator))
-                    ->errorBag($this->errorBag)
-                    ->redirectTo($this->getRedirectUrl());
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 }
