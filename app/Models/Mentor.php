@@ -59,4 +59,12 @@ class Mentor extends Model
     // {
     //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
     // }
+
+    /**
+     * Get the industry that owns the Mentor
+     */
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class, 'industry_id', 'id');
+    }
 }

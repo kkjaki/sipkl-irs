@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active',
     ];
 
     /**
@@ -49,8 +50,8 @@ class User extends Authenticatable
     /**
      * Get the industry associated with the user.
      */
-    public function industry()
+    public function industries()
     {
-        return $this->hasOne(Industry::class, 'owner_id');
+        return $this->hasMany(Industry::class, 'owner_id');
     }
 }

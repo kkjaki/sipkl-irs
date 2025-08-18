@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'owner', 'mentor', 'student'])
                 ->default('student');
-            $table->string('status')->default('active');
+            $table->boolean('is_active')->default('1');
             $table->rememberToken();
             $table->timestamps();
         });
