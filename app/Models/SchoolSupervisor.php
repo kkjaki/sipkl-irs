@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class School_supervisor extends Model
+class SchoolSupervisor extends Model
 {
     use HasFactory;
 
@@ -18,8 +18,8 @@ class School_supervisor extends Model
      */
     protected $fillable = [
         'school_id', // Foreign key to schools table
-        'name',
-        'phone',
+        'name', // Name of the school supervisor
+        'phone', // Nullable phone for the school supervisor
     ];
 
     /**
@@ -43,15 +43,17 @@ class School_supervisor extends Model
     */
 
     /**
-     * Get the parent that owns the School_supervisor
+     * Get the parent that owns the SchoolSupervisor
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function school(): BelongsTo
     {
-        return $this->belongsTo(School::class, 'school_id', 'id');
+        return $this->belongsTo(School::class);
     }
 
     // /**
-    //  * Get all of the children for the School_supervisor
+    //  * Get all of the children for the SchoolSupervisor
     //  *
     //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
     //  */

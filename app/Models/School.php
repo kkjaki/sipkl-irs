@@ -58,4 +58,9 @@ class School extends Model
     {
         return $this->hasMany(Student::class, 'school_id', 'id');
     }
+
+    public function schoolSupervisors(): HasMany
+    {
+        return $this->hasMany(SchoolSupervisor::class, 'school_id', 'id');
+    }
 }

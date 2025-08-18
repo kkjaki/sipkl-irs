@@ -19,6 +19,21 @@ class SchoolController extends BaseController
         $this->middleware('auth');
     }
 
+    public function management()
+    {
+        // Ensure the user is authenticated and has the 'owner' role
+        $user = Auth::user();
+        if ($user->role !== 'owner') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $schools = School::where('industry_id', $user->industry->id)->get();
+
+
+        // Return the management view for the owner
+        return view('schools.management', compact('schools'));
+    }
+
     /**
      * Display a listing of the resource.
      */
