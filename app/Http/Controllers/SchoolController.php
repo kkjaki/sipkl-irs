@@ -57,9 +57,9 @@ class SchoolController extends BaseController
         $user = Auth::user();
         if ($user->role === 'owner') {
             // Allow only owners to create schools
-            $industries = $user->industries; // Assuming the user has an industry relationship
+            $industry = $user->industry; // The user has a `hasOne` industry relationship
 
-            return view('schools.create', compact('industries'));
+            return view('schools.create', compact('industry'));
         } else {
             abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
         }

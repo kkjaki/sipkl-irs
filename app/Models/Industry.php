@@ -37,7 +37,7 @@ class Industry extends Model
     */
 
     /**
-     * Get the parent that owns the Industry
+     * Get the user that owns the Industry
      */
     public function user(): BelongsTo
     {
@@ -52,7 +52,7 @@ class Industry extends Model
         return $this->hasMany(Internship_program::class, 'industry_id', 'id');
     }
 
-    public function school(): HasMany
+    public function schools(): HasMany
     {
         return $this->hasMany(School::class, 'industry_id', 'id');
     }

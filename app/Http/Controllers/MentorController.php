@@ -25,7 +25,7 @@ class MentorController extends BaseController
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
         }
-        $mentors = Mentor::all();
+        $mentors = Mentor::where('industry_id', $user->industry->id)->with('user')->get(); // Fetch mentors in the same industry as the owner
         return view('mentors.index', compact('mentors'));
     }
 
@@ -38,8 +38,8 @@ class MentorController extends BaseController
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
         }
-        $industries = $user->industries; // Assuming the user has an industries relationship
-        return view('mentors.create', compact('industries')); // Return the view with industries data
+        $industry = $user->industry; // The user has a `hasOne` industry relationship
+        return view('mentors.create', compact('industry')); // Return the view with the industry data
     }
 
     /**
@@ -56,7 +56,6 @@ class MentorController extends BaseController
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'industry_id' => 'required|exists:industries,id',
             'position' => 'required|string|max:255',
         ]);
 
@@ -71,7 +70,7 @@ class MentorController extends BaseController
         // Create the mentor record
         Mentor::create([
             'user_id' => $newUser->id,
-            'industry_id' => $validatedData['industry_id'],
+            'industry_id' => $user->industry->id, // Assign the industry of the owner creating the mentor
             'position' => $validatedData['position'],
         ]);
 
@@ -95,8 +94,8 @@ class MentorController extends BaseController
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
         }
-        $industries = $user->industries; // Assuming the user has an industries relationship
-        return view('mentors.edit', compact('mentor', 'industries')); // Return the view with mentor and industries data
+        $industry = $user->industry; // The user has a `hasOne` industry relationship
+        return view('mentors.edit', compact('mentor', 'industry')); // Return the view with mentor and the industry data
     }
 
     /**
@@ -112,7 +111,6 @@ class MentorController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $mentor->user_id,
-            'industry_id' => 'required|exists:industries,id',
             'position' => 'required|string|max:255',
         ]);
 
@@ -124,7 +122,6 @@ class MentorController extends BaseController
 
         // Update the mentor record
         $mentor->update([
-            'industry_id' => $validatedData['industry_id'],
             'position' => $validatedData['position'],
         ]);
 

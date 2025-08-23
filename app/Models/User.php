@@ -50,8 +50,8 @@ class User extends Authenticatable
     /**
      * Get the industry associated with the user.
      */
-    public function industries()
+    public function industry()
     {
-        return $this->hasMany(Industry::class, 'owner_id');
+        return $this->hasOne(Industry::class, 'owner_id');
     }
 }

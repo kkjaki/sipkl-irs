@@ -50,6 +50,14 @@ class Mentor extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    /**
+     * Get the industry that owns the Mentor
+     */
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class, 'industry_id', 'id');
+    }
+
     // /**
     //  * Get all of the children for the Mentor
     //  *
@@ -60,11 +68,4 @@ class Mentor extends Model
     //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
     // }
 
-    /**
-     * Get the industry that owns the Mentor
-     */
-    public function industry(): BelongsTo
-    {
-        return $this->belongsTo(Industry::class, 'industry_id', 'id');
-    }
 }

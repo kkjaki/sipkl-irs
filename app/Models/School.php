@@ -54,11 +54,16 @@ class School extends Model
     /**
      * Get all of the children for the School
      */
-    public function student(): HasMany
+    public function students(): HasMany
     {
         return $this->hasMany(Student::class, 'school_id', 'id');
     }
 
+    /**
+     * Get all of the supervisors for the School.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function schoolSupervisors(): HasMany
     {
         return $this->hasMany(SchoolSupervisor::class, 'school_id', 'id');
