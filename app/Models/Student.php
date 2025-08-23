@@ -56,6 +56,22 @@ class Student extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function internshipProgram(): BelongsTo
+    {
+        return $this->belongsTo(InternshipProgram::class, 'internship_program_id', 'id');
+    }
+
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class, 'school_id', 'id');
+    }
+
+    public function schoolSupervisor(): BelongsTo
+    {
+        return $this->belongsTo(SchoolSupervisor::class, 'school_supervisor_id', 'id');
+    }
+
+
     // /**
     //  * Get all of the children for the Student
     //  *

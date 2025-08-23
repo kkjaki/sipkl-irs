@@ -47,9 +47,9 @@ class Industry extends Model
     /**
      * Get all of the children for the Industry
      */
-    public function internship_programs(): HasMany
+    public function internshipPrograms(): HasMany
     {
-        return $this->hasMany(Internship_program::class, 'industry_id', 'id');
+        return $this->hasMany(InternshipProgram::class, 'industry_id', 'id');
     }
 
     public function schools(): HasMany

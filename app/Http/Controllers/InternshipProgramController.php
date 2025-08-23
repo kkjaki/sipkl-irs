@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInternshipProgramRequest;
 use App\Http\Requests\UpdateInternshipProgramRequest;
-use App\Models\Internship_program;
+use App\Models\InternshipProgram;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,14 +27,15 @@ class InternshipProgramController extends BaseController
         $user = Auth::user();
         if ($user->role === 'owner') {
             // Ambil semua program magang yang dimiliki oleh industri yang dimiliki oleh user
-            $internshipPrograms = Internship_program::whereHas('industry', function ($query) use ($user) {
+            $internshipPrograms = InternshipProgram::whereHas('industry', function ($query) use ($user) 
+            {
                 $query->where('owner_id', $user->id);
             })->get();
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return view('internship_programs.index', compact('internshipPrograms'));
+        return view('internshipPrograms.index', compact('internshipPrograms'));
     }
 
     /**
@@ -49,7 +50,7 @@ class InternshipProgramController extends BaseController
         }
 
         // Tampilkan form untuk membuat program magang baru
-        return view('internship_programs.create');
+        return view('internshipPrograms.create');
     }
 
     /**
@@ -63,68 +64,72 @@ class InternshipProgramController extends BaseController
         }
         $validatedData = $request->validated();
         $validatedData['industry_id'] = $user->industry->id; // Set industry_id from the authenticated user's industry
-        Internship_program::create($validatedData);
+        $invitationCode = \Illuminate\Support\Str::random(6); // Generate a random 6-character invitation code
+        $validatedData['invitation_code'] = $invitationCode;
+        InternshipProgram::create($validatedData);
 
-        return redirect()->route('internship_programs.index')->with('success', 'Program magang berhasil dibuat.');
+        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dibuat.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Internship_program $internship_program)
+    public function show(InternshipProgram $internshipProgram)
     {
         $user = Auth::user();
         // Ensure the owner can only see internship programs in their industry
-        if ($user->role !== 'owner' || $internship_program->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
             abort(403, 'Unauthorized action.');
         }
+        // Reload the internship program from the database
+        $internshipProgram = InternshipProgram::find($internshipProgram->id);
 
-        return view('internship_programs.show', compact('internship_program'));
+        return view('internshipPrograms.show', compact('internshipProgram'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Internship_program $internship_program)
+    public function edit(InternshipProgram $internshipProgram)
     {
         $user = Auth::user();
         // Ensure the owner can only edit internship programs in their industry
-        if ($user->role !== 'owner' || $internship_program->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return view('internship_programs.edit', compact('internship_program'));
+        return view('internshipPrograms.edit', compact('internshipProgram'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateInternshipProgramRequest $request, Internship_program $internship_program)
+    public function update(UpdateInternshipProgramRequest $request, InternshipProgram $internshipProgram)
     {
         $user = Auth::user();
         // Ensure the owner can only update internship programs in their industry
-        if ($user->role !== 'owner' || $internship_program->industry_id !== $user->industry->id) { // Deny access for non-owner roles
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) { // Deny access for non-owner roles
             abort(403, 'Unauthorized action.');
         }
 
-        $internship_program->update($request->validated());
+        $internshipProgram->update($request->validated());
 
-        return redirect()->route('internship_programs.index')->with('success', 'Program magang berhasil diperbarui.');
+        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Internship_program $internship_program)
+    public function destroy(InternshipProgram $internshipProgram)
     {
         $user = Auth::user();
         // Ensure the owner can only delete internship programs in their industry
-        if ($user->role !== 'owner' || $internship_program->industry_id !== $user->industry->id) { // Deny access for non-owner roles
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) { // Deny access for non-owner roles
             abort(403, 'Unauthorized action.');
         }
 
-        $internship_program->delete();
+        $internshipProgram->delete();
 
-        return redirect()->route('internship_programs.index')->with('success', 'Program magang berhasil dihapus.');
+        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dihapus.');
     }
 }
