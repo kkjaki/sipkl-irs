@@ -13,6 +13,7 @@ class InternshipProgram extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -26,6 +27,7 @@ class InternshipProgram extends Model
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -35,18 +37,14 @@ class InternshipProgram extends Model
      *
      * @var array<string, string>
      */
-    protected $casts = [];
-
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
+    protected $casts = [
+        'is_active' => 'boolean',
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
 
     /**
-     * Get the parent that owns the InternshipProgram
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Get the industry that this internship program belongs to.
      */
     public function industry(): BelongsTo
     {
@@ -54,9 +52,7 @@ class InternshipProgram extends Model
     }
 
     /**
-     * Get all of the children for the InternshipProgram
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get all of the students for the internship program.
      */
     public function students(): HasMany
     {

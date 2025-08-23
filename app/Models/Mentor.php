@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mentor extends Model
 {
@@ -17,8 +16,8 @@ class Mentor extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id', // Foreign key to users table
-        'industry_id', // Foreign key to industries table
+        'user_id',
+        'industry_id',
         'position',
     ];
 
@@ -36,36 +35,19 @@ class Mentor extends Model
      */
     protected $casts = [];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Get the parent that owns the Mentor
+     * Get the user record associated with the mentor.
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     /**
-     * Get the industry that owns the Mentor
+     * Get the industry that the mentor belongs to.
      */
     public function industry(): BelongsTo
     {
-        return $this->belongsTo(Industry::class, 'industry_id', 'id');
+        return $this->belongsTo(Industry::class);
     }
-
-    // /**
-    //  * Get all of the children for the Mentor
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function children(): HasMany
-    // {
-    //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
-    // }
-
 }

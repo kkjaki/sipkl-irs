@@ -11,88 +11,88 @@ use Illuminate\Support\Facades\Auth;
 class SchoolController extends BaseController
 {
     /**
-     * Constructor to apply middleware.
+     * Apply authentication middleware.
      */
     public function __construct()
     {
-        // Redirects to login page if user is not authenticated.
         $this->middleware('auth');
     }
 
+    /**
+     * Display the school management page for an industry owner.
+     */
     public function management()
     {
-        // Ensure the user is authenticated and has the 'owner' role
         $user = Auth::user();
+        // Deny access for non-owner roles.
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.');
         }
 
         $schools = School::where('industry_id', $user->industry->id)->get();
 
-
-        // Return the management view for the owner
         return view('schools.management', compact('schools'));
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the schools for an industry owner.
      */
     public function index()
     {
         $user = Auth::user();
-        if ($user->role === 'owner') {
-            $schools = School::where('industry_id', $user->industry->id)->get();
-        } else {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+        // Deny access for non-owner roles.
+        if ($user->role !== 'owner') {
+            abort(403, 'Unauthorized action.');
         }
 
-        return view('schools.index', compact('schools')); // Return the view with schools data
+        $schools = School::where('industry_id', $user->industry->id)->get();
+
+        return view('schools.index', compact('schools'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new school.
      */
     public function create()
     {
         $user = Auth::user();
-        if ($user->role === 'owner') {
-            // Allow only owners to create schools
-            $industry = $user->industry; // The user has a `hasOne` industry relationship
-
-            return view('schools.create', compact('industry'));
-        } else {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+        // Deny access for non-owner roles.
+        if ($user->role !== 'owner') {
+            abort(403, 'Unauthorized action.');
         }
+
+        $industry = $user->industry;
+
+        return view('schools.create', compact('industry'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created school in storage.
      */
     public function store(StoreSchoolRequest $request)
     {
         $user = Auth::user();
 
-        // Ensure the authenticated user is an owner
+        // Deny access for non-owner roles.
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.');
         }
         $validatedData = $request->validated();
-        // Add the industry_id from the authenticated user's industry
+        // Assign the industry_id from the authenticated owner's industry.
         $validatedData['industry_id'] = $user->industry->id;
-        // Create a new school record
+
         School::create($validatedData);
 
-        // Redirect or return a response
-        return redirect()->route('schools.index')->with('success', 'School created successfully.');
+        return redirect()->route('schools.index')->with('success', 'Sekolah berhasil ditambahkan.');
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified school.
      */
     public function show(School $school)
     {
-        // Ensure the owner can only see schools in their industry
         $user = Auth::user();
+        // Deny access if user is not an owner or the school is not in their industry.
         if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
             abort(403, 'Unauthorized action.');
         }
@@ -101,12 +101,12 @@ class SchoolController extends BaseController
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified school.
      */
     public function edit(School $school)
     {
-        // Ensure the owner can only edit schools in their industry
         $user = Auth::user();
+        // Deny access if user is not an owner or the school is not in their industry.
         if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
             abort(403, 'Unauthorized action.');
         }
@@ -115,38 +115,35 @@ class SchoolController extends BaseController
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified school in storage.
      */
     public function update(UpdateSchoolRequest $request, School $school)
     {
-        $validatedData = $request->validated();
-        // Ensure the owner can only update schools in their industry
         $user = Auth::user();
+        // Deny access if user is not an owner or the school is not in their industry.
         if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
             abort(403, 'Unauthorized action.');
         }
-        // Update the school record
+
+        $validatedData = $request->validated();
         $school->update($validatedData);
 
-        // Redirect or return a response
-        return redirect()->route('schools.index')->with('success', 'School updated successfully.');
+        return redirect()->route('schools.index')->with('success', 'Sekolah berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified school from storage.
      */
     public function destroy(School $school)
     {
-        // Ensure the owner can only delete schools in their industry
         $user = Auth::user();
+        // Deny access if user is not an owner or the school is not in their industry.
         if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Delete the school record
         $school->delete();
 
-        // Redirect or return a response
-        return redirect()->route('schools.index')->with('success', 'School deleted successfully.');
+        return redirect()->route('schools.index')->with('success', 'Sekolah berhasil dihapus.');
     }
 }

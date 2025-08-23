@@ -4,6 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Sets up the initial tables required for user authentication.
+ *
+ * This migration creates the `users`, `password_reset_tokens`, and `sessions` tables,
+ * which are fundamental for Laravel's authentication and session management systems.
+ */
 return new class extends Migration
 {
     /**
@@ -17,9 +23,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'owner', 'mentor', 'student'])
-                ->default('student');
-            $table->boolean('is_active')->default('1');
+            $table->enum('role', ['admin', 'owner', 'mentor', 'student'])->default('student');
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

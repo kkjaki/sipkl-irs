@@ -17,7 +17,7 @@ class School extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'industry_id', // Foreign key to industries table
+        'industry_id',
         'name',
         'address',
         'phone',
@@ -37,35 +37,27 @@ class School extends Model
      */
     protected $casts = [];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Get the parent that owns the School
+     * Get the industry that this school partners with.
      */
     public function industry(): BelongsTo
     {
-        return $this->belongsTo(Industry::class, 'industry_id', 'id ');
+        return $this->belongsTo(Industry::class);
     }
 
     /**
-     * Get all of the children for the School
+     * Get all of the students from this school.
      */
     public function students(): HasMany
     {
-        return $this->hasMany(Student::class, 'school_id', 'id');
+        return $this->hasMany(Student::class);
     }
 
     /**
-     * Get all of the supervisors for the School.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get all of the supervisors from this school.
      */
     public function schoolSupervisors(): HasMany
     {
-        return $this->hasMany(SchoolSupervisor::class, 'school_id', 'id');
+        return $this->hasMany(SchoolSupervisor::class);
     }
 }

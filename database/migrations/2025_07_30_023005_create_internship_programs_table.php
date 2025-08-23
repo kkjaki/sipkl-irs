@@ -4,6 +4,9 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates the 'internship_programs' table to store internship program details.
+ */
 return new class extends Migration
 {
     /**
@@ -13,12 +16,12 @@ return new class extends Migration
     {
         Schema::create('internship_programs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('industry_id')->constrained('industries')->onDelete('cascade'); // Foreign key to industries table
-            $table->string('name'); // Name of the internship program
-            $table->date('start_date'); // Start date of the internship program
-            $table->date('end_date'); // End date of the internship program
-            $table->string('invitation_code')->unique(); // Unique invitation code for the internship program
-            $table->boolean('is_active')->default(true); // Active status of the internship program
+            $table->foreignId('industry_id')->constrained('industries')->onDelete('cascade');
+            $table->string('name');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->string('invitation_code')->unique();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             // Additional indexes for better performance

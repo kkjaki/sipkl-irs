@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
@@ -17,10 +16,10 @@ class Student extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id', // Foreign key to users table
-        'internship_program_id', // Foreign key to internship_programs table
-        'school_id', // Foreign key to schools table
-        'school_supervisor_id', // Nullable Foreign key to school_supervisors table
+        'user_id',
+        'internship_program_id',
+        'school_id',
+        'school_supervisor_id',
         'nis',
         'class',
         'address',
@@ -42,43 +41,35 @@ class Student extends Model
      */
     protected $casts = [];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Get the parent that owns the Student
+     * Get the user account associated with the student.
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the internship program the student is enrolled in.
+     */
     public function internshipProgram(): BelongsTo
     {
-        return $this->belongsTo(InternshipProgram::class, 'internship_program_id', 'id');
+        return $this->belongsTo(InternshipProgram::class);
     }
 
+    /**
+     * Get the school the student belongs to.
+     */
     public function school(): BelongsTo
     {
-        return $this->belongsTo(School::class, 'school_id', 'id');
+        return $this->belongsTo(School::class);
     }
 
+    /**
+     * Get the school supervisor guiding the student.
+     */
     public function schoolSupervisor(): BelongsTo
     {
-        return $this->belongsTo(SchoolSupervisor::class, 'school_supervisor_id', 'id');
+        return $this->belongsTo(SchoolSupervisor::class);
     }
-
-
-    // /**
-    //  * Get all of the children for the Student
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function children(): HasMany
-    // {
-    //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
-    // }
 }

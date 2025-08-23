@@ -1,55 +1,63 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Mentor;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller as BaseController;
-
+use Illuminate\Support\Facades\Auth;
 
 class MentorController extends BaseController
 {
+    /**
+     * Apply authentication middleware.
+     */
     public function __construct()
     {
-        // Redirects to login page if user is not authenticated.
         $this->middleware('auth');
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of mentors for the owner's industry.
      */
     public function index()
     {
         $user = Auth::user();
+        // Deny access for non-owner roles.
         if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+            abort(403, 'Unauthorized action.');
         }
-        $mentors = Mentor::where('industry_id', $user->industry->id)->with('user')->get(); // Fetch mentors in the same industry as the owner
+        // Fetch mentors in the same industry as the owner.
+        $mentors = Mentor::where('industry_id', $user->industry->id)->with('user')->get();
+
         return view('mentors.index', compact('mentors'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new mentor.
      */
     public function create()
     {
         $user = Auth::user();
+        // Deny access for non-owner roles.
         if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+            abort(403, 'Unauthorized action.');
         }
-        $industry = $user->industry; // The user has a `hasOne` industry relationship
-        return view('mentors.create', compact('industry')); // Return the view with the industry data
+        $industry = $user->industry;
+
+        return view('mentors.create', compact('industry'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created mentor in storage.
      */
     public function store(Request $request)
     {
         $user = Auth::user();
+        // Deny access for non-owner roles.
         if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+            abort(403, 'Unauthorized action.');
         }
 
         $validatedData = $request->validate([
@@ -59,112 +67,128 @@ class MentorController extends BaseController
             'position' => 'required|string|max:255',
         ]);
 
-        // Create the user
+        // Create a new user for the mentor.
         $newUser = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
-            'role' => 'mentor', // Assign the role as mentor
+            'role' => 'mentor',
         ]);
 
-        // Create the mentor record
+        // Create the mentor record, linking it to the new user and owner's industry.
         Mentor::create([
             'user_id' => $newUser->id,
-            'industry_id' => $user->industry->id, // Assign the industry of the owner creating the mentor
+            'industry_id' => $user->industry->id,
             'position' => $validatedData['position'],
         ]);
 
-        return redirect()->route('mentors.index')->with('success', 'Mentor created successfully.');
+        return redirect()->route('mentors.index')->with('success', 'Mentor berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
+     *
+     * Note: This method is not typically used as the index view serves as the primary list.
      */
     public function show(Mentor $mentor)
     {
-        // Not typically used for nested resources, the index view serves as the list.
+        // Intentionally left blank.
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified mentor.
      */
     public function edit(Mentor $mentor)
     {
         $user = Auth::user();
-        if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+        // Deny access if user is not an owner or the mentor is not in their industry.
+        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
         }
-        $industry = $user->industry; // The user has a `hasOne` industry relationship
-        return view('mentors.edit', compact('mentor', 'industry')); // Return the view with mentor and the industry data
+        $industry = $user->industry;
+
+        return view('mentors.edit', compact('mentor', 'industry'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified mentor in storage.
      */
     public function update(Request $request, Mentor $mentor)
     {
         $user = Auth::user();
-        if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+        // Deny access if user is not an owner or the mentor is not in their industry.
+        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
         }
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $mentor->user_id,
+            'email' => 'required|email|unique:users,email,'.$mentor->user_id,
             'position' => 'required|string|max:255',
         ]);
 
-        // Update the user
+        // Update the associated user record.
         $mentor->user->update([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
         ]);
 
-        // Update the mentor record
+        // Update the mentor's position.
         $mentor->update([
             'position' => $validatedData['position'],
         ]);
 
-        return redirect()->route('mentors.index')->with('success', 'Mentor updated successfully.');
+        return redirect()->route('mentors.index')->with('success', 'Mentor berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified mentor from storage.
      */
     public function destroy(Mentor $mentor)
     {
         $user = Auth::user();
-        if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+        // Deny access if user is not an owner or the mentor is not in their industry.
+        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
         }
-        // Delete the mentor record and the associated user
+
+        // The associated user record is deleted automatically by the model's deleting event.
         $mentor->delete();
-        $mentor->user->delete();
 
-        return redirect()->route('mentors.index')->with('success', 'Mentor deleted successfully.');
+        return redirect()->route('mentors.index')->with('success', 'Mentor berhasil dihapus.');
     }
 
-    public function deactive(Mentor $mentor)
+    /**
+     * Deactivates the specified mentor's account.
+     */
+    public function deactivate(Mentor $mentor)
     {
         $user = Auth::user();
-        if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+        // Deny access if user is not an owner or the mentor is not in their industry.
+        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
         }
-        // Deactivate the mentor
+
+        // Deactivate the mentor's user account.
         $mentor->user->update(['is_active' => false]);
-        $mentor->user->save();
-        return redirect()->route('mentors.index')->with('success', 'Mentor deactivated successfully.');
+
+        return redirect()->route('mentors.index')->with('success', 'Mentor berhasil dinonaktifkan.');
     }
-    
-    public function active(Mentor $mentor)
+
+    /**
+     * Activates the specified mentor's account.
+     */
+    public function activate(Mentor $mentor)
     {
         $user = Auth::user();
-        if ($user->role !== 'owner') {
-            abort(403, 'Unauthorized action.'); // Deny access for non-owner roles
+        // Deny access if user is not an owner or the mentor is not in their industry.
+        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
         }
-        // Activate the mentor
+
+        // Activate the mentor's user account.
         $mentor->user->update(['is_active' => true]);
-        $mentor->user->save();
-        return redirect()->route('mentors.index')->with('success', 'Mentor activated successfully.');
+
+        return redirect()->route('mentors.index')->with('success', 'Mentor berhasil diaktifkan.');
     }
 }

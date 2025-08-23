@@ -30,30 +30,27 @@ class Industry extends Model
      */
     protected $hidden = [];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Get the user that owns the Industry
+     * Get the owner (a user) of the industry.
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'owner_id', 'id');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     /**
-     * Get all of the children for the Industry
+     * Get all of the internship programs for the industry.
      */
     public function internshipPrograms(): HasMany
     {
-        return $this->hasMany(InternshipProgram::class, 'industry_id', 'id');
+        return $this->hasMany(InternshipProgram::class);
     }
 
+    /**
+     * Get all of the partner schools for the industry.
+     */
     public function schools(): HasMany
     {
-        return $this->hasMany(School::class, 'industry_id', 'id');
+        return $this->hasMany(School::class);
     }
 }

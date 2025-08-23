@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 use function Laravel\Prompts\table;
 
+/**
+ * Creates the 'mentors' table to store mentor information.
+ */
 return new class extends Migration
 {
     /**
@@ -15,9 +18,9 @@ return new class extends Migration
     {
         Schema::create('mentors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Foreign key to users table
-            $table->foreignId('industry_id')->constrained('industries')->onDelete('cascade'); // Foreign key to industries table
-            $table->string('position'); // Position for mentors
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('industry_id')->constrained('industries')->onDelete('cascade');
+            $table->string('position');
             $table->timestamps();
         });
     }

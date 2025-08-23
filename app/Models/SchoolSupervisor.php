@@ -13,16 +13,18 @@ class SchoolSupervisor extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array<int, string>
      */
     protected $fillable = [
-        'school_id', // Foreign key to schools table
-        'name', // Name of the school supervisor
-        'phone', // Nullable phone for the school supervisor
+        'school_id',
+        'name',
+        'phone',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
+     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -34,29 +36,19 @@ class SchoolSupervisor extends Model
      */
     protected $casts = [];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Get the parent that owns the SchoolSupervisor
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Get the school that the supervisor belongs to.
      */
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
     }
 
-    // /**
-    //  * Get all of the children for the SchoolSupervisor
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function children(): HasMany
-    // {
-    //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
-    // }
+    /**
+     * Get all of the students guided by this supervisor.
+     */
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class);
+    }
 }

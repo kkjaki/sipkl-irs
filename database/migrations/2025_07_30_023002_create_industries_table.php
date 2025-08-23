@@ -4,6 +4,9 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates the 'industries' table to store company/industry information.
+ */
 return new class extends Migration
 {
     /**
@@ -13,10 +16,10 @@ return new class extends Migration
     {
         Schema::create('industries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade'); // Foreign key to users table
-            $table->string('name'); // Name of the industry
-            $table->text('address')->nullable(); // Nullable Address for the industry
-            $table->string('phone', 15)->nullable(); // Nullable Phone for the industry
+            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->string('name');
+            $table->text('address')->nullable();
+            $table->string('phone', 15)->nullable();
             $table->timestamps();
         });
     }
