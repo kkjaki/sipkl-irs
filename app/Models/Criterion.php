@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class School extends Model
+class Criterion extends Model
 {
     use HasFactory;
 
@@ -18,9 +18,9 @@ class School extends Model
      */
     protected $fillable = [
         'industry_id',
+        'school_id',
         'name',
-        'address',
-        'phone',
+        'description',
     ];
 
     /**
@@ -38,34 +38,25 @@ class School extends Model
     protected $casts = [];
 
     /**
-     * Get the industry that this school partners with.
+     * Get the parent that owns the Criterion
      */
     public function industry(): BelongsTo
     {
-        return $this->belongsTo(Industry::class);
+        return $this->belongsTo(Industry::class, 'industry_id');
     }
 
-    /**
-     * Get all of the students from this school.
-     */
-    public function students(): HasMany
+    public function school(): BelongsTo
     {
-        return $this->hasMany(Student::class);
+        return $this->belongsTo(School::class, 'school_id');
     }
 
-    /**
-     * Get all of the supervisors from this school.
-     */
-    public function schoolSupervisors(): HasMany
-    {
-        return $this->hasMany(SchoolSupervisor::class);
-    }
-
-    /**
-     * Get all of the criteria for this school.
-     */
-    public function criteria(): HasMany
-    {
-        return $this->hasMany(Criterion::class);
-    }
+    // /**
+    //  * Get all of the children for the Criterion
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    //  */
+    // public function grades(): HasMany
+    // {
+    //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
+    // }
 }
