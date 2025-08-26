@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
         'is_active',
     ];
 
@@ -53,5 +54,15 @@ class User extends Authenticatable
     public function industry()
     {
         return $this->hasOne(Industry::class, 'owner_id');
+    }
+
+    public function mentor()
+    {
+        return $this->hasOne(Mentor::class);
+    }
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
     }
 }

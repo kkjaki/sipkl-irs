@@ -18,9 +18,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('internship_program_id')->constrained('internship_programs')->onDelete('cascade');
-            $table->foreignId('school_id')->constrained('schools')->onDelete('cascade');
-            $table->foreignId('school_supervisor_id')->constrained('school_supervisors')->onDelete('cascade')->nullable();
-            $table->string('nis', 20)->unique();
+            $table->foreignId('school_id')->nullable()->constrained('schools')->onDelete('cascade');
+            $table->foreignId('school_supervisor_id')->nullable()->constrained('school_supervisors')->onDelete('cascade');
+            $table->string('nis', 20)->unique()->nullable();
             $table->string('class', 30)->nullable();
             $table->text('address')->nullable();
             $table->string('phone', 15)->nullable();
