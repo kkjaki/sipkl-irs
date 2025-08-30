@@ -65,4 +65,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class);
     }
+
+    public function attendanceSessions()
+    {
+        return $this->hasMany(AttendanceSession::class, 'opened_by_user_id');
+    }
 }

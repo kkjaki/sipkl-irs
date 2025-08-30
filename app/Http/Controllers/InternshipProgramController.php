@@ -129,4 +129,30 @@ class InternshipProgramController extends BaseController
 
         return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dihapus.');
     }
+
+    public function deactivate(InternshipProgram $internshipProgram)
+    {
+        $user = Auth::user();
+        // Ensure the owner can only deactivate internship programs in their industry.
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $internshipProgram->update(['is_active' => false]);
+
+        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dinonaktifkan.');
+    }
+
+    public function activate(InternshipProgram $internshipProgram)
+    {
+        $user = Auth::user();
+        // Ensure the owner can only activate internship programs in their industry.
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $internshipProgram->update(['is_active' => true]);
+
+        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil diaktifkan.');
+    }
 }

@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\InternshipProgram;
-use App\Models\User;
 use App\Models\Student;
-use App\Models\School;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class StudentRegistrationController extends Controller
@@ -27,7 +26,6 @@ class StudentRegistrationController extends Controller
     /**
      * Handle an incoming student registration request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -43,7 +41,7 @@ class StudentRegistrationController extends Controller
 
         $internshipProgram = InternshipProgram::where('invitation_code', $request->invitation_code)->where('is_active', true)->first();
 
-        if (!$internshipProgram) {
+        if (! $internshipProgram) {
             return back()->withErrors(['invitation_code' => 'Kode Undangan tidak valid atau sudah tidak berlaku.']);
         }
 

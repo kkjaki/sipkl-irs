@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Industry;
 use App\Models\School;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SchoolSeeder extends Seeder
@@ -18,6 +17,7 @@ class SchoolSeeder extends Seeder
 
         if ($industries->isEmpty()) {
             $this->command->info('No industries found. Please run the IndustrySeeder first.');
+
             return;
         }
 

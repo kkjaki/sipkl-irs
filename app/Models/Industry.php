@@ -53,4 +53,12 @@ class Industry extends Model
     {
         return $this->hasMany(School::class);
     }
+
+    /**
+     * Get all of the attendance sessions for the industry.
+     */
+    public function attendanceSessions(): HasMany
+    {
+        return $this->hasMany(AttendanceSession::class);
+    }
 }

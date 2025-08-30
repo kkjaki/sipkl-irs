@@ -19,7 +19,7 @@ class SchoolFactory extends Factory
     {
         return [
             'industry_id' => Industry::factory(),
-            'name' => $this->faker->company . ' High School',
+            'name' => $this->faker->company.' High School',
             'address' => $this->faker->address,
             'phone' => $this->faker->numerify('##########'),
         ];
