@@ -64,10 +64,11 @@ class InternshipProgramController extends BaseController
         // Set industry_id from the authenticated user's industry.
         $validatedData['industry_id'] = $user->industry->id;
         // Generate a random 6-character invitation code.
-        $validatedData['invitation_code'] = \Illuminate\Support\Str::random(6);
+        $validatedData['invitation_code'] = $validatedData['invitation_code'] ??\Illuminate\Support\Str::random(6);
         InternshipProgram::create($validatedData);
 
-        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dibuat.');
+        return response()->json(['success' => true]);
+        // return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dibuat.');
     }
 
     /**

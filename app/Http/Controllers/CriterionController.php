@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Criterion;
+use App\Models\Grade;
 use App\Models\School;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -50,14 +51,29 @@ class CriterionController extends BaseController
             'description' => 'nullable|string',
         ]);
 
-        $data = array_merge($validated, ['industry_id' => $school->industry_id]);
+        $user = Auth::user();
+        $industryId = $school->industry_id;
 
-        $school->criteria()->create($data);
+        $data = array_merge($validated, [
+            'industry_id' => $industryId,
+            'school_id' => $school->id
+        ]);
 
-        return redirect()->route('schools.criteria.index', $school)
-            ->with('success', 'Kriteria berhasil ditambahkan.');
+        $criterion = Criterion::create($data);
+
+        $students = $school->students()->get();
+        foreach ($students as $student) {
+            Grade::create([
+                'criteria_id' => $criterion->id,
+                'student_id' => $student->id,
+                'score' => 0,
+            ]);
+        }
+
+        return response()->json(['message' => 'Kriteria berhasil ditambahkan.'], 201);
+        // return redirect()->route('schools.criteria.index', $school)
+        //     ->with('success', 'Kriteria berhasil ditambahkan.');
     }
-
     /**
      * Display the specified resource.
      *

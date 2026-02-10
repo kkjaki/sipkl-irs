@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AttendanceSessionController;
 use App\Http\Controllers\Auth\StudentRegistrationController;
 use App\Http\Controllers\CriterionController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\InternshipProgramController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\ProfileController;
@@ -30,7 +32,20 @@ Route::middleware('auth')->group(function () {
     Route::post('mentors/{mentor}/deactivate', [MentorController::class, 'deactivate'])->name('mentors.deactivate');
     Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');
     Route::resource('internshipPrograms', InternshipProgramController::class);
+
+    Route::group(['prefix' => 'grades/schools'], function () {
+        Route::controller(GradeController::class)->group(function () {
+            Route::get('/', 'index')->name('grades.schools.index');
+            Route::get('/{school}', 'show')->name('grades.schools.show');
+            Route::get('/{school}/student/{student}', 'edit')->name('grades.schools.edit');
+            Route::put('/{school}/student/{student}', 'update')->name('grades.schools.update');
+        });
+    });
 });
+
+Route::get('csrf-token', function () {
+    return response()->json(['csrfToken' => csrf_token()]);
+})->name('csrf-token');
 
 // Student Registration
 Route::get('register/student', [StudentRegistrationController::class, 'create'])->name('student.register');

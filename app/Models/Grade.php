@@ -7,25 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Criterion extends Model
+class Grade extends Model
 {
     use HasFactory;
 
     /**
      * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
-        'industry_id',
-        'school_id',
-        'name',
-        'description',
+        'criteria_id',
+        'student_id',
+        'score'
     ];
 
     /**
      * The attributes that should be hidden for serialization.
-     *
      * @var array<int, string>
      */
     protected $hidden = [];
@@ -37,30 +34,32 @@ class Criterion extends Model
      */
     protected $casts = [];
 
-    /**
-     * Get the parent that owns the Criterion
-     */
-    public function industry(): BelongsTo
-    {
-        return $this->belongsTo(Industry::class, 'industry_id');
-    }
-
-    public function school(): BelongsTo
-    {
-        return $this->belongsTo(School::class, 'school_id');
-    }
-
-    public function grades() {
-        return $this->hasMany(Grade::class, 'criteria_id', 'id');
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
     // /**
-    //  * Get all of the children for the Criterion
+    //  * Get the parent that owns the Grade
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    //  */
+    // public function parent(): BelongsTo
+    // {
+    //     return $this->belongsTo(Parent::class, 'foreign_key', 'owner_key');
+    // }
+
+    // /**
+    //  * Get all of the children for the Grade
     //  *
     //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
     //  */
-    // public function grades(): HasMany
+    // public function children(): HasMany
     // {
     //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
     // }
+    public function criterion() {
+        return $this->belongsTo(Criterion::class, 'criteria_id');
+    }
 }

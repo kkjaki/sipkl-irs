@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\InternshipProgram;
+use App\Models\School;
+use App\Models\SchoolSupervisor;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +23,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $schools = School::all();
+
+        return view('auth.register', compact('schools'));
     }
 
     /**
@@ -31,9 +37,17 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'school_id' => ['nullable', 'exists:schools,id'],
+            'invitation_code' => ['required', 'string', 'max:255', 'exists:internship_programs,invitation_code'],
         ]);
+
+        $internshipProgramId = InternshipProgram::where('invitation_code', $request->invitation_code)->first()->id;
+        $schoolSupervisor = SchoolSupervisor::where('school_id', $request->school_id)->first()?->id;
+        if (!$schoolSupervisor) {
+            return back()->withErrors(['school_id' => 'Supervisor untuk sekolah ini tidak ditemukan. Silakan hubungi administrator.'])->withInput();
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -42,6 +56,13 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
+
+        Student::create([
+            'user_id' => $user->id,
+            'school_id' => $request->school_id,
+            'internship_program_id' => $internshipProgramId,
+            'school_supervisor_id' => $schoolSupervisor,
+        ]);
 
         Auth::login($user);
 
