@@ -3,14 +3,123 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| LANDING
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return view('welcome');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| STUDENT ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('student')->name('student.')->group(function () {
+
+    // Landing & Auth
+    Route::get('/', function () {
+        return view('landing-student');
+    })->name('landing');
+
+    Route::get('/login', function () {
+        return view('auth.login-student');
+    })->name('login');
+
+    Route::get('/register', function () {
+        return view('auth.register-student');
+    })->name('register');
+
+    Route::get('/dashboard', function () {
+        return view('dashboard-student');
+    })->name('dashboard');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRESENSI SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/industry/kehadiran', function () {
+        return view('industry.student.presensi.index');
+    })->name('kehadiran.index');
+
+    Route::get('/industry/kehadiran/create', function () {
+        return view('industry.student.presensi.create');
+    })->name('kehadiran.create');
+
+    Route::post('/industry/kehadiran', function () {
+        //
+    })->name('kehadiran.store');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOGBOOK SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/industry/logbook', function () {
+        return view('industry.student.logbook.index');
+    })->name('logbook.index');
+
+    Route::get('/industry/logbook/create', function () {
+        return view('industry.student.logbook.create');
+    })->name('logbook.create');
+
+    Route::post('/industry/logbook', function () {
+        return "Data berhasil disimpan";
+    })->name('logbook.store');
+
+    Route::get('/industry/logbook/{id}/edit', function ($id) {
+        return view('industry.student.logbook.edit');
+    })->name('logbook.edit');
+
+    Route::put('/industry/logbook/{id}', function ($id) {
+        return "Data berhasil diupdate";
+    })->name('logbook.update');
+
+    Route::get('/industry/logbook/{id}', function ($id) {
+        return view('industry.student.logbook.show');
+    })->name('logbook.show');
+
+    Route::delete('/industry/logbook/{id}', function ($id) {
+        return "Data berhasil dihapus";
+    })->name('logbook.destroy');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | NILAI SISWA  ✅ PINDAH KE DALAM GROUP
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/industry/nilai', function () {
+        return view('industry.student.nilai.index');
+    })->name('nilai.index');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD (DEFAULT)
+|--------------------------------------------------------------------------
+*/
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
