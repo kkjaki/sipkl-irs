@@ -102,6 +102,25 @@ Route::prefix('student')->name('student.')->group(function () {
         return view('industry.student.nilai.index');
     })->name('nilai.index');
 
+    Route::get('/industry/nilai/print', function () {
+        return view('industry.student.nilai.print');
+    })->name('nilai.print');
+
+        /*
+    |--------------------------------------------------------------------------
+    | PROFILE SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/industry/profil', function () {
+        return view('industry.student.profil.index');
+    })->name('profil.index');
+
+    Route::put('/industry/profil', function () {
+    return back()->with('success', 'Profil berhasil diperbarui!');
+})->name('profil.update');
+
+
 });
 
 

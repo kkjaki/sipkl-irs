@@ -10,10 +10,11 @@ Nilai
 
     {{-- Button Cetak --}}
     <div class="mb-4">
-        <button onclick="window.print()"
-            class="px-4 py-2 border rounded hover:bg-gray-100 text-sm">
+        <a href="{{ route('student.nilai.print') }}" 
+        target="_blank"
+        class="px-4 py-2 border rounded bg-gray-100 hover:bg-gray-200">
             CETAK
-        </button>
+        </a>
     </div>
 
     {{-- Profil Siswa --}}

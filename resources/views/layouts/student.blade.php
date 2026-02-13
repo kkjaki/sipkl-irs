@@ -31,16 +31,16 @@
             {{-- NAVBAR --}}
             @include('partials.navbar')
 
-{{-- HEADER --}}
-@hasSection('header')
-<header class="bg-slate-800">
-    <div class="w-full py-6 px-6">
-        <h2 class="font-black text-3xl text-white leading-tight">
-            @yield('header')
-        </h2>
-    </div>
-</header>
-@endif
+            {{-- HEADER --}}
+            @hasSection('header')
+            <header class="bg-slate-800">
+                <div class="w-full py-6 px-6">
+                    <h2 class="font-black text-3xl text-white leading-tight">
+                        @yield('header')
+                    </h2>
+                </div>
+            </header>
+            @endif
 
 
 
