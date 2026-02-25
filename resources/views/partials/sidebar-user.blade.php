@@ -18,7 +18,7 @@
                         ? 'border-teal-400 bg-gray-50 text-brand-primary' 
                         : 'border-transparent hover:border-teal-300' }}">
                     
-                    <x-heroicon-m-home class="w-5 h-5" />
+                    <x-lucide-home class="w-5 h-5" />
                     <span class="text-lg">Dashboard</span>
                 </a>
             </li>
@@ -35,11 +35,11 @@
                     {{ $presensiActive ? 'border-teal-400 bg-gray-50' : 'border-transparent hover:border-teal-300' }}">
                     
                     <div class="flex items-center gap-3.5">
-                        <i class="fas fa-list w-5 h-5"></i>
+                        <x-lucide-clipboard-list class="w-5 h-5" />
                         <span class="text-lg">Presensi</span>
                     </div>
 
-                    <x-heroicon-m-chevron-left
+                    <x-lucide-chevron-left
                         class="chevron-icon w-5 h-5 transition-transform duration-300
                         {{ $presensiActive ? '-rotate-90' : '' }}" />
                 </div>
@@ -83,11 +83,11 @@
                     {{ $logbookActive ? 'border-teal-400 bg-gray-50' : 'border-transparent hover:border-teal-300' }}">
                     
                     <div class="flex items-center gap-3.5">
-                        <x-heroicon-s-book-open class="w-5 h-5" />
+                        <x-lucide-book-open class="w-5 h-5" />
                         <span class="text-lg">Logbook</span>
                     </div>
 
-                    <x-heroicon-m-chevron-left
+                    <x-lucide-chevron-left
                         class="chevron-icon w-5 h-5 transition-transform duration-300
                         {{ $logbookActive ? '-rotate-90' : '' }}" />
                 </div>
@@ -128,11 +128,10 @@
                         ? 'border-teal-400 bg-gray-50 text-brand-primary' 
                         : 'border-transparent hover:border-teal-300' }}">
                     
-                    <x-heroicon-s-academic-cap class="w-5 h-5" />
+                    <x-lucide-graduation-cap class="w-5 h-5" />
                     <span class="text-lg">Nilai</span>
                 </a>
             </li>
-
 
         </ul>
     </nav>

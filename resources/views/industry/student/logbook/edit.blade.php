@@ -6,7 +6,7 @@ Edit Logbook
 
 @section('content')
 
-<div class="bg-white shadow rounded-lg p-6 max-w-3xl">
+<div class="bg-white shadow rounded-lg p-8 w-full min-h-[80vh]">
 
     <form action="#" method="POST" enctype="multipart/form-data">
         @csrf
