@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Grade extends Model
+class Attendance extends Model
 {
     use HasFactory;
 
@@ -16,9 +16,11 @@ class Grade extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'criteria_id',
+        'attendance_session_id',
         'student_id',
-        'score'
+        'status',
+        'check_in',
+        'notes'
     ];
 
     /**
@@ -41,7 +43,7 @@ class Grade extends Model
     */
 
     // /**
-    //  * Get the parent that owns the Grade
+    //  * Get the parent that owns the Attendance
     //  *
     //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
     //  */
@@ -51,7 +53,7 @@ class Grade extends Model
     // }
 
     // /**
-    //  * Get all of the children for the Grade
+    //  * Get all of the children for the Attendance
     //  *
     //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
     //  */
@@ -59,11 +61,19 @@ class Grade extends Model
     // {
     //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
     // }
-    public function criterion()
+
+    /**
+     * Menghubungkan absen kembali ke sesinya.
+     */
+    public function session(): BelongsTo
     {
-        return $this->belongsTo(Criterion::class, 'criteria_id');
+        return $this->belongsTo(AttendanceSession::class, 'attendance_session_id');
     }
-    public function student()
+
+    /**
+     * Menghubungkan absen ke data siswa.
+     */
+    public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
     }

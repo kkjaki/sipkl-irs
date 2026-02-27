@@ -10,118 +10,145 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceSessionController extends BaseController
 {
-    /**
-     * Create a new controller instance.
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
     /**
-     * Display a listing of the resource.
+     * Filter industry_id agar data tidak bocor antar perusahaan.
      */
     public function index()
     {
-        // Eager load relationships for efficiency and paginate the results.
-        $attendanceSessions = AttendanceSession::with('user')->latest()->paginate(15);
+        $user = Auth::user();
+
+        // Hanya menampilkan sesi milik industri user yang sedang login
+        $attendanceSessions = AttendanceSession::where('industry_id', $user->industry->id)
+            ->with('user')
+            ->latest()
+            ->paginate(15);
 
         return view('attendanceSessions.index', compact('attendanceSessions'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('attendanceSessions.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Pengecekan agar tidak ada sesi ganda di hari yang sama.
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $validated = $request->validate([
+            'name' => 'required',
             'session_date' => 'required|date',
-            'on_time_deadline' => 'required|date_format:H:i',
-            'closed_at' => 'nullable|date_format:H:i|after:on_time_deadline',
+            'on_time_deadline' => 'required',
+            'closed_at' => 'required',
+            'industry_id' => 'required'
         ]);
 
         $user = Auth::user();
 
-        // Ensure user has an associated industry
-        if (! $user->industry) {
-            return back()->with('error', 'Anda tidak terhubung dengan industri manapun.');
+        $industryId = $user->industry->id ?? $request->industry_id;
+
+        $exists = AttendanceSession::where('industry_id', $industryId)
+            ->where('session_date', $request->session_date)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['error' => 'Sesi untuk tanggal ini sudah ada.'], 422);
         }
 
-        $validatedData['opened_by_user_id'] = $user->id;
-        $validatedData['industry_id'] = $user->industry->id;
+        $validated['opened_by_user_id'] = $user->id;
+        $validated['industry_id'] = $industryId;
+        $validated['is_open'] = true;
 
-        AttendanceSession::create($validatedData);
+        $session = AttendanceSession::create($validated);
 
-        return redirect()->route('attendanceSessions.index')->with('success', 'Sesi Presensi berhasil dibuka.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Sesi Presensi berhasil dibuka!',
+            'data' => $session
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Otorisasi agar detail sesi tidak bisa diintip industri lain.
      */
     public function show(AttendanceSession $attendanceSession)
     {
-        // Eager load relations for the detail view
+        $this->authorizeAccess($attendanceSession);
         $attendanceSession->load(['user', 'industry', 'attendances']);
-
         return view('attendanceSessions.show', compact('attendanceSession'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(AttendanceSession $attendanceSession)
     {
+        $this->authorizeAccess($attendanceSession);
         return view('attendanceSessions.edit', compact('attendanceSession'));
     }
 
-    /**
-     * Update the specified resource in storage.
-    */
     public function update(Request $request, AttendanceSession $attendanceSession)
     {
+        $this->authorizeAccess($attendanceSession);
+
         $validatedData = $request->validate([
             'session_date' => 'required|date',
             'on_time_deadline' => 'required|date_format:H:i',
             'closed_at' => 'nullable|date_format:H:i|after:on_time_deadline',
         ]);
 
-        // Handle boolean 'is_open' from checkbox
         $validatedData['is_open'] = $request->has('is_open');
-
         $attendanceSession->update($validatedData);
 
         return redirect()->route('attendanceSessions.index')->with('success', 'Sesi Presensi berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(AttendanceSession $attendanceSession)
     {
-        $user = Auth::user();
-        $industry = $attendanceSession->industry;
+        $this->authorizeAccess($attendanceSession);
 
-        // Authorization check: user must be the industry owner or a mentor in that industry.
-        // This is a good candidate for a Policy class (e.g., AttendanceSessionPolicy).
-        $isOwner = $user->id === $industry->owner_id;
-        $isMentor = Mentor::where('industry_id', $industry->id)
+        $attendanceSession->delete();
+        return redirect()->route('attendanceSessions.index')->with('success', 'Sesi Presensi berhasil dihapus.');
+    }
+
+    /**
+     * Helper Method: Mengamankan akses agar hanya Owner/Mentor di industri yang sama yang bisa akses.
+     * Ini membuat kode lebih clean karena dipanggil di show, edit, update, dan destroy.
+     */
+    protected function authorizeAccess(AttendanceSession $attendanceSession)
+    {
+        $user = Auth::user();
+
+        $isOwner = $user->id === $attendanceSession->industry->owner_id;
+        $isMentor = Mentor::where('industry_id', $attendanceSession->industry_id)
             ->where('user_id', $user->id)
             ->exists();
 
-        if (! $isOwner && ! $isMentor) {
-            abort(403, 'Unauthorized action.');
+        if (!$isOwner && !$isMentor) {
+            abort(403, 'Anda tidak memiliki akses ke sesi industri lain.');
+        }
+    }
+
+    /**
+     * Menutup sesi presensi secara manual.
+     */
+    public function close(AttendanceSession $attendanceSession)
+    {
+        $this->authorizeAccess($attendanceSession);
+
+        $attendanceSession->update(['is_open' => false]);
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Sesi presensi resmi ditutup!',
+                'data' => $attendanceSession
+            ]);
         }
 
-        $attendanceSession->delete();
-
-        return redirect()->route('attendanceSessions.index')->with('success', 'Sesi Presensi berhasil dihapus.');
+        return redirect()->back()->with('success', 'Sesi presensi telah ditutup.');
     }
 }

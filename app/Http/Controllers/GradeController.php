@@ -82,17 +82,25 @@ class GradeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreGradeRequest $request, Student $student, Grade $grade)
+    public function update(Request $request, School $school, Student $student)
     {
-        $user = Auth::user();
-        $validated = $request->validated();
-    }
+        $validated = $request->validate([
+            'grades' => 'required|array',
+            'grades.*.id' => 'required|exists:grades,id',
+            'grades.*.score' => 'required|numeric|min:0|max:100',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Grade $grade)
-    {
-        //
+        foreach ($validated['grades'] as $gradeData) {
+            \App\Models\Grade::where('id', $gradeData['id'])
+                ->where('student_id', $student->id) 
+                ->update(['score' => $gradeData['score']]);
+        }
+
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Semua penilaian berhasil disimpan sekaligus!',
+        //     'data' => $validated['grades']
+        // ]);
+        return redirect()->back()->with('success', 'Nilai berhasil diperbarui!');
     }
 }

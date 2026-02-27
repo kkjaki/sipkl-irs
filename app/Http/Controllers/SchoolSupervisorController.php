@@ -49,7 +49,7 @@ class SchoolSupervisorController extends BaseController
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|integer',
+            'phone' => 'required|string|max:20',
         ]);
 
         $school->schoolSupervisors()->create($request->all());

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceSessionController;
 use App\Http\Controllers\Auth\StudentRegistrationController;
 use App\Http\Controllers\CriterionController;
@@ -33,6 +34,17 @@ Route::middleware('auth')->group(function () {
     Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');
     Route::resource('internshipPrograms', InternshipProgramController::class);
 
+    Route::controller(AttendanceSessionController::class)->group(function () {
+        Route::get('/attendance-sessions', 'index')->name('attendance-sessions.index');
+        Route::post('/attendance-sessions', 'store')->name('attendance-sessions.store');
+        Route::patch('/attendance-sessions/{attendanceSession}/close', [AttendanceSessionController::class, 'close'])->name('attendanceSessions.close');
+    });
+
+    Route::controller(AttendanceController::class)->group(function () {
+        Route::get('/attendance-sessions/{session}/validate', 'show')->name('attendance.validate.show');
+        Route::put('/attendance-sessions/{session}/validate', 'update')->name('attendance.validate.update');
+    });
+
     Route::group(['prefix' => 'grades/schools'], function () {
         Route::controller(GradeController::class)->group(function () {
             Route::get('/', 'index')->name('grades.schools.index');
@@ -51,4 +63,4 @@ Route::get('csrf-token', function () {
 Route::get('register/student', [StudentRegistrationController::class, 'create'])->name('student.register');
 Route::post('register/student', [StudentRegistrationController::class, 'store']);
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
