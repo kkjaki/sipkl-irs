@@ -31,7 +31,7 @@ class SchoolController extends BaseController
 
         $schools = School::where('industry_id', $user->industry->id)->get();
 
-        return view('schools.management', compact('schools'));
+        return view('industry.schools.management', compact('schools'));
     }
 
     /**

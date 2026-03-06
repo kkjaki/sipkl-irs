@@ -17,7 +17,7 @@ export default {
                 "brand-bg": "#EFF3FD", 
             },
             fontFamily: {
-                sans: ["Figtree", ...defaultTheme.fontFamily.sans],
+                sans: ["SF Pro Display", "Figtree", ...defaultTheme.fontFamily.sans],
             },
         },
     },

@@ -1,7 +1,7 @@
-<aside class="w-64 h-screen py-2.5 bg-white flex flex-col justify-start items-center shadow-lg">
+<aside :class="sidebarOpen ? 'w-64' : 'w-16'" class="py-2.5 h-screen fixed bg-white flex flex-col justify-start items-center shadow-lg transition-all duration-300 overflow-x-hidden">
     {{-- Logo Aplikasi --}}
     <div class="w-full px-7 py-9 flex justify-center items-center">
-        <h1 class="text-neutral-800 text-3xl font-['SF_Pro'] font-bold leading-10">PKL ONLINE</h1>
+        <h1 x-show="sidebarOpen" class="text-neutral-800 text-3xl font-sans font-bold leading-10 whitespace-nowrap">PKL ONLINE</h1>
     </div>
 
     {{-- Navigasi --}}
@@ -9,32 +9,38 @@
         <ul>
             {{-- Dashboard --}}
             <li onclick="window.location.href='{{ route('dashboard') }}'"
-                class="px-4 py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+                :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('dashboard') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-m-home
-                    class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
+                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('dashboard') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    x-show="sidebarOpen"
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('dashboard') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Dashboard
                 </span>
             </li>
 
             {{-- Pendamping Industri --}}
-            <li onclick="window.location.href='#'"
-                class="px-4 py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
-                <i class="w-5 h-5 fas fa-user-tie text-stone-900 group-hover:text-brand-primary"></i>
+            <li onclick="window.location.href='{{ route('mentors.index') }}'"
+                :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('mentors.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
+                <i class="w-5 h-5 fas fa-user-tie transition-colors duration-100 {{ request()->routeIs('mentors.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}"></i>
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    x-show="sidebarOpen"
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('mentors.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Pendamping Industri
                 </span>
             </li>
 
             {{-- Manajemen Program PKL --}}
-            <li onclick="window.location.href='#'"
-                class="px-4 py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+            <li onclick="window.location.href='{{ route('internship-programs.index') }}'"
+                :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('internship-programs.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-s-briefcase
-                    class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
+                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('internship-programs.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    x-show="sidebarOpen"
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('internshipPrograms.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Manajemen Program
                 </span>
             </li>
@@ -42,27 +48,30 @@
             {{-- Sekolah Dropdown --}}
             <li>
                 <div onclick="toggleDropdown(this, 'sekolahDropdown')"
-                    class="px-4 py-4 flex items-center justify-between gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+                    :class="sidebarOpen ? 'px-4 justify-between' : 'px-0 justify-center'"
+                    class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('schools.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                     <div class="flex items-center gap-3.5">
-                        <i class="w-5 h-5 fas fa-school text-stone-900 group-hover:text-brand-primary"></i>
+                        <i class="w-5 h-5 fas fa-school transition-colors duration-100 {{ request()->routeIs('schools.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}"></i>
                         <span
-                            class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                            x-show="sidebarOpen"
+                            class="text-lg font-normal font-sans transition {{ request()->routeIs('schools.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                             Sekolah
                         </span>
                     </div>
                     <x-heroicon-m-chevron-left
-                        class="chevron-icon w-5 h-5 text-stone-900 transition-transform duration-500 group-hover:text-brand-primary" />
+                        x-show="sidebarOpen"
+                        class="chevron-icon w-5 h-5 transition-transform duration-500 {{ request()->routeIs('schools.*') ? '-rotate-90 text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 </div>
-                <ul id="sekolahDropdown" class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                <ul id="sekolahDropdown" x-show="sidebarOpen" class="{{ request()->routeIs('schools.*') ? 'max-h-[500px]' : 'max-h-0' }} overflow-hidden transition-all duration-500 ease-in-out">
                     <li>
-                        <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                        <a href="{{ route('schools.index') }}"
+                            class="flex items-center px-12 py-4 text-lg font-normal font-sans transition {{ request()->routeIs('schools.index', 'schools.create', 'schools.edit') ? 'border-l-8 border-brand-primary bg-teal-50 text-brand-primary' : 'border-l-8 border-transparent text-gray-700 hover:border-teal-300 hover:bg-teal-50 hover:text-brand-primary' }}">
                             Data Sekolah
                         </a>
                     </li>
                     <li>
-                        <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                        <a href="{{ route('schools.management') }}"
+                            class="flex items-center px-12 py-4 text-lg font-normal font-sans transition {{ request()->routeIs('schools.management') ? 'border-l-8 border-brand-primary bg-teal-50 text-brand-primary' : 'border-l-8 border-transparent text-gray-700 hover:border-teal-300 hover:bg-teal-50 hover:text-brand-primary' }}">
                             Manajemen Sekolah
                         </a>
                     </li>
@@ -72,27 +81,30 @@
             {{-- Presensi Dropdown --}}
             <li>
                 <div onclick="toggleDropdown(this, 'presensiDropdown')"
-                    class="px-4 py-4 flex items-center justify-between gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+                    :class="sidebarOpen ? 'px-4 justify-between' : 'px-0 justify-center'"
+                    class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('presences.*', 'attendance.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                     <div class="flex items-center gap-3.5">
-                        <i class="w-5 h-5 fas fa-list text-stone-900 group-hover:text-brand-primary"></i>
+                        <i class="w-5 h-5 fas fa-list transition-colors duration-100 {{ request()->routeIs('presences.*', 'attendance.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}"></i>
                         <span
-                            class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                            x-show="sidebarOpen"
+                            class="text-lg font-normal font-sans transition {{ request()->routeIs('presences.*', 'attendance.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                             Presensi
                         </span>
                     </div>
                     <x-heroicon-m-chevron-left
-                        class="chevron-icon w-5 h-5 text-stone-900 transition-transform duration-500 group-hover:text-brand-primary" />
+                        x-show="sidebarOpen"
+                        class="chevron-icon w-5 h-5 transition-transform duration-500 {{ request()->routeIs('presences.*', 'attendance.*') ? '-rotate-90 text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 </div>
-                <ul id="presensiDropdown" class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                <ul id="presensiDropdown" x-show="sidebarOpen" class="{{ request()->routeIs('presences.*', 'attendance.*') ? 'max-h-[500px]' : 'max-h-0' }} overflow-hidden transition-all duration-500 ease-in-out">
                     <li>
                         <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                            class="flex items-center px-12 py-4 text-lg font-normal font-sans transition {{ request()->routeIs('attendance.sessions.*') ? 'border-l-8 border-brand-primary bg-teal-50 text-brand-primary' : 'border-l-8 border-transparent text-gray-700 hover:border-teal-300 hover:bg-teal-50 hover:text-brand-primary' }}">
                             Kelola Sesi Presensi
                         </a>
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                            class="flex items-center px-12 py-4 text-lg font-normal font-sans transition {{ request()->routeIs('attendance.validations.*') ? 'border-l-8 border-brand-primary bg-teal-50 text-brand-primary' : 'border-l-8 border-transparent text-gray-700 hover:border-teal-300 hover:bg-teal-50 hover:text-brand-primary' }}">
                             Validasi Presensi
                         </a>
                     </li>
@@ -102,33 +114,39 @@
 
             {{-- Validasi Logbook --}}
             <li onclick="window.location.href='#'"
-                class="px-4 py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+                :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('logbooks.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-s-book-open
-                    class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
+                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('logbooks.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    x-show="sidebarOpen"
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('logbooks.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Validasi Logbook
                 </span>
             </li>
 
             {{-- Rekap --}}
             <li onclick="window.location.href='#'"
-                class="px-4 py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+                :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('recap.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-s-clipboard-document-list
-                    class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
+                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('recap.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    x-show="sidebarOpen"
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('recap.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Rekap
                 </span>
             </li>
 
             {{-- Nilai --}}
             <li onclick="window.location.href='#'"
-                class="px-4 py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+                :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('grades.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-s-academic-cap
-                    class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
+                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('grades.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    x-show="sidebarOpen"
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('grades.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Nilai
                 </span>
             </li>

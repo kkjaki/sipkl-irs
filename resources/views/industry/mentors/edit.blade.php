@@ -18,33 +18,35 @@
             <section class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
                 Data Pendamping Industri
             </section>
-            <form action="" class="w-full mx-auto space-y-5">
+            <form method="POST" action="{{ route('mentors.update', $mentor->id) }}" class="w-full mx-auto space-y-5">
+                @method('PUT')
+                @csrf
                 {{-- Nama Guru Pembimbing --}}
                 <section class="w-full flex items-center gap-2">
-                    <label for="nama_program" class="w-40 text-neutral-800 text-base">Nama Pembimbing</label>
-                    <input type="text" id="nama_program" name="nama_program" placeholder="Masukkan Nama Pendamping"
+                    <label for="name" class="w-40 text-neutral-800 text-base">Nama Pembimbing</label>
+                    <input type="text" id="name" name="name" value="{{ $mentor->user->name }}" placeholder="Masukkan Nama Pendamping"
                         required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
                 {{-- Asal Sekolah --}}
                 <section class="w-full flex items-center gap-2">
-                    <label for="nama_program" class="w-40 text-neutral-800 text-base">Email</label>
-                    <input type="email" id="nama_program" name="nama_program" value="example@gmail.com" placeholder="Masukkan Email" required
+                    <label for="email" class="w-40 text-neutral-800 text-base">Email</label>
+                    <input type="email" id="email" name="email" value="{{ $mentor->user->email }}" placeholder="Masukkan Email" required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-stone-700 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
                 {{-- Kontak Guru Pembimbing --}}
                 <section class="w-full flex items-center gap-2">
-                    <label for="nama_program" class="w-40 text-neutral-800 text-base">Password</label>
-                    <input type="password" id="nama_program" name="nama_program" value="12345678" placeholder="Masukkan Password" required disabled
+                    <label for="password" class="w-40 text-neutral-800 text-base">Password</label>
+                    <input type="password" id="password" name="password" value="{{ $mentor->user->password }}" placeholder="Masukkan Password" required disabled
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
                 {{-- Kontak Guru Pembimbing --}}
                 <section class="w-full flex items-center gap-2">
-                    <label for="nama_program" class="w-40 text-neutral-800 text-base">Jabatan</label>
-                    <input type="text" id="nama_program" name="nama_program" value="Mentor" placeholder="Masukkan Jabatan" required
+                    <label for="position" class="w-40 text-neutral-800 text-base">Jabatan</label>
+                    <input type="text" id="position" name="position" value="{{ $mentor->position }}" placeholder="Masukkan Jabatan" required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
@@ -54,7 +56,7 @@
                         class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
                         <span class="justify-start text-white text-lg leading-snug">Simpan</span>
                     </button>
-                    <a href="{{ route('industry.mentors.index') }}"
+                    <a href="{{ route('mentors.index') }}"
                         class="w-max px-5 py-2 border border-gray-400 text-gray-500 bg-white rounded-md inline-flex justify-center items-center gap-2.5 hover:bg-gray-400 hover:text-white hover:border-transparent transition">
                         <span class="text-lg leading-snug">Batal</span>
                     </a>

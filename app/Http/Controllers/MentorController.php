@@ -31,7 +31,7 @@ class MentorController extends BaseController
         // Fetch mentors in the same industry as the owner.
         $mentors = Mentor::where('industry_id', $user->industry->id)->with('user')->get();
 
-        return view('mentors.index', compact('mentors'));
+        return view('industry.mentors.index', compact('mentors'));
     }
 
     /**
@@ -46,7 +46,7 @@ class MentorController extends BaseController
         }
         $industry = $user->industry;
 
-        return view('mentors.create', compact('industry'));
+        return view('industry.mentors.create', compact('industry'));
     }
 
     /**
@@ -59,14 +59,14 @@ class MentorController extends BaseController
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.');
         }
-
+        
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'position' => 'required|string|max:255',
         ]);
-
+        
         // Create a new user for the mentor.
         $newUser = User::create([
             'name' => $validatedData['name'],
@@ -107,14 +107,14 @@ class MentorController extends BaseController
         }
         $industry = $user->industry;
 
-        return view('mentors.edit', compact('mentor', 'industry'));
+        return view('industry.mentors.edit', compact('mentor', 'industry'));
     }
 
     /**
      * Update the specified mentor in storage.
      */
     public function update(Request $request, Mentor $mentor)
-    {
+    {  
         $user = Auth::user();
         // Deny access if user is not an owner or the mentor is not in their industry.
         if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {

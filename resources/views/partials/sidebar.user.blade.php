@@ -1,7 +1,7 @@
 <aside class="w-64 h-screen py-2.5 bg-white flex flex-col justify-start items-center shadow-lg">
     {{-- Logo Aplikasi --}}
     <div class="w-full px-7 py-9 flex justify-center items-center">
-        <h1 class="text-neutral-800 text-3xl font-['SF_Pro'] font-bold leading-10">PKL ONLINE</h1>
+        <h1 class="text-neutral-800 text-3xl font-sans font-bold leading-10">PKL ONLINE</h1>
     </div>
 
     {{-- Navigasi --}}
@@ -13,7 +13,7 @@
                 <x-heroicon-m-home
                     class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    class="text-neutral-800 text-lg font-normal font-sans group-hover:text-brand-primary transition">
                     Dashboard
                 </span>
             </li>
@@ -25,7 +25,7 @@
                     <div class="flex items-center gap-3.5">
                         <i class="w-5 h-5 fas fa-list text-stone-900 group-hover:text-brand-primary"></i>
                         <span
-                            class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                            class="text-neutral-800 text-lg font-normal font-sans group-hover:text-brand-primary transition">
                             Presensi
                         </span>
                     </div>
@@ -35,13 +35,13 @@
                 <ul id="presensiDropdown" class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
                     <li>
                         <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-sans text-gray-700 hover:text-brand-primary transition">
                             Presensi Harian
                         </a>
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-sans text-gray-700 hover:text-brand-primary transition">
                             Daftar Kehadiran
                         </a>
                     </li>
@@ -56,7 +56,7 @@
                         <x-heroicon-s-book-open
                             class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
                         <span
-                            class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                            class="text-neutral-800 text-lg font-normal font-sans group-hover:text-brand-primary transition">
                             Logbook
                         </span>
                     </div>
@@ -66,13 +66,13 @@
                 <ul id="logbookDropdown" class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
                     <li>
                         <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-sans text-gray-700 hover:text-brand-primary transition">
                             Logbook Harian
                         </a>
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-['SF_Pro'] text-gray-700 hover:text-brand-primary transition">
+                            class="flex items-center border-l-8 border-transparent hover:border-teal-300 px-12 py-4 text-lg font-normal font-sans text-gray-700 hover:text-brand-primary transition">
                             Daftar Logbook
                         </a>
                     </li>
@@ -85,7 +85,7 @@
                 <x-heroicon-s-academic-cap
                     class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-['SF_Pro'] group-hover:text-brand-primary transition">
+                    class="text-neutral-800 text-lg font-normal font-sans group-hover:text-brand-primary transition">
                     Nilai
                 </span>
             </li>

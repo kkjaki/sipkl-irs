@@ -11,6 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
@@ -19,7 +20,7 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen flex bg-gray-100 dark:bg-gray-900">
+    <div x-data="{ sidebarOpen: true }" class="min-h-screen flex bg-[#F4F6F9]">
 
         {{-- Sidebar --}}
         {{-- @include('partials.sidebar-user') --}}
@@ -27,15 +28,15 @@
         {{-- @include('partials.sidebar-mentor') --}}
 
         {{-- Konten utama (navbar + isi halaman) --}}
-        <div class="flex-1 flex flex-col min-h-screen">
+        <div :class="sidebarOpen ? 'ml-64' : 'ml-16'" class="flex-1 min-h-screen transition-all duration-300">
 
             {{-- Navbar --}}
             @include('partials.navbar')
 
             {{-- Header jika ada --}}
             @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="bg-transparent">
+                    <div class="py-6 px-8">
                         {{ $header }}
                     </div>
                 </header>
@@ -43,7 +44,7 @@
 
             {{-- Konten halaman --}}
             <main class="flex-1">
-                {{ $slot }}
+                @yield('content')
             </main>
 
         </div>

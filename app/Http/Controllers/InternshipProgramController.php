@@ -33,7 +33,7 @@ class InternshipProgramController extends BaseController
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return view('internshipPrograms.index', compact('internshipPrograms'));
+        return view('industry.programs.index', compact('internshipPrograms'));
     }
 
     /**
@@ -47,7 +47,7 @@ class InternshipProgramController extends BaseController
         }
 
         // Show the form to create a new internship program.
-        return view('internshipPrograms.create');
+        return view('industry.programs.create');
     }
 
     /**

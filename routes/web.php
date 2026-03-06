@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('mentors', MentorController::class)->except(['show']);
     Route::post('mentors/{mentor}/deactivate', [MentorController::class, 'deactivate'])->name('mentors.deactivate');
     Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');
-    Route::resource('internshipPrograms', InternshipProgramController::class);
+    Route::resource('internship-programs', InternshipProgramController::class);
 
     Route::controller(AttendanceSessionController::class)->group(function () {
         Route::get('/attendance-sessions', 'index')->name('attendance-sessions.index');
@@ -53,6 +53,10 @@ Route::middleware('auth')->group(function () {
             Route::put('/{school}/student/{student}', 'update')->name('grades.schools.update');
         });
     });
+
+    Route::get('/industry', function () {
+        return view('industry.dashboard');
+    })->name('industry');
 });
 
 Route::get('csrf-token', function () {
