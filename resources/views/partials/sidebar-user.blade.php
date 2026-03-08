@@ -1,4 +1,7 @@
-<aside class="w-64 min-h-screen py-2.5 bg-white flex flex-col shadow-lg shrink-0">
+{{-- SIDEBAR --}}
+<aside id="sidebar"
+class="w-64 min-h-screen py-2.5 bg-white flex flex-col shadow-lg shrink-0
+fixed md:relative transform transition-transform duration-300 z-40">
 
     {{-- Logo --}}
     <div class="w-full px-7 py-9 flex justify-center items-center">
@@ -10,7 +13,7 @@
     <nav class="w-full">
         <ul>
 
-            {{-- ================= DASHBOARD ================= --}}
+            {{-- DASHBOARD --}}
             <li>
                 <a href="{{ route('student.dashboard') }}"
                    class="px-4 py-4 flex items-center gap-3.5 border-l-8 transition
@@ -24,7 +27,7 @@
             </li>
 
 
-            {{-- ================= PRESENSI ================= --}}
+            {{-- PRESENSI --}}
             @php
                 $presensiActive = request()->routeIs('student.kehadiran.*');
             @endphp
@@ -72,7 +75,7 @@
             </li>
 
 
-            {{-- ================= LOGBOOK ================= --}}
+            {{-- LOGBOOK --}}
             @php
                 $logbookActive = request()->routeIs('student.logbook.*');
             @endphp
@@ -120,7 +123,7 @@
             </li>
 
 
-            {{-- ================= NILAI ================= --}}
+            {{-- NILAI --}}
             <li>
                 <a href="{{ route('student.nilai.index') }}"
                 class="px-4 py-4 flex items-center gap-3.5 border-l-8 transition
@@ -139,14 +142,21 @@
 </aside>
 
 
-{{-- Dropdown Script --}}
+{{-- SIDEBAR SCRIPT --}}
 <script>
-    function toggleDropdown(el, dropdownId) {
-        const dropdown = document.getElementById(dropdownId);
-        const icon = el.querySelector('.chevron-icon');
 
-        dropdown.classList.toggle('max-h-0');
-        dropdown.classList.toggle('max-h-40');
-        icon.classList.toggle('-rotate-90');
-    }
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('-translate-x-full');
+}
+
+function toggleDropdown(el, dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    const icon = el.querySelector('.chevron-icon');
+
+    dropdown.classList.toggle('max-h-0');
+    dropdown.classList.toggle('max-h-40');
+    icon.classList.toggle('-rotate-90');
+}
+
 </script>

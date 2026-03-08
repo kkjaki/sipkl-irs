@@ -1,47 +1,244 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<div class="min-h-screen flex bg-gray-200">
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+    <!-- LEFT IMAGE -->
+    <div class="hidden md:flex w-1/2 items-center justify-center bg-gray-300">
+        <img src="{{ asset('images/login-illustration.png') }}" 
+             class="w-3/4"
+             alt="login image">
+    </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
+    <!-- RIGHT FORM -->
+    <div class="w-full md:w-1/2 flex items-center justify-center px-6">
+
+        <div class="max-w-md w-full flex flex-col items-center">
+
+            <!-- TITLE -->
+            <p class="text-gray-500 text-center">
+                Selamat Datang di
+            </p>
+
+            <h1 class="text-3xl font-bold mb-6 text-center">
+                PKL-ONLINE
+            </h1>
+
+
+            <!-- TAB -->
+            <div class="flex bg-teal-100 rounded-full p-1 mb-8 w-64">
+                <button id="loginTab"
+                    class="flex-1 bg-teal-400 text-white rounded-full py-1 text-sm">
+                    Masuk
+                </button>
+
+                <button id="registerTab"
+                    class="flex-1 text-gray-500 text-sm">
+                    Daftar
+                </button>
+            </div>
+
+
+            <x-auth-session-status class="mb-4 w-full" :status="session('status')" />
+
+
+            <form id="loginForm" method="POST" action="{{ route('student.login') }}" class="w-full">
+                @csrf
+
+
+                <!-- EMAIL -->
+                <div class="mb-4 w-full text-left">
+
+                    <label class="text-sm text-gray-600 block">
+                        Email
+                    </label>
+
+                    <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        placeholder="example@gmail.com"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-teal-300">
+
+                    <p id="emailError" class="text-red-500 text-sm hidden mt-1">
+                        Email wajib diisi
+                    </p>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+                <div class="mb-2 w-full text-left">
+
+                    <label class="text-sm text-gray-600 block">
+                        Kata Sandi
+                    </label>
+
+                    <div class="relative">
+
+                        <input
+                            id="password"
                             type="password"
                             name="password"
-                            required autocomplete="current-password" />
+                            placeholder="********"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-teal-300">
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                        <button type="button"
+                            onclick="togglePassword()"
+                            class="absolute right-3 top-3 text-gray-400">
+
+                            <i id="eyeIcon" class="fa fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                    <p id="passwordError" class="text-red-500 text-sm hidden mt-1">
+                        Password wajib diisi
+                    </p>
+
+                </div>
+
+
+                <!-- FORGOT -->
+                <div class="text-right mb-4 w-full">
+
+                    <a href="{{ route('password.request') }}"
+                        class="text-sm text-gray-500 hover:underline">
+                        Lupa kata sandi?
+                    </a>
+
+                </div>
+
+
+                <!-- BUTTON -->
+                <button
+                    class="w-full bg-teal-400 hover:bg-teal-500 text-white py-2 rounded-full transition">
+                    Masuk
+                </button>
+
+            </form>
+
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+    </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+</div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+
+<!-- FRONTEND LOGIC -->
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const form = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+
+    const registerTab = document.getElementById("registerTab");
+    const loginTab = document.getElementById("loginTab");
+
+
+    // VALIDASI FORM LOGIN
+    if(form){
+        form.addEventListener("submit", function(e){
+
+            let email = emailInput.value.trim();
+            let password = passwordInput.value.trim();
+
+            let valid = true;
+
+            // VALIDASI EMAIL
+            if(email === ""){
+                emailError.textContent = "Email wajib diisi";
+                emailError.classList.remove("hidden");
+                emailInput.focus();
+                valid = false;
+            }
+            else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+                emailError.textContent = "Format email tidak valid";
+                emailError.classList.remove("hidden");
+                emailInput.focus();
+                valid = false;
+            }
+            else{
+                emailError.classList.add("hidden");
+            }
+
+
+            // VALIDASI PASSWORD
+            if(password === ""){
+                passwordError.textContent = "Password wajib diisi";
+                passwordError.classList.remove("hidden");
+
+                if(valid){
+                    passwordInput.focus();
+                }
+
+                valid = false;
+            }
+            else{
+                passwordError.classList.add("hidden");
+            }
+
+
+            if(!valid){
+                e.preventDefault();
+            }
+
+        });
+    }
+
+
+    // HAPUS ERROR SAAT MENGETIK
+    if(emailInput){
+        emailInput.addEventListener("input", function(){
+            emailError.classList.add("hidden");
+        });
+    }
+
+    if(passwordInput){
+        passwordInput.addEventListener("input", function(){
+            passwordError.classList.add("hidden");
+        });
+    }
+
+
+    // SHOW / HIDE PASSWORD
+    window.togglePassword = function(){
+
+        const icon = document.getElementById("eyeIcon");
+
+        if(passwordInput.type === "password"){
+            passwordInput.type = "text";
+            icon.classList.replace("fa-eye","fa-eye-slash");
+        }else{
+            passwordInput.type = "password";
+            icon.classList.replace("fa-eye-slash","fa-eye");
+        }
+
+    };
+
+
+    // TAB LOGIN
+    if(loginTab){
+        loginTab.addEventListener("click", function(){
+            window.location.href = "{{ route('student.login') }}";
+        });
+    }
+
+    // TAB REGISTER
+    if(registerTab){
+        registerTab.addEventListener("click", function(){
+            window.location.href = "{{ route('student.register') }}";
+        });
+    }
+
+});
+
+</script>
+
 </x-guest-layout>
