@@ -2,8 +2,8 @@
 
     {{-- MENU TOGGLE SIDEBAR --}}
     <div>
-        <button onclick="toggleSidebar()" class="p-2 rounded hover:bg-gray-200 transition">
-            <x-heroicon-s-bars-3 class="w-6 h-6 text-stone-900 cursor-pointer"/>
+        <button onclick="toggleSidebar()" class="p-2 hover:bg-gray-200 rounded">
+            <x-heroicon-s-bars-3 class="w-6 h-6 text-stone-900"/>
         </button>
     </div>
 

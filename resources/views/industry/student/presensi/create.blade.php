@@ -1,74 +1,158 @@
 @extends('layouts.student')
 
+@section('header')
+Presensi Harian
+@endsection
+
 @section('content')
-<main class="min-h-screen bg-brand-bg px-10">
 
-    {{-- Header --}}
-    <header>
-        <div class="w-full py-6">
-            <h2 class="font-black text-3xl text-gray-800 leading-tight">
-                {{ __('Presensi Harian') }}
-            </h2>
-        </div>
-    </header>
+<div class="max-w-6xl">
 
-    {{-- Card Presensi --}}
-    <article
-        class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 flex flex-col gap-4">
+    {{-- CARD --}}
+    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
 
-        {{-- Title Card --}}
-        <section class="bg-gray-200 text-gray-800 p-4 font-bold text-lg rounded-t-xl">
+        {{-- HEADER CARD --}}
+        <div class="bg-teal-400 text-white px-6 py-3 font-semibold">
             Data Presensi
-        </section>
+        </div>
 
-        {{-- Form Presensi --}}
-        <form action="#" method="POST" enctype="multipart/form-data" class="w-full mx-auto space-y-6">
-            @csrf
+        {{-- BODY --}}
+        <div class="p-6">
 
-            {{-- Hari & Tanggal --}}
-            <section class="w-full flex items-center gap-4">
-                <label class="w-40 text-neutral-800 text-base">
-                    Hari, Tanggal
-                </label>
-                <input type="text"
-                    value="{{ now()->translatedFormat('l, d-m-Y') }}"
-                    readonly
-                    class="w-1/3 h-10 px-3.5 rounded-md border border-gray-300 bg-gray-100 text-neutral-700 text-base focus:outline-none" />
-            </section>
+            <form id="presensiForm" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
 
-            {{-- Bukti Presensi --}}
-            <section class="w-full flex items-start gap-4">
-                <label class="w-40 text-neutral-800 text-base pt-2">
-                    Bukti Presensi
-                </label>
-
-                <div
-                    class="w-1/2 h-48 border-2 border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center text-gray-500 cursor-pointer hover:border-brand-primary transition">
-                    
-                    <input type="file" name="bukti_presensi" class="hidden" id="bukti_presensi" />
-
-                    <label for="bukti_presensi" class="flex flex-col items-center justify-center gap-2 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 7h2l2-3h10l2 3h2v13H3V7z" />
-                            <circle cx="12" cy="13" r="4" />
-                        </svg>
-                        <span class="text-sm text-gray-500">
-                            Ambil gambar Anda di sini
-                        </span>
+                {{-- HARI & TANGGAL --}}
+                <div class="flex items-center gap-6">
+                    <label class="w-40 text-gray-700">
+                        Hari, Tanggal
                     </label>
-                </div>
-            </section>
 
-            {{-- Button --}}
-            <section class="pt-4 flex items-center gap-3">
-                <button type="submit"
-                    class="px-6 py-2 bg-brand-primary hover:bg-teal-500 rounded-md text-white text-lg transition">
-                    Kirim
-                </button>
-            </section>
-        </form>
-    </article>
-</main>
+                    <input
+                        type="text"
+                        value="{{ now()->translatedFormat('l, d-m-Y') }}"
+                        readonly
+                        class="w-56 border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-700"
+                    >
+                </div>
+
+                {{-- BUKTI PRESENSI --}}
+                <div class="flex gap-6">
+
+                    <label class="w-40 text-gray-700 pt-3">
+                        Bukti Presensi
+                    </label>
+
+                    <div class="flex-1">
+
+                        <label id="uploadBox"
+                            for="bukti_presensi"
+                            class="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg
+                            flex flex-col items-center justify-center cursor-pointer
+                            hover:border-teal-400 transition">
+
+                            <input
+                                type="file"
+                                name="bukti_presensi"
+                                id="bukti_presensi"
+                                class="hidden"
+                                accept="image/*"
+                            >
+
+                            <i class="fa fa-camera text-2xl text-gray-500 mb-2"></i>
+
+                            <span id="uploadText" class="text-gray-500 text-sm">
+                                Ambil gambar Anda di sini
+                            </span>
+
+                            <img id="previewImage" class="hidden h-32 rounded mt-2">
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+                {{-- BUTTON --}}
+                <div class="pt-2">
+
+                    <button
+                        type="submit"
+                        class="bg-teal-400 hover:bg-teal-500 text-white px-6 py-2 rounded shadow-sm transition">
+                        Kirim
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{{-- ================= FRONTEND LOGIC ================= --}}
+<script>
+
+const fileInput = document.getElementById('bukti_presensi');
+const preview = document.getElementById('previewImage');
+const uploadText = document.getElementById('uploadText');
+const uploadBox = document.getElementById('uploadBox');
+const form = document.getElementById('presensiForm');
+
+
+// ================= PREVIEW GAMBAR =================
+fileInput.addEventListener('change', function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        preview.src = e.target.result;
+        preview.classList.remove('hidden');
+
+        uploadText.textContent = file.name;
+
+    };
+
+    reader.readAsDataURL(file);
+
+});
+
+
+// ================= VALIDASI FORM =================
+form.addEventListener('submit', function(e){
+
+    if(fileInput.files.length === 0){
+
+        alert("Silakan upload bukti presensi terlebih dahulu.");
+        e.preventDefault();
+
+    }
+
+});
+
+
+// ================= DRAG & DROP STYLE =================
+uploadBox.addEventListener('dragover', function(e){
+
+    e.preventDefault();
+    uploadBox.classList.add('border-teal-400');
+
+});
+
+uploadBox.addEventListener('dragleave', function(){
+
+    uploadBox.classList.remove('border-teal-400');
+
+});
+
+</script>
+
 @endsection

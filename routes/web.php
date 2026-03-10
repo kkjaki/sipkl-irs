@@ -20,19 +20,29 @@ Route::get('/', function () {
 */
 Route::prefix('student')->name('student.')->group(function () {
 
-    // Landing & Auth
     Route::get('/', function () {
         return view('landing-student');
     })->name('landing');
 
+    // LOGIN
     Route::get('/login', function () {
         return view('auth.login-student');
     })->name('login');
 
+    Route::post('/login', function () {
+        return redirect()->route('student.dashboard');
+    })->name('login.store');
+
+    // REGISTER
     Route::get('/register', function () {
         return view('auth.register-student');
     })->name('register');
 
+    Route::post('/register', function () {
+        return redirect()->route('student.dashboard');
+    })->name('register.store');
+
+    // DASHBOARD
     Route::get('/dashboard', function () {
         return view('dashboard-student');
     })->name('dashboard');

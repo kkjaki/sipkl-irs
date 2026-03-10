@@ -1,11 +1,11 @@
 {{-- SIDEBAR --}}
 <aside id="sidebar"
 class="w-64 min-h-screen py-2.5 bg-white flex flex-col shadow-lg shrink-0
-fixed md:relative transform transition-transform duration-300 z-40">
+transition-all duration-300 overflow-hidden">
 
     {{-- Logo --}}
     <div class="w-full px-7 py-9 flex justify-center items-center">
-        <h1 class="text-neutral-800 text-3xl font-bold leading-10">
+        <h1 class="text-neutral-800 text-3xl font-extrabold leading-10">
             PKL ONLINE
         </h1>
     </div>

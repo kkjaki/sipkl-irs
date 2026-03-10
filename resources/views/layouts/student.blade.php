@@ -19,36 +19,66 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased">
-    <div class="min-h-screen flex bg-gray-100 dark:bg-gray-900">
+<body class="bg-[#EFF3FD]">
 
-        {{-- SIDEBAR SISWA --}}
-        @include('partials.sidebar-user')
+<div class="flex min-h-screen">
 
-        {{-- KONTEN UTAMA --}}
-        <div class="flex-1 flex flex-col min-h-screen">
+    {{-- SIDEBAR --}}
+    @include('partials.sidebar-user')
 
-            {{-- NAVBAR --}}
-            @include('partials.navbar')
+    {{-- MAIN CONTENT --}}
+    <div id="mainContent" class="flex-1 flex flex-col transition-all duration-300">
 
-            {{-- HEADER --}}
-            @hasSection('header')
-            <header class="bg-slate-800">
-                <div class="w-full py-6 px-6">
-                    <h2 class="font-black text-3xl text-white leading-tight">
-                        @yield('header')
-                    </h2>
-                </div>
-            </header>
-            @endif
+        {{-- NAVBAR --}}
+        @include('partials.navbar')
 
-            {{-- ISI HALAMAN --}}
-            <main class="flex-1 p-6">
-                @yield('content')
-            </main>
+        {{-- HEADER --}}
+        <header class="bg-[#EFF3FD] text-gray-800 px-6 py-4">
+            <h2 class="text-4xl font-extrabold">
+                @yield('header')
+            </h2>
+        </header>
 
-        </div>
+        {{-- PAGE CONTENT --}}
+        <main class="flex-1 p-6 bg-[#EFF3FD]">
+            @yield('content')
+        </main>
+
     </div>
-</body>
 
+</div>
+
+
+{{-- SCRIPT SIDEBAR TOGGLE --}}
+<script>
+
+let sidebarOpen = true;
+
+function toggleSidebar(){
+
+    const sidebar = document.getElementById('sidebar');
+
+    if(!sidebar) return;
+
+    if(sidebarOpen){
+
+        sidebar.classList.remove('w-64');
+        sidebar.classList.add('w-0');
+
+        sidebarOpen = false;
+
+    }else{
+
+        sidebar.classList.remove('w-0');
+        sidebar.classList.add('w-64');
+
+        sidebarOpen = true;
+
+    }
+
+}
+
+</script>
+
+</body>
 </html>
