@@ -1,162 +1,219 @@
-{{-- SIDEBAR --}}
-<aside id="sidebar"
-class="w-64 min-h-screen py-2.5 bg-white flex flex-col shadow-lg shrink-0
-transition-all duration-300 overflow-hidden">
+<div class="flex">
 
-    {{-- Logo --}}
-    <div class="w-full px-7 py-9 flex justify-center items-center">
-        <h1 class="text-neutral-800 text-3xl font-extrabold leading-10">
-            PKL ONLINE
-        </h1>
-    </div>
+    {{-- ================= SIDEBAR ================= --}}
+    <aside id="sidebar"
+        class="w-64 h-screen py-2.5 bg-white flex flex-col items-center shadow-lg transition-all duration-300">
 
-    <nav class="w-full">
-        <ul>
-
-            {{-- DASHBOARD --}}
-            <li>
-                <a href="{{ route('student.dashboard') }}"
-                   class="px-4 py-4 flex items-center gap-3.5 border-l-8 transition
-                   {{ request()->routeIs('student.dashboard') 
-                        ? 'border-teal-400 bg-gray-50 text-brand-primary' 
-                        : 'border-transparent hover:border-teal-300' }}">
-                    
-                    <x-lucide-home class="w-5 h-5" />
-                    <span class="text-lg">Dashboard</span>
-                </a>
-            </li>
+        {{-- ================= LOGO ================= --}}
+        <div class="w-full px-7 py-9 flex justify-center items-center">
+            <h1 class="text-neutral-800 text-3xl font-bold">
+                PKL ONLINE
+            </h1>
+        </div>
 
 
-            {{-- PRESENSI --}}
-            @php
-                $presensiActive = request()->routeIs('student.kehadiran.*');
-            @endphp
+        {{-- ================= NAVIGATION ================= --}}
+        <nav class="w-full">
+            <ul>
 
-            <li>
-                <div onclick="toggleDropdown(this, 'presensiDropdown')"
-                    class="px-4 py-4 flex items-center justify-between cursor-pointer border-l-8 transition
-                    {{ $presensiActive ? 'border-teal-400 bg-gray-50' : 'border-transparent hover:border-teal-300' }}">
-                    
-                    <div class="flex items-center gap-3.5">
-                        <x-lucide-clipboard-list class="w-5 h-5" />
-                        <span class="text-lg">Presensi</span>
+                {{-- ================= DASHBOARD ================= --}}
+                <li onclick="window.location.href='{{ route('student.dashboard') }}'"
+                    class="menu-item {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+
+                    <x-heroicon-m-home class="menu-icon"/>
+                    <span>Dashboard</span>
+
+                </li>
+
+
+                {{-- ================= PRESENSI ================= --}}
+                @php
+                    $presensiActive = request()->routeIs('student.presensi.*');
+                @endphp
+
+                <li>
+
+                    <div onclick="toggleDropdown(this,'presensiDropdown')"
+                        class="menu-item dropdown {{ $presensiActive ? 'active' : '' }}">
+
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-list menu-icon"></i>
+                            <span>Presensi</span>
+                        </div>
+
+                        <x-heroicon-m-chevron-down
+                            class="chevron-icon w-5 h-5 {{ $presensiActive ? 'text-teal-400 rotate-180' : '' }}"/>
+
                     </div>
 
-                    <x-lucide-chevron-left
-                        class="chevron-icon w-5 h-5 transition-transform duration-300
-                        {{ $presensiActive ? '-rotate-90' : '' }}" />
-                </div>
 
-                <ul id="presensiDropdown"
-                    class="overflow-hidden transition-all duration-300 ease-in-out
-                    {{ $presensiActive ? 'max-h-40' : 'max-h-0' }}">
+                    <ul id="presensiDropdown"
+                        class="dropdown-menu {{ $presensiActive ? 'open' : '' }}">
 
-                    <li>
-                        <a href="{{ route('student.kehadiran.create') }}"
-                           class="block px-12 py-4 border-l-8 transition
-                           {{ request()->routeIs('student.kehadiran.create') 
-                                ? 'border-teal-400 text-brand-primary' 
-                                : 'border-transparent hover:border-teal-300' }}">
-                            Presensi Harian
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{{ route('student.presensi.create') }}"
+                               class="submenu {{ request()->routeIs('student.presensi.create') ? 'active' : '' }}">
+                                Presensi Harian
+                            </a>
+                        </li>
 
-                    <li>
-                        <a href="{{ route('student.kehadiran.index') }}"
-                           class="block px-12 py-4 border-l-8 transition
-                           {{ request()->routeIs('student.kehadiran.index') 
-                                ? 'border-teal-400 text-brand-primary' 
-                                : 'border-transparent hover:border-teal-300' }}">
-                            Daftar Kehadiran
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{{ route('student.presensi.index') }}"
+                               class="submenu {{ request()->routeIs('student.presensi.index') ? 'active' : '' }}">
+                                Daftar Kehadiran
+                            </a>
+                        </li>
 
-                </ul>
-            </li>
+                    </ul>
+
+                </li>
 
 
-            {{-- LOGBOOK --}}
-            @php
-                $logbookActive = request()->routeIs('student.logbook.*');
-            @endphp
+                {{-- ================= LOGBOOK ================= --}}
+                @php
+                    $logbookActive = request()->routeIs('student.logbook.*');
+                @endphp
 
-            <li>
-                <div onclick="toggleDropdown(this, 'logbookDropdown')"
-                    class="px-4 py-4 flex items-center justify-between cursor-pointer border-l-8 transition
-                    {{ $logbookActive ? 'border-teal-400 bg-gray-50' : 'border-transparent hover:border-teal-300' }}">
-                    
-                    <div class="flex items-center gap-3.5">
-                        <x-lucide-book-open class="w-5 h-5" />
-                        <span class="text-lg">Logbook</span>
+                <li>
+
+                    <div onclick="toggleDropdown(this,'logbookDropdown')"
+                        class="menu-item dropdown {{ $logbookActive ? 'active' : '' }}">
+
+                        <div class="flex items-center gap-3">
+                            <x-heroicon-s-book-open class="menu-icon"/>
+                            <span>Logbook</span>
+                        </div>
+
+                        <x-heroicon-m-chevron-left
+                            class="chevron-icon w-5 h-5 {{ $logbookActive ? 'rotate-180 text-teal-400' : '' }}"/>
+
                     </div>
 
-                    <x-lucide-chevron-left
-                        class="chevron-icon w-5 h-5 transition-transform duration-300
-                        {{ $logbookActive ? '-rotate-90' : '' }}" />
-                </div>
 
-                <ul id="logbookDropdown"
-                    class="overflow-hidden transition-all duration-300 ease-in-out
-                    {{ $logbookActive ? 'max-h-40' : 'max-h-0' }}">
+                    <ul id="logbookDropdown"
+                        class="dropdown-menu {{ $logbookActive ? 'open' : '' }}">
 
-                    <li>
-                        <a href="{{ route('student.logbook.create') }}"
-                           class="block px-12 py-4 border-l-8 transition
-                           {{ request()->routeIs('student.logbook.create') 
-                                ? 'border-teal-400 text-brand-primary' 
-                                : 'border-transparent hover:border-teal-300' }}">
-                            Logbook Harian
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{{ route('student.logbook.create') }}"
+                               class="submenu {{ request()->routeIs('student.logbook.create') ? 'active' : '' }}">
+                                Logbook Harian
+                            </a>
+                        </li>
 
-                    <li>
-                        <a href="{{ route('student.logbook.index') }}"
-                           class="block px-12 py-4 border-l-8 transition
-                           {{ request()->routeIs('student.logbook.index') 
-                                ? 'border-teal-400 text-brand-primary' 
-                                : 'border-transparent hover:border-teal-300' }}">
-                            Daftar Logbook
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{{ route('student.logbook.index') }}"
+                               class="submenu {{ request()->routeIs('student.logbook.index') ? 'active' : '' }}">
+                                Daftar Logbook
+                            </a>
+                        </li>
 
-                </ul>
-            </li>
+                    </ul>
+
+                </li>
 
 
-            {{-- NILAI --}}
-            <li>
-                <a href="{{ route('student.nilai.index') }}"
-                class="px-4 py-4 flex items-center gap-3.5 border-l-8 transition
-                {{ request()->routeIs('student.nilai.*') 
-                        ? 'border-teal-400 bg-gray-50 text-brand-primary' 
-                        : 'border-transparent hover:border-teal-300' }}">
-                    
-                    <x-lucide-graduation-cap class="w-5 h-5" />
-                    <span class="text-lg">Nilai</span>
-                </a>
-            </li>
+                {{-- ================= NILAI ================= --}}
+                <li onclick="window.location.href='{{ route('student.nilai.index') }}'"
+                    class="menu-item {{ request()->routeIs('student.nilai.*') ? 'active' : '' }}">
 
-        </ul>
-    </nav>
+                    <x-heroicon-s-academic-cap class="menu-icon"/>
+                    <span>Nilai</span>
 
-</aside>
+                </li>
 
 
-{{-- SIDEBAR SCRIPT --}}
-<script>
+            </ul>
+        </nav>
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('-translate-x-full');
+    </aside>
+
+</div>
+
+
+
+{{-- ================= STYLE ================= --}}
+<style>
+
+.menu-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px;
+    cursor:pointer;
+    border-left:6px solid transparent;
+    transition:.2s;
 }
 
-function toggleDropdown(el, dropdownId) {
-    const dropdown = document.getElementById(dropdownId);
-    const icon = el.querySelector('.chevron-icon');
+.menu-item.dropdown{
+    justify-content:space-between;
+}
 
-    dropdown.classList.toggle('max-h-0');
-    dropdown.classList.toggle('max-h-40');
-    icon.classList.toggle('-rotate-90');
+.menu-item:hover{
+    border-color:#2dd4bf;
+    background:#f9fafb;
+}
+
+.menu-item.active{
+    color:#2dd4bf;
+    border-color:#2dd4bf;
+    background:#f9fafb;
+}
+
+.menu-icon{
+    width:20px;
+    height:20px;
+    color:#111827;
+}
+
+.dropdown-menu{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s;
+}
+
+.dropdown-menu.open{
+    max-height:200px;
+}
+
+.submenu{
+    display:block;
+    padding:12px 48px;
+    font-size:16px;
+    color:#111827;
+}
+
+.submenu.active{
+    color:#2dd4bf;
+}
+
+#sidebar.hide{
+    transform:translateX(-100%);
+}
+
+</style>
+
+
+
+{{-- ================= SCRIPT ================= --}}
+<script>
+
+function toggleSidebar(){
+    const sidebar = document.getElementById("sidebar")
+    sidebar.classList.toggle("hide")
+}
+
+
+function toggleDropdown(el, dropdownId){
+
+    const dropdown = document.getElementById(dropdownId)
+    const icon = el.querySelector(".chevron-icon")
+
+    dropdown.classList.toggle("open")
+
+    if(icon){
+        icon.classList.toggle("rotate-180")
+    }
+
 }
 
 </script>

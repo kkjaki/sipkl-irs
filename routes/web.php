@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
 | LANDING
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -18,11 +20,25 @@ Route::get('/', function () {
 | STUDENT ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('student')->name('student.')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | LANDING
+    |--------------------------------------------------------------------------
+    */
 
     Route::get('/', function () {
         return view('landing-student');
     })->name('landing');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUTH
+    |--------------------------------------------------------------------------
+    */
 
     // LOGIN
     Route::get('/login', function () {
@@ -33,6 +49,7 @@ Route::prefix('student')->name('student.')->group(function () {
         return redirect()->route('student.dashboard');
     })->name('login.store');
 
+
     // REGISTER
     Route::get('/register', function () {
         return view('auth.register-student');
@@ -42,7 +59,13 @@ Route::prefix('student')->name('student.')->group(function () {
         return redirect()->route('student.dashboard');
     })->name('register.store');
 
-    // DASHBOARD
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
+
     Route::get('/dashboard', function () {
         return view('dashboard-student');
     })->name('dashboard');
@@ -50,98 +73,113 @@ Route::prefix('student')->name('student.')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | PRESENSI SISWA
+    | PRESENSI
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/industry/kehadiran', function () {
-        return view('industry.student.presensi.index');
-    })->name('kehadiran.index');
+    Route::get('/presensi', function () {
+        return view('student.presensi.index');
+    })->name('presensi.index');
 
-    Route::get('/industry/kehadiran/create', function () {
-        return view('industry.student.presensi.create');
-    })->name('kehadiran.create');
+    Route::get('/presensi/create', function () {
+        return view('student.presensi.create');
+    })->name('presensi.create');
 
-    Route::post('/industry/kehadiran', function () {
-        //
-    })->name('kehadiran.store');
+    Route::post('/presensi', function (Request $request) {
+
+        $request->validate([
+            'bukti_presensi' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'tanggal' => 'required|date'
+        ]);
+
+        // simpan foto
+        $path = $request->file('bukti_presensi')->store('presensi','public');
+
+        return back()->with('success','Presensi berhasil disimpan. File: '.$path);
+
+    })->name('presensi.store');
 
 
     /*
     |--------------------------------------------------------------------------
-    | LOGBOOK SISWA
+    | LOGBOOK
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/industry/logbook', function () {
-        return view('industry.student.logbook.index');
+    Route::get('/logbook', function () {
+        return view('student.logbook.index');
     })->name('logbook.index');
 
-    Route::get('/industry/logbook/create', function () {
-        return view('industry.student.logbook.create');
+    Route::get('/logbook/create', function () {
+        return view('student.logbook.create');
     })->name('logbook.create');
 
-    Route::post('/industry/logbook', function () {
-        return "Data berhasil disimpan";
+    Route::post('/logbook', function (Request $request) {
+
+        $request->validate([
+            'deskripsi' => 'required',
+            'pendamping' => 'required',
+            'dokumentasi' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240'
+        ]);
+
+        // simpan file dokumentasi
+        $path = $request->file('dokumentasi')->store('logbook','public');
+
+        return back()->with('success','Logbook berhasil disimpan. File: '.$path);
+
     })->name('logbook.store');
 
-    Route::get('/industry/logbook/{id}/edit', function ($id) {
-        return view('industry.student.logbook.edit');
+
+    Route::get('/logbook/{id}/edit', function ($id) {
+        return view('student.logbook.edit');
     })->name('logbook.edit');
 
-    Route::put('/industry/logbook/{id}', function ($id) {
-        return "Data berhasil diupdate";
+    Route::put('/logbook/{id}', function ($id) {
+        return back()->with('success','Logbook berhasil diupdate');
     })->name('logbook.update');
-
-    Route::get('/industry/logbook/{id}', function ($id) {
-        return view('industry.student.logbook.show');
-    })->name('logbook.show');
-
-    Route::delete('/industry/logbook/{id}', function ($id) {
-        return "Data berhasil dihapus";
-    })->name('logbook.destroy');
 
 
     /*
     |--------------------------------------------------------------------------
-    | NILAI SISWA  ✅ PINDAH KE DALAM GROUP
+    | NILAI
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/industry/nilai', function () {
-        return view('industry.student.nilai.index');
+    Route::get('/nilai', function () {
+        return view('student.nilai.index');
     })->name('nilai.index');
 
-    Route::get('/industry/nilai/print', function () {
-        return view('industry.student.nilai.print');
+    Route::get('/nilai/print', function () {
+        return view('student.nilai.print');
     })->name('nilai.print');
 
-        /*
+
+    /*
     |--------------------------------------------------------------------------
-    | PROFILE SISWA
+    | PROFIL
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/industry/profil', function () {
-        return view('industry.student.profil.index');
+    Route::get('/profil', function () {
+        return view('student.profil.index');
     })->name('profil.index');
 
-    Route::put('/industry/profil', function () {
-    return back()->with('success', 'Profil berhasil diperbarui!');
-})->name('profil.update');
-
+    Route::put('/profil', function () {
+        return back()->with('success','Profil berhasil diperbarui!');
+    })->name('profil.update');
 
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD (DEFAULT)
+| DASHBOARD DEFAULT
 |--------------------------------------------------------------------------
 */
+
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth','verified'])->name('dashboard');
 
 
 /*
@@ -149,10 +187,15 @@ Route::get('/dashboard', function () {
 | PROFILE
 |--------------------------------------------------------------------------
 */
+
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/profile', [ProfileController::class,'edit'])->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class,'update'])->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class,'destroy'])->name('profile.destroy');
+
 });
 
 require __DIR__.'/auth.php';

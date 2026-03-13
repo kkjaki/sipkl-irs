@@ -21,7 +21,7 @@
 
 <body class="bg-[#EFF3FD]">
 
-<div class="flex min-h-screen">
+<div class="flex flex-col md:flex-row min-h-screen">
 
     {{-- SIDEBAR --}}
     @include('partials.sidebar-user')
@@ -34,13 +34,13 @@
 
         {{-- HEADER --}}
         <header class="bg-[#EFF3FD] text-gray-800 px-6 py-4">
-            <h2 class="text-4xl font-extrabold">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold">
                 @yield('header')
             </h2>
         </header>
 
         {{-- PAGE CONTENT --}}
-        <main class="flex-1 p-6 bg-[#EFF3FD]">
+        <main class="flex-1 p-4 md:p-6 lg:p-8 bg-[#EFF3FD]">
             @yield('content')
         </main>
 

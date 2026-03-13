@@ -8,10 +8,8 @@ Daftar Logbook
 
 <div class="bg-white shadow-md rounded-xl overflow-hidden relative">
 
-```
 {{-- HEADER CARD --}}
-<div class="bg-teal-400 text-white px-6 py-4 flex justify-between items-center">
-
+<div class="bg-teal-400 text-white px-4 md:px-6 py-4 flex flex-wrap gap-3 justify-between items-center">
     <h3 class="font-semibold text-lg">Daftar Logbook</h3>
 
     <div class="flex items-center gap-3">
@@ -70,7 +68,8 @@ Daftar Logbook
 
 
 {{-- LIST LOGBOOK --}}
-<div id="logbookList" class="p-6 space-y-6">
+<div id="logbookList" 
+class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
     @php
         $data = [
@@ -148,7 +147,7 @@ Daftar Logbook
 
 
         {{-- ACTION --}}
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-2 mt-2">
 
             {{-- EDIT --}}
             <a href="{{ route('student.logbook.edit', $loop->iteration) }}"
@@ -175,7 +174,7 @@ Daftar Logbook
     @endforeach
 
 </div>
-```
+
 
 </div>
 
@@ -183,7 +182,7 @@ Daftar Logbook
 
 <div id="detailModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
 
-<div class="bg-white w-[720px] rounded-xl p-10 relative shadow-lg">
+<div class="bg-white w-[95%] max-w-2xl rounded-xl p-6 md:p-10 relative shadow-lg">
 
     {{-- tombol close --}}
     <button id="closeModal" class="absolute right-6 top-5 text-2xl text-gray-600 hover:text-black">
@@ -260,7 +259,7 @@ Daftar Logbook
 
 </div>
 </div>
-```
+
 
 </div>
 

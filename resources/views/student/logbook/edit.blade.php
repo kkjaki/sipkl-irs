@@ -8,64 +8,66 @@ Edit Logbook
 
 <div class="bg-white shadow-md rounded-xl overflow-hidden">
 
-    {{-- HEADER CARD --}}
+    {{-- HEADER --}}
     <div class="bg-teal-400 text-white px-6 py-4">
         <h3 class="font-semibold text-lg">
             Detail Logbook
         </h3>
     </div>
 
+    <div class="p-4 md:p-6">
 
-    <div class="p-6">
-
-        <form id="logbookForm" action="#" method="POST" enctype="multipart/form-data">
+        <form id="logbookForm" action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
 
             {{-- HARI TANGGAL --}}
-            <div class="flex items-center mb-6 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3 items-center">
 
-                <label class="w-40 text-gray-700 text-sm">
+                <label class="text-gray-700 text-sm">
                     Hari, Tanggal
                 </label>
 
                 <input type="text"
                        value="Kamis, 26-06-2025"
                        readonly
-                       class="w-60 border rounded-md px-3 py-2 text-sm bg-gray-100">
+                       class="w-full md:w-72 border rounded-md px-3 py-2 text-sm bg-gray-100">
+
             </div>
 
 
-            {{-- DESKRIPSI KEGIATAN --}}
-            <div class="flex items-start mb-6 gap-6">
+            {{-- DESKRIPSI --}}
+            <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
 
-                <label class="w-40 text-gray-700 text-sm pt-2">
+                <label class="text-gray-700 text-sm pt-1">
                     Deskripsi Kegiatan
                 </label>
 
                 <div>
+
                     <textarea
                         id="deskripsi"
                         rows="4"
-                        class="w-[520px] border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-300 focus:outline-none">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</textarea>
+                        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-300 focus:outline-none">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</textarea>
 
                     <p id="descError" class="text-red-500 text-xs mt-1 hidden">
                         Deskripsi kegiatan wajib diisi
                     </p>
+
                 </div>
 
             </div>
 
 
-            {{-- NAMA PENDAMPING --}}
-            <div class="flex items-center mb-6 gap-6">
+            {{-- PENDAMPING --}}
+            <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3 items-center">
 
-                <label class="w-40 text-gray-700 text-sm">
+                <label class="text-gray-700 text-sm">
                     Nama Pendamping
                 </label>
 
                 <select
-                    class="w-60 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-300">
+                    class="w-full md:w-72 border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-300">
 
                     <option>Lorem Ipsum, S. Pd.</option>
                     <option>Pak Budi</option>
@@ -77,14 +79,13 @@ Edit Logbook
 
 
             {{-- DOKUMENTASI --}}
-            <div class="flex items-start mb-6 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-3">
 
-                <label class="w-40 text-gray-700 text-sm pt-2">
+                <label class="text-gray-700 text-sm pt-2">
                     Dokumentasi Kegiatan
                 </label>
 
-
-                <div class="w-[520px]">
+                <div>
 
                     <div class="border border-gray-300 rounded-md p-4">
 
@@ -121,20 +122,18 @@ Edit Logbook
             </div>
 
 
-
             {{-- BUTTON --}}
-            <div class="flex gap-3">
+            <div class="flex flex-col sm:flex-row gap-3">
 
                 <button type="submit"
-                    class="bg-teal-400 hover:bg-teal-500 text-white px-5 py-2 rounded text-sm">
+                    class="bg-teal-400 hover:bg-teal-500 text-white px-5 py-2 rounded text-sm w-full sm:w-auto">
 
                     Simpan
 
                 </button>
 
-
                 <a href="{{ route('student.logbook.index') }}"
-                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded text-sm">
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded text-sm text-center w-full sm:w-auto">
 
                     Batal
 
@@ -162,7 +161,7 @@ const fileName = document.getElementById('fileName');
 const fileError = document.getElementById('fileError');
 
 
-// PREVIEW NAMA FILE
+// PREVIEW FILE
 upload.addEventListener('change', function(){
 
     const file = this.files[0];
@@ -171,7 +170,6 @@ upload.addEventListener('change', function(){
 
     fileName.textContent = file.name;
 
-    // VALIDASI SIZE
     if(file.size > 10000000){
 
         fileError.classList.remove('hidden');
@@ -206,13 +204,11 @@ form.addEventListener('submit', function(e){
 
     }
 
-
     if(!valid){
         e.preventDefault();
         return;
     }
 
-    // KONFIRMASI
     if(!confirm("Simpan perubahan logbook ini?")){
         e.preventDefault();
     }
