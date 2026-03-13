@@ -10,6 +10,10 @@ use App\Http\Controllers\MentorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SchoolSupervisorController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\AttendanceController as StudentAttendanceController;
+use App\Http\Controllers\Student\LogbookController as StudentLogbookController;
+use App\Http\Controllers\Student\GradeController as StudentGradeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,6 +21,9 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+    if (Auth::check() && Auth::user()->role === 'student') {
+        return redirect()->route('student.dashboard');
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -51,6 +58,33 @@ Route::middleware('auth')->group(function () {
             Route::get('/{school}', 'show')->name('grades.schools.show');
             Route::get('/{school}/student/{student}', 'edit')->name('grades.schools.edit');
             Route::put('/{school}/student/{student}', 'update')->name('grades.schools.update');
+        });
+    });
+
+    // Student routes
+    Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->group(function () {
+        Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
+
+        // Attendance routes
+        Route::controller(StudentAttendanceController::class)->group(function () {
+            Route::get('/presensi/harian', 'presensiHarian')->name('presensi.harian');
+            Route::post('/presensi', 'store')->name('presensi.store');
+            Route::get('/presensi/daftar', 'index')->name('presensi.index');
+        });
+
+        // Logbook routes
+        Route::controller(StudentLogbookController::class)->group(function () {
+            Route::get('/logbook/harian', 'logbookHarian')->name('logbook.harian');
+            Route::post('/logbook', 'store')->name('logbook.store');
+            Route::get('/logbook/daftar', 'index')->name('logbook.index');
+            Route::get('/logbook/{id}/edit', 'edit')->name('logbook.edit');
+            Route::put('/logbook/{id}', 'update')->name('logbook.update');
+        });
+
+        // Grades routes
+        Route::controller(StudentGradeController::class)->group(function () {
+            Route::get('/nilai', 'index')->name('nilai.index');
+            Route::get('/nilai/download', 'downloadPdf')->name('nilai.download');
         });
     });
 

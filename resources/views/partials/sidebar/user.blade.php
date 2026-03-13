@@ -1,19 +1,21 @@
-<aside class="w-64 h-screen py-2.5 bg-white flex flex-col justify-start items-center shadow-lg">
+<aside :class="sidebarOpen ? 'w-64' : 'w-16'" class="py-2.5 h-screen fixed bg-white flex flex-col justify-start items-center shadow-lg transition-all duration-300 overflow-x-hidden">
     {{-- Logo Aplikasi --}}
     <div class="w-full px-7 py-9 flex justify-center items-center">
-        <h1 class="text-neutral-800 text-3xl font-sans font-bold leading-10">PKL ONLINE</h1>
+        <h1 x-show="sidebarOpen" class="text-neutral-800 text-3xl font-sans font-bold leading-10 whitespace-nowrap">PKL ONLINE</h1>
     </div>
 
     {{-- Navigasi --}}
     <nav class="w-full">
         <ul>
             {{-- Dashboard --}}
-            <li onclick="window.location.href='{{ route('dashboard') }}'"
-                class="px-4 py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 border-l-8 border-transparent hover:border-teal-300">
+            <li onclick="window.location.href='{{ route('student.dashboard') }}'"
+                :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('student.dashboard') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-m-home
-                    class="w-5 h-5 text-stone-900 transition-colors duration-100 group-hover:text-brand-primary" />
+                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('student.dashboard') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 <span
-                    class="text-neutral-800 text-lg font-normal font-sans group-hover:text-brand-primary transition">
+                    x-show="sidebarOpen"
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('student.dashboard') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Dashboard
                 </span>
             </li>

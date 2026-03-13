@@ -20,7 +20,8 @@ class Attendance extends Model
         'student_id',
         'status',
         'check_in',
-        'notes'
+        'notes',
+        'image'
     ];
 
     /**

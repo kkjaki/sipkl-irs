@@ -1,61 +1,350 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIPKL-IRS (Sistem Informasi Praktek Kerja Lapangan - Internship Record System)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web-based internship management system for industries (companies) to manage their internship programs, partner schools, students, mentors, attendance, and grading.
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Layer      | Technology                                        |
+| ---------- | ------------------------------------------------- |
+| Framework  | **Laravel 12** (PHP 8.2+)                         |
+| Database   | **MySQL** (`sipkl-irs`)                           |
+| Frontend   | **Blade** + **Vite** + **Tailwind CSS**           |
+| Auth       | **Laravel Breeze** (session-based)                |
+| Icons      | Blade Lucide Icons, Blade Heroicons               |
+| Testing    | Pest PHP                                          |
+| Queue/Cache| Database driver                                   |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## User Roles
 
-## Learning Laravel
+Defined as an enum on the `users` table: **`admin`**, **`owner`**, **`mentor`**, **`student`**.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Role      | Description                                                    |
+| --------- | -------------------------------------------------------------- |
+| `admin`   | System administrator                                           |
+| `owner`   | Industry/company owner — creates and manages their industry    |
+| `mentor`  | Industry employee who supervises students on-site              |
+| `student` | Intern who registers via invitation code                       |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Database Schema
 
-## Laravel Sponsors
+### Entity Relationship Diagram (text)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```
+User (1)──────(1) Industry       (owner)
+User (1)──────(1) Mentor
+User (1)──────(1) Student
+User (1)──────(∞) AttendanceSession (opened_by)
 
-### Premium Partners
+Industry (1)──(∞) InternshipProgram
+Industry (1)──(∞) School           (partner schools)
+Industry (1)──(∞) AttendanceSession
+Industry (1)──(∞) Mentor
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+InternshipProgram (1)──(∞) Student
 
-## Contributing
+School (1)────(∞) Student
+School (1)────(∞) SchoolSupervisor
+School (1)────(∞) Criterion
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+SchoolSupervisor (1)──(∞) Student
 
-## Code of Conduct
+Criterion (1)──(∞) Grade
+Student   (1)──(∞) Grade
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+AttendanceSession (1)──(∞) Attendance
+Student           (1)──(∞) Attendance
+```
 
-## Security Vulnerabilities
+### Tables
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### `users`
+| Column              | Type                                        | Notes                   |
+| ------------------- | ------------------------------------------- | ----------------------- |
+| `id`                | bigint (PK)                                 |                         |
+| `name`              | string                                      |                         |
+| `email`             | string (unique)                             |                         |
+| `email_verified_at` | timestamp (nullable)                        |                         |
+| `password`          | string (hashed)                             |                         |
+| `role`              | enum: admin, owner, mentor, student         | default: `student`      |
+| `is_active`         | boolean                                     | default: `true`         |
+| `remember_token`    | string                                      |                         |
+| `timestamps`        |                                             |                         |
 
-## License
+#### `industries`
+| Column     | Type                | Notes                        |
+| ---------- | ------------------- | ---------------------------- |
+| `id`       | bigint (PK)         |                              |
+| `owner_id` | FK → `users.id`     | cascade delete               |
+| `name`     | string              |                              |
+| `address`  | text (nullable)     |                              |
+| `phone`    | string(15) nullable |                              |
+| `timestamps` |                  |                              |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### `internship_programs`
+| Column            | Type                  | Notes                       |
+| ----------------- | --------------------- | --------------------------- |
+| `id`              | bigint (PK)           |                             |
+| `industry_id`     | FK → `industries.id`  | cascade delete              |
+| `name`            | string                |                             |
+| `start_date`      | date                  |                             |
+| `end_date`        | date                  |                             |
+| `invitation_code` | string (unique)       | used by students to join    |
+| `is_active`       | boolean               | default: `true`             |
+| `timestamps`      |                       |                             |
+
+**Indexes:** `(industry_id, is_active)`, `(start_date, end_date)`
+
+#### `mentors`
+| Column        | Type                 | Notes           |
+| ------------- | -------------------- | --------------- |
+| `id`          | bigint (PK)          |                 |
+| `user_id`     | FK → `users.id`      | cascade delete  |
+| `industry_id` | FK → `industries.id` | cascade delete  |
+| `position`    | string               |                 |
+| `timestamps`  |                      |                 |
+
+#### `schools`
+| Column        | Type                 | Notes               |
+| ------------- | -------------------- | ------------------- |
+| `id`          | bigint (PK)          |                     |
+| `industry_id` | FK → `industries.id` | cascade delete      |
+| `name`        | string               |                     |
+| `address`     | text (nullable)      |                     |
+| `phone`       | string(15) nullable  |                     |
+| `timestamps`  |                      |                     |
+
+#### `school_supervisors`
+| Column       | Type               | Notes          |
+| ------------ | ------------------ | -------------- |
+| `id`         | bigint (PK)        |                |
+| `school_id`  | FK → `schools.id`  | cascade delete |
+| `name`       | string             |                |
+| `phone`      | string(15) nullable|                |
+| `timestamps` |                    |                |
+
+#### `students`
+| Column                 | Type                             | Notes               |
+| ---------------------- | -------------------------------- | -------------------- |
+| `id`                   | bigint (PK)                      |                      |
+| `user_id`              | FK → `users.id`                  | cascade delete       |
+| `internship_program_id`| FK → `internship_programs.id`    | cascade delete       |
+| `school_id`            | FK → `schools.id` (nullable)     | cascade delete       |
+| `school_supervisor_id` | FK → `school_supervisors.id` (nullable) | cascade delete |
+| `nis`                  | string(20) unique nullable       | student ID number    |
+| `class`                | string(30) nullable              |                      |
+| `address`              | text (nullable)                  |                      |
+| `phone`                | string(15) nullable              |                      |
+| `hobby`                | string(64) nullable              |                      |
+| `timestamps`           |                                  |                      |
+
+#### `criteria`
+| Column        | Type                 | Notes          |
+| ------------- | -------------------- | -------------- |
+| `id`          | bigint (PK)          |                |
+| `industry_id` | FK → `industries.id` | cascade delete |
+| `school_id`   | FK → `schools.id`    | cascade delete |
+| `name`        | string               |                |
+| `description` | text (nullable)      |                |
+| `timestamps`  |                      |                |
+
+#### `grades`
+| Column        | Type                  | Notes          |
+| ------------- | --------------------- | -------------- |
+| `id`          | bigint (PK)           |                |
+| `criteria_id` | FK → `criteria.id`    | cascade delete |
+| `student_id`  | FK → `students.id`    | cascade delete |
+| `score`       | integer               | default: `0`   |
+| `timestamps`  |                       |                |
+
+#### `attendance_sessions`
+| Column              | Type                 | Notes               |
+| ------------------- | -------------------- | ------------------- |
+| `id`                | bigint (PK)          |                     |
+| `industry_id`       | FK → `industries.id` | cascade delete     |
+| `opened_by_user_id` | FK → `users.id`      | cascade delete     |
+| `session_date`      | date                 |                     |
+| `on_time_deadline`  | time                 |                     |
+| `closed_at`         | time (nullable)      |                     |
+| `is_open`           | boolean              | default: `true`     |
+| `timestamps`        |                      |                     |
+
+#### `attendances`
+| Column                  | Type                             | Notes                                    |
+| ----------------------- | -------------------------------- | ---------------------------------------- |
+| `id`                    | bigint (PK)                      |                                          |
+| `attendance_session_id` | FK → `attendance_sessions.id`    | cascade delete                           |
+| `student_id`            | FK → `students.id`               | cascade delete                           |
+| `status`                | enum: hadir, izin, sakit, alpa   | default: `alpa` (absent)                 |
+| `check_in`              | timestamp (nullable)             |                                          |
+| `notes`                 | text (nullable)                  |                                          |
+| `timestamps`            |                                  |                                          |
+
+**Status values:** `hadir` = present, `izin` = permitted leave, `sakit` = sick, `alpa` = absent (unexcused)
+
+---
+
+## Project Structure
+
+```
+sipkl-irs/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Auth/                        # Breeze auth controllers + StudentRegistrationController
+│   │   │   ├── AttendanceController.php     # Validate/update attendance records
+│   │   │   ├── AttendanceSessionController.php # Open/close attendance sessions
+│   │   │   ├── CriterionController.php      # CRUD grading criteria (nested under schools)
+│   │   │   ├── GradeController.php          # View & assign grades per student per school
+│   │   │   ├── InternshipProgramController.php # CRUD internship programs
+│   │   │   ├── MentorController.php         # CRUD mentors + activate/deactivate
+│   │   │   ├── ProfileController.php        # User profile management
+│   │   │   ├── SchoolController.php         # CRUD partner schools + management view
+│   │   │   └── SchoolSupervisorController.php # CRUD school supervisors (nested under schools)
+│   │   └── Requests/                        # Form request validation classes
+│   ├── Models/
+│   │   ├── Attendance.php
+│   │   ├── AttendanceSession.php
+│   │   ├── Criterion.php
+│   │   ├── Grade.php
+│   │   ├── Industry.php
+│   │   ├── InternshipProgram.php
+│   │   ├── Mentor.php
+│   │   ├── School.php
+│   │   ├── SchoolSupervisor.php
+│   │   ├── Student.php
+│   │   └── User.php
+│   └── View/                                # View composers / shared data
+├── database/
+│   ├── migrations/                          # 13 migration files
+│   └── seeders/
+│       ├── DatabaseSeeder.php               # Calls: UserSeeder, IndustrySeeder, SchoolSeeder
+│       ├── DummyDataSeeder.php              # Creates test owner + industry
+│       ├── UserSeeder.php
+│       ├── IndustrySeeder.php
+│       └── SchoolSeeder.php
+├── resources/views/
+│   ├── auth/                                # Login, register, password reset views
+│   ├── components/                          # Reusable Blade components
+│   ├── dashboard.blade.php                  # Main dashboard
+│   ├── industry/                            # Industry management views
+│   │   ├── dashboard.blade.php
+│   │   ├── mentors/                         # Mentor CRUD views
+│   │   ├── programs/                        # Internship program views
+│   │   ├── schools/                         # School CRUD views
+│   │   └── supervisors/                     # Supervisor views
+│   ├── layouts/                             # App layout templates
+│   ├── partials/                            # Shared partials
+│   ├── profile/                             # Profile edit views
+│   └── welcome.blade.php                    # Landing page
+├── routes/
+│   ├── web.php                              # Main web routes (all behind auth middleware)
+│   └── auth.php                             # Breeze authentication routes
+├── composer.json
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
+```
+
+---
+
+## Routes Summary
+
+### Public Routes
+| Method | URI                   | Description                     |
+| ------ | --------------------- | ------------------------------- |
+| GET    | `/`                   | Welcome / landing page          |
+| GET    | `/csrf-token`         | Returns CSRF token as JSON      |
+| GET    | `/register/student`   | Student self-registration form  |
+| POST   | `/register/student`   | Store student registration      |
+
+### Authenticated Routes (require login)
+| Method   | URI                                              | Name                        | Description                         |
+| -------- | ------------------------------------------------ | --------------------------- | ----------------------------------- |
+| GET      | `/dashboard`                                     | `dashboard`                 | Main dashboard                      |
+| Resource | `/schools`                                       | `schools.*`                 | Full CRUD for schools               |
+| GET      | `/schools/management`                            | `schools.management`        | School management view              |
+| Resource | `/schools/{school}/supervisors`                  | `supervisors.*`             | Nested CRUD for supervisors         |
+| Resource | `/schools/{school}/criteria`                     | `criteria.*`                | Nested CRUD for grading criteria    |
+| Resource | `/mentors`                                       | `mentors.*`                 | CRUD for mentors (except show)      |
+| POST     | `/mentors/{mentor}/deactivate`                   | `mentors.deactivate`        | Deactivate a mentor                 |
+| POST     | `/mentors/{mentor}/activate`                     | `mentors.activate`          | Activate a mentor                   |
+| Resource | `/internship-programs`                           | `internship-programs.*`     | Full CRUD for internship programs   |
+| GET      | `/attendance-sessions`                           | `attendance-sessions.index` | List attendance sessions            |
+| POST     | `/attendance-sessions`                           | `attendance-sessions.store` | Open new attendance session         |
+| PATCH    | `/attendance-sessions/{session}/close`           | `attendanceSessions.close`  | Close an attendance session         |
+| GET      | `/attendance-sessions/{session}/validate`        | `attendance.validate.show`  | View attendance for validation      |
+| PUT      | `/attendance-sessions/{session}/validate`        | `attendance.validate.update`| Update/validate attendance          |
+| GET      | `/grades/schools`                                | `grades.schools.index`      | List schools for grading            |
+| GET      | `/grades/schools/{school}`                       | `grades.schools.show`       | View students in school for grading |
+| GET      | `/grades/schools/{school}/student/{student}`     | `grades.schools.edit`       | Edit student grades                 |
+| PUT      | `/grades/schools/{school}/student/{student}`     | `grades.schools.update`     | Save student grades                 |
+| GET      | `/industry`                                      | `industry`                  | Industry dashboard                  |
+| *        | `/profile`                                       | `profile.*`                 | View/update/delete profile          |
+
+### Auth Routes (Breeze)
+Standard Laravel Breeze routes: login, register, logout, password reset, email verification, password confirm.
+
+---
+
+## Getting Started
+
+### Prerequisites
+- PHP 8.2+
+- Composer
+- Node.js & npm
+- MySQL
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repo-url> sipkl-irs
+cd sipkl-irs
+
+# Install PHP dependencies
+composer install
+
+# Install Node dependencies
+npm install
+
+# Environment setup
+cp .env.example .env
+php artisan key:generate
+
+# Configure .env with your database credentials:
+# DB_DATABASE=sipkl-irs
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# Run migrations
+php artisan migrate
+
+# (Optional) Seed with test data
+php artisan db:seed
+```
+
+### Running Locally
+
+```bash
+# Start all services (server + queue + logs + vite) concurrently:
+composer dev
+
+# Or individually:
+php artisan serve        # Laravel dev server
+npm run dev              # Vite dev server
+```
+
+---
+
+## Key Business Logic
+
+1. **Industry Owner** creates their Industry, then adds Schools, Mentors, and Internship Programs.
+2. Each **Internship Program** has a unique `invitation_code` that students use to self-register.
+3. **Schools** are partner schools. Each school can have **Supervisors** and **Criteria** (grading rubrics).
+4. **Students** register via the public registration form, linking to a program and optionally a school/supervisor.
+5. **Attendance** is managed through **Sessions** — an owner/mentor opens a session for a date, students are marked, then the session is closed.
+6. **Grading** is done per student per criterion. Criteria are scoped to a specific industry + school pair.
