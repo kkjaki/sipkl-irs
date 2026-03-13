@@ -23,27 +23,27 @@
                 {{-- Data Card --}}
                 <article class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Card Data Sekolah --}}
+                    @foreach ($schools as $school)
                     <section
                         class="w-full p-5 bg-white rounded-xl shadow-md outline outline-1 outline-offset-1 outline-neutral-300 inline-flex flex-col justify-center items-start gap-2.5">
-                        <h1 class="w-full justify-start text-black text-lg font-bold leading-snug">SMK IT (Informatika)
-                            AL-GPT</h1>
-                        <h2 class="self-stretch justify-start text-black text-lg font-normal leading-snug">Jl Otto
-                            Iskandardinata Raya 125, Dki Jakarta, Jakarta, 13330</h2>
+                        <h1 class="w-full justify-start text-black text-lg font-bold leading-snug">{{ $school->name }}</h1>
+                        <h2 class="self-stretch justify-start text-black text-lg font-normal leading-snug">{{ $school->address }}</h2>
                         <span
-                            class="self-stretch justify-start text-black text-lg font-normal leading-snug">0850000000</span>
+                            class="self-stretch justify-start text-black text-lg font-normal leading-snug">{{ $school->phone }}</span>
                         <article class="w-full pt-2.5 inline-flex justify-start items-center gap-2.5">
-                            <button onclick="window.location.href='{{ route('industry.supervisors.index')}}'"
+                            <button onclick="window.location.href='{{ route('schools.supervisors.index', $school->id)}}'"
                                 class="w-full flex-1 px-2.5 py-1.5 bg-brand-primary hover:bg-teal-500 rounded-sm flex justify-center items-center gap-2.5">
                                 <span class="justify-start text-white text-lg leading-tight">Kelola Guru Pembimbing</span>
                                 <i class="fas fa-user-graduate text-white text-lg"></i>
                             </button>
-                            <button
+                            <button onclick="window.location.href='{{ route('schools.criteria.index', $school->id)}}'"
                                 class="w-full flex-1 px-2.5 py-2 bg-brand-primary hover:bg-teal-500 rounded-sm flex justify-center items-center gap-2.5">
                                 <span class="justify-start text-white text-lg leading-tight">Kelola Kriteria Penilaian</span>
                                 <x-heroicon-s-academic-cap class="w-6 h-6 text-white" />
                             </button>
                         </article>
                     </section>
+                    @endforeach
                 </article>
             </article>
         </article>

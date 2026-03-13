@@ -7,7 +7,7 @@
         <header>
             <div class="w-full py-6">
                 <h2 class="font-black text-3xl text-gray-800 leading-tight">
-                    {{ __('Tambah Guru Pembimbing') }}
+                    {{ __('Edit Guru Pembimbing') }}
                 </h2>
             </div>
         </header>
@@ -18,11 +18,13 @@
             <section class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
                 Data Guru Pembimbing
             </section>
-            <form action="" class="w-full mx-auto space-y-5">
+            <form action="{{ route('supervisors.update', $supervisor->id) }}" method="POST" class="w-full mx-auto space-y-5">
+                @csrf
+                @method('PUT')
                 {{-- Nama Guru Pembimbing --}}
                 <section class="w-full flex items-center gap-2">
-                    <label for="program_name" class="w-32 text-neutral-800 text-base">Nama Guru Pembimbing</label>
-                    <input type="text" id="program_name" name="program_name" placeholder="Masukkan Nama Guru Pembimbing"
+                    <label for="name" class="w-32 text-neutral-800 text-base">Nama Guru Pembimbing</label>
+                    <input type="text" id="name" name="name" value="{{ old('name', $supervisor->name) }}" 
                         required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
@@ -30,15 +32,15 @@
                 {{-- Asal Sekolah --}}
                 <section class="w-full flex items-center gap-2">
                     <label for="school" class="w-32 text-neutral-800 text-base">Asal Sekolah</label>
-                    <input type="text" id="school" name="school" value="Sekolah Guweh" disabled required
+                    <input type="text" id="school" name="school" value="{{ $supervisor->school->name }}" disabled required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-stone-700 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
                 {{-- Kontak Guru Pembimbing --}}
                 <section class="w-full flex items-center gap-2">
                     <label for="phone" class="w-32 text-neutral-800 text-base">Kontak</label>
-                    <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                        placeholder="Masukkan Kontak Guru Pembimbing" required
+                    <input type="tel" id="phone" name="phone" pattern="}"
+                        value="{{ old('phone', $supervisor->phone) }}" required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
@@ -48,7 +50,7 @@
                         class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
                         <span class="justify-start text-white text-lg leading-snug">Simpan</span>
                     </button>
-                    <a href="{{ route('industry.supervisors.index') }}"
+                    <a href="{{ route('schools.supervisors.index', $supervisor->school) }}"
                         class="w-max px-5 py-2 border border-gray-400 text-gray-500 bg-white rounded-md inline-flex justify-center items-center gap-2.5 hover:bg-gray-400 hover:text-white hover:border-transparent transition">
                         <span class="text-lg leading-snug">Batal</span>
                     </a>

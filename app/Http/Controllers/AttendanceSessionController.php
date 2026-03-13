@@ -28,12 +28,12 @@ class AttendanceSessionController extends BaseController
             ->latest()
             ->paginate(15);
 
-        return view('attendanceSessions.index', compact('attendanceSessions'));
+        return view('industry.attendanceSessions.index', compact('attendanceSessions'));
     }
 
     public function create()
     {
-        return view('attendanceSessions.create');
+        return view('industry.attendanceSessions.create');
     }
 
     /**
@@ -41,37 +41,47 @@ class AttendanceSessionController extends BaseController
      */
     public function store(Request $request)
     {
+        // 1. Validasi HANYA untuk jam (Karena nama dan tanggal di-generate otomatis)
         $validated = $request->validate([
-            'name' => 'required',
-            'session_date' => 'required|date',
             'on_time_deadline' => 'required',
             'closed_at' => 'required',
-            'industry_id' => 'required'
         ]);
 
         $user = Auth::user();
+        
+        // Ambil ID industri user yang login
+        $industryId = $user->industry->id ?? null;
 
-        $industryId = $user->industry->id ?? $request->industry_id;
+        if (!$industryId) {
+            return redirect()->back()->withErrors(['error' => 'Industri tidak ditemukan pada akun Anda.'])->withInput();
+        }
+        
+        // 2. Set tanggal hari ini secara otomatis
+        $sessionDate = now()->toDateString();
 
-        $exists = AttendanceSession::where('industry_id', $industryId)
-            ->where('session_date', $request->session_date)
+        // 3. Cek sesi ganda: Jangan sampai ada sesi dengan jam buka yang SAMA di hari yang SAMA
+        $exists = \App\Models\AttendanceSession::where('industry_id', $industryId)
+            ->where('session_date', $sessionDate)
+            ->where('on_time_deadline', $validated['on_time_deadline'])
             ->exists();
 
         if ($exists) {
-            return response()->json(['error' => 'Sesi untuk tanggal ini sudah ada.'], 422);
+            return redirect()->back()->withErrors(['on_time_deadline' => 'Sesi di jam ini untuk hari ini sudah ada.'])->withInput();
         }
 
-        $validated['opened_by_user_id'] = $user->id;
-        $validated['industry_id'] = $industryId;
-        $validated['is_open'] = true;
+        // 4. Simpan ke database (Tanpa kolom 'name')
+        \App\Models\AttendanceSession::create([
+            'industry_id' => $industryId,
+            'opened_by_user_id' => $user->id,
+            'session_date' => $sessionDate,
+            'on_time_deadline' => $validated['on_time_deadline'],
+            'closed_at' => $validated['closed_at'],
+            'is_open' => true,
+        ]);
 
-        $session = AttendanceSession::create($validated);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Sesi Presensi berhasil dibuka!',
-            'data' => $session
-        ], 201);
+        // 5. Kembali ke halaman index dengan pesan sukses
+        return redirect()->route('attendance-sessions.index')
+            ->with('success', 'Sesi presensi berhasil dibuka!');
     }
 
     /**
@@ -81,13 +91,13 @@ class AttendanceSessionController extends BaseController
     {
         $this->authorizeAccess($attendanceSession);
         $attendanceSession->load(['user', 'industry', 'attendances']);
-        return view('attendanceSessions.show', compact('attendanceSession'));
+        return view('industry.attendanceSessions.show', compact('attendanceSession'));
     }
 
     public function edit(AttendanceSession $attendanceSession)
     {
         $this->authorizeAccess($attendanceSession);
-        return view('attendanceSessions.edit', compact('attendanceSession'));
+        return view('industry.attendanceSessions.edit', compact('attendanceSession'));
     }
 
     public function update(Request $request, AttendanceSession $attendanceSession)

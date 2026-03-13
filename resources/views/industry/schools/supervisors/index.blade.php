@@ -22,7 +22,7 @@
                     class="w-1/4 h-10 px-3.5 rounded-md border border-gray-400 text-gray-500 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
             </section>
 
-            <button onclick="window.location.href='{{ route('industry.supervisors.create') }}'"
+            <button onclick="window.location.href='{{ route('schools.supervisors.create', $school->id) }}'"
                 class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
                 <span class="justify-start text-white text-lg font-bold leading-snug">Tambah Guru Pembimbing</span>
                 <x-heroicon-o-plus class="w-6 h-6 text-white" stroke-width="3" />
@@ -36,14 +36,15 @@
                 {{-- Cards --}}
                 <article class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Card Guru Pembimbing --}}
+                    @foreach ($supervisors as $supervisor)
                     <section
                         class="w-full p-5 bg-white rounded-xl shadow-md outline outline-1 outline-offset-1 outline-neutral-300 inline-flex flex-col justify-center items-start gap-2.5">
-                        <h1 class="w-full justify-start text-black text-lg font-bold leading-snug">Joe Nathaniel, S.Pd.</h1>
+                        <h1 class="w-full justify-start text-black text-lg font-bold leading-snug">{{ $supervisor->name }}</h1>
                         <span
-                            class="self-stretch justify-start text-black text-lg font-normal leading-snug">0850000000</span>
+                            class="self-stretch justify-start text-black text-lg font-normal leading-snug">{{ $supervisor->phone }}</span>
                         <article class="w-96 inline-flex justify-start items-center gap-2.5">
                             <button
-                                onclick="window.location.href='{{ route('industry.supervisors.edit', ['supervisor' => 1]) }}'"
+                                onclick="window.location.href='{{ route('supervisors.edit', ['supervisor' => $supervisor->id]) }}'"
                                 class="flex-1 px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-sm flex justify-center items-center gap-2.5">
                                 <div class="justify-start text-white text-base leading-tight">Edit</div>
                                 <x-heroicon-o-pencil-square class="w-6 h-6 text-white" stroke-width="2" />
@@ -77,17 +78,22 @@
                                                 </button>
 
                                                 {{-- Tombol Ya --}}
-                                                <button @click="open = false"
-                                                    class="px-7 py-2 rounded-md text-white bg-brand-primary hover:bg-teal-500 hover:text-white">
-                                                    Ya
-                                                </button>
-                                            </div>
+                                                <form action="{{ route('supervisors.destroy', $supervisor->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="px-7 py-2 rounded-md text-white bg-brand-primary hover:bg-teal-500 hover:text-white">
+                                                        Ya
+                                                    </button>
+                                                </form>
                                         </div>
                                     </div>
                                 </template>
                             </section>
                         </article>
                     </section>
+                    @endforeach
                 </article>
             </article>
         </article>

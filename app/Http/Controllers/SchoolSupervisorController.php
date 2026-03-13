@@ -26,8 +26,7 @@ class SchoolSupervisorController extends BaseController
         $this->authorizeManagement($school);
 
         $supervisors = $school->schoolSupervisors()->orderBy('name')->get();
-
-        return view('supervisors.index', compact('school', 'supervisors'));
+        return view('industry.schools.supervisors.index', compact('school', 'supervisors'));
     }
 
     /**
@@ -37,7 +36,7 @@ class SchoolSupervisorController extends BaseController
     {
         $this->authorizeManagement($school);
 
-        return view('supervisors.create', compact('school'));
+        return view('industry.schools.supervisors.create', compact('school'));
     }
 
     /**
@@ -75,7 +74,7 @@ class SchoolSupervisorController extends BaseController
     {
         $this->authorizeManagement($supervisor->school);
 
-        return view('supervisors.edit', compact('supervisor'));
+        return view('industry.schools.supervisors.edit', compact('supervisor'));
     }
 
     /**

@@ -28,7 +28,7 @@ class CriterionController extends BaseController
 
         $criteria = $school->criteria()->orderBy('name')->get();
 
-        return view('criteria.index', compact('criteria', 'school'));
+        return view('industry.schools.criteria.index', compact('criteria', 'school'));
     }
 
     /**
@@ -70,9 +70,9 @@ class CriterionController extends BaseController
             ]);
         }
 
-        return response()->json(['message' => 'Kriteria berhasil ditambahkan.'], 201);
-        // return redirect()->route('schools.criteria.index', $school)
-        //     ->with('success', 'Kriteria berhasil ditambahkan.');
+        //return response()->json(['message' => 'Kriteria berhasil ditambahkan.'], 201);
+        return redirect()->route('schools.criteria.index', $school)
+            ->with('success', 'Kriteria berhasil ditambahkan.');
     }
     /**
      * Display the specified resource.
@@ -91,7 +91,7 @@ class CriterionController extends BaseController
     {
         $this->authorizeManagement($criterion->school);
 
-        return view('criteria.edit', compact('criterion'));
+        return view('industry.schools.criteria.edit', compact('criterion'));
     }
 
     /**

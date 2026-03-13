@@ -47,7 +47,7 @@ class SchoolController extends BaseController
 
         $schools = School::where('industry_id', $user->industry->id)->get();
 
-        return view('schools.index', compact('schools'));
+        return view('industry.schools.index', compact('schools'));
     }
 
     /**
@@ -63,7 +63,7 @@ class SchoolController extends BaseController
 
         $industry = $user->industry;
 
-        return view('schools.create', compact('industry'));
+        return view('industry.schools.create', compact('industry'));
     }
 
     /**
@@ -111,7 +111,7 @@ class SchoolController extends BaseController
             abort(403, 'Unauthorized action.');
         }
 
-        return view('schools.edit', compact('school'));
+        return view('industry.schools.edit', compact('school'));
     }
 
     /**

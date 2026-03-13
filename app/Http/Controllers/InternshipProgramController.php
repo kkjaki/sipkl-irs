@@ -17,7 +17,7 @@ class InternshipProgramController extends BaseController
     {
         $this->middleware('auth');
     }
-
+    
     /**
      * Display a listing of the internship programs.
      */
@@ -49,17 +49,16 @@ class InternshipProgramController extends BaseController
         // Show the form to create a new internship program.
         return view('industry.programs.create');
     }
-
+    
     /**
      * Store a newly created internship program in storage.
-     */
+    */
     public function store(StoreInternshipProgramRequest $request)
     {
         $user = Auth::user();
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.');
         }
-
         $validatedData = $request->validated();
         // Set industry_id from the authenticated user's industry.
         $validatedData['industry_id'] = $user->industry->id;
@@ -67,8 +66,8 @@ class InternshipProgramController extends BaseController
         $validatedData['invitation_code'] = $validatedData['invitation_code'] ??\Illuminate\Support\Str::random(6);
         InternshipProgram::create($validatedData);
 
-        return response()->json(['success' => true]);
-        // return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dibuat.');
+        //return response()->json(['success' => true]);
+        return redirect()->route('internship-programs.index')->with('success', 'Program magang berhasil dibuat.');
     }
 
     /**
@@ -96,7 +95,7 @@ class InternshipProgramController extends BaseController
             abort(403, 'Unauthorized action.');
         }
 
-        return view('internshipPrograms.edit', compact('internshipProgram'));
+        return view('industry.programs.edit', compact('internshipProgram'));
     }
 
     /**
@@ -112,7 +111,7 @@ class InternshipProgramController extends BaseController
 
         $internshipProgram->update($request->validated());
 
-        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil diperbarui.');
+        return redirect()->route('internship-programs.index')->with('success', 'Program magang berhasil diperbarui.');
     }
 
     /**
@@ -128,7 +127,7 @@ class InternshipProgramController extends BaseController
 
         $internshipProgram->delete();
 
-        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dihapus.');
+        return redirect()->route('internship-programs.index')->with('success', 'Program magang berhasil dihapus.');
     }
 
     public function deactivate(InternshipProgram $internshipProgram)
@@ -141,7 +140,7 @@ class InternshipProgramController extends BaseController
 
         $internshipProgram->update(['is_active' => false]);
 
-        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil dinonaktifkan.');
+        return redirect()->route('internship-programs.index')->with('success', 'Program magang berhasil dinonaktifkan.');
     }
 
     public function activate(InternshipProgram $internshipProgram)
@@ -154,6 +153,6 @@ class InternshipProgramController extends BaseController
 
         $internshipProgram->update(['is_active' => true]);
 
-        return redirect()->route('internshipPrograms.index')->with('success', 'Program magang berhasil diaktifkan.');
+        return redirect()->route('internship-programs.index')->with('success', 'Program magang berhasil diaktifkan.');
     }
 }
