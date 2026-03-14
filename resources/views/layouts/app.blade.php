@@ -31,12 +31,17 @@
     <div x-data="{ sidebarOpen: true }"
         class="min-h-screen flex bg-[#F4F6F9]">
 
+<<<<<<< HEAD
         {{-- Sidebar (role-based) --}}
         @if(auth()->user()->role === 'student')
         @include('partials.sidebar-student')
         @elseif(auth()->user()->role === 'mentor')
         @include('partials.sidebar-mentor')
         @else
+=======
+        {{-- Sidebar --}}
+        {{-- @include(view: 'partials.sidebar.user') --}}
+>>>>>>> origin/fe-riyani
         @include('partials.sidebar-owner')
         @endif
 
