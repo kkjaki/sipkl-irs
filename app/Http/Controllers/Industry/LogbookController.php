@@ -47,12 +47,11 @@ class LogbookController extends Controller
     public function bulkValidate(Request $request)
     {
         $request->validate([
-            'ids' => 'required|array',       // Menampung banyak ID sekaligus [1, 2, 3]
-            'ids.*' => 'exists:logbooks,id', // Pastikan ID-nya ada di database
+            'ids' => 'required|array',       
+            'ids.*' => 'exists:logbooks,id', 
             'status' => 'required|in:approved,rejected',
         ]);
 
-        // Sekali jalan, semua ID yang dikirim langsung berubah statusnya
         \App\Models\Logbook::whereIn('id', $request->ids)->update([
             'status' => $request->status
         ]);
