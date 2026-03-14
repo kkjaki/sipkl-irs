@@ -60,6 +60,14 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    // Industry/Owner Logbook API Routes
+    Route::prefix('industry')->name('industry.')->group(function () {
+        Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
+        Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
+        Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
+        Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
+    });
+
     // Student routes
     Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->group(function () {
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
@@ -105,15 +113,8 @@ Route::post('register/student', [StudentRegistrationController::class, 'store'])
 
 require __DIR__ . '/auth.php';
 
-// Industry/Owner Logbook API Routes
-Route::prefix('industry')->name('industry.')->group(function () {
-    Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
-    Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
-    Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
-    Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
-});
-
-// Extra routes from Riyani (Tampilan Landing dll, tanpa numpur controller lo)
 Route::prefix('student')->name('student.')->group(function () {
-    Route::get('/landing', function () { return view('landing-student'); })->name('landing');
+    Route::get('/landing', function () {
+        return view('landing-student');
+    })->name('landing');
 });
