@@ -15,6 +15,7 @@ use App\Http\Controllers\Student\AttendanceController as StudentAttendanceContro
 use App\Http\Controllers\Student\LogbookController as StudentLogbookController;
 use App\Http\Controllers\Student\GradeController as StudentGradeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Industry\LogbookController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -61,6 +62,8 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+   
+
     // Student routes
     Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->group(function () {
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
@@ -102,3 +105,13 @@ Route::get('register/student', [StudentRegistrationController::class, 'create'])
 Route::post('register/student', [StudentRegistrationController::class, 'store']);
 
 require __DIR__ . '/auth.php';
+
+ // Industry/Owner
+    Route::prefix('industry')->name('industry.')->group(function () {
+    Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
+    // Route Individu
+    Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
+    // Route Massal
+    Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
+    Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
+});
