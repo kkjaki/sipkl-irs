@@ -42,11 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');
     Route::resource('internship-programs', InternshipProgramController::class);
 
-    Route::controller(AttendanceSessionController::class)->group(function () {
-        Route::get('/attendance-sessions', 'index')->name('attendance-sessions.index');
-        Route::post('/attendance-sessions', 'store')->name('attendance-sessions.store');
-        Route::patch('/attendance-sessions/{attendanceSession}/close', [AttendanceSessionController::class, 'close'])->name('attendanceSessions.close');
-    });
+    Route::patch('/attendance-sessions/{attendanceSession}/close', [AttendanceSessionController::class, 'close'])->name('attendance-sessions.close');
+    Route::resource('attendance-sessions', AttendanceSessionController::class);
 
     Route::controller(AttendanceController::class)->group(function () {
         Route::get('/attendance-sessions/{session}/validate', 'show')->name('attendance.validate.show');
@@ -62,6 +59,7 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+<<<<<<< HEAD
    
 
     // Student routes
@@ -94,6 +92,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/industry', function () {
         return view('industry.dashboard');
     })->name('industry');
+=======
+    Route::middleware(['role:owner'])->group(function () {
+        Route::get('/industry', function () {
+            return view('industry.dashboard');
+        })->name('industry');
+    });
+>>>>>>> origin/fe-tanu
 });
 
 Route::get('csrf-token', function () {
