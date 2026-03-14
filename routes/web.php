@@ -59,10 +59,7 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-<<<<<<< HEAD
-   
-
-    // Student routes
+    // Student routes (Dari branch kamu)
     Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->group(function () {
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
 
@@ -89,16 +86,12 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::get('/industry', function () {
-        return view('industry.dashboard');
-    })->name('industry');
-=======
+    // Industry/Owner routes (Dari branch fe-tanu)
     Route::middleware(['role:owner'])->group(function () {
         Route::get('/industry', function () {
             return view('industry.dashboard');
         })->name('industry');
     });
->>>>>>> origin/fe-tanu
 });
 
 Route::get('csrf-token', function () {
@@ -111,8 +104,8 @@ Route::post('register/student', [StudentRegistrationController::class, 'store'])
 
 require __DIR__ . '/auth.php';
 
- // Industry/Owner
-    Route::prefix('industry')->name('industry.')->group(function () {
+// Industry/Owner Logbook API Routes
+Route::prefix('industry')->name('industry.')->group(function () {
     Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
     // Route Individu
     Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
