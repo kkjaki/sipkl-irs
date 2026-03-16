@@ -14,11 +14,10 @@ class LogbookController extends Controller
      */
     public function index()
     {
-        $logbooks = Logbook::with(['student.user'])
-            ->where('status', 'pending')
+        $logbooks = Logbook::with(['student.user', 'student.school'])
             ->latest()
-            ->get();
-        // return response()->json($logbooks);
+            ->paginate(30);
+            
         return view('industry.logbooks.index', compact('logbooks'));
     }
 
@@ -27,11 +26,22 @@ class LogbookController extends Controller
      * Sesuai panah: validateLogbook(status)
      */
     //  INDIVIDU 
+    public function edit($id)
+    {
+        $logbook = Logbook::with(['student.user'])->findOrFail($id);
+        return view('industry.logbooks.edit', compact('logbook'));
+    }
+
     public function validateLogbook(Request $request, $id)
     {
-        $request->validate(['status' => 'required|in:approved,rejected']);
+        $request->validate([
+            'status' => 'required|in:pending,approved,rejected,revision',
+            'feedback' => 'nullable|string'
+        ]);
+
         $logbook = \App\Models\Logbook::findOrFail($id);
         $logbook->status = $request->status;
+        $logbook->feedback = $request->feedback;
         $logbook->save();
 
         if ($request->wantsJson() || $request->header('Accept') == 'application/json') {

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
@@ -58,6 +60,22 @@ class Student extends Model
     }
 
     /**
+     * Get all grades for the student.
+     */
+    public function grades(): HasMany
+    {
+        return $this->hasMany(Grade::class);
+    }
+
+    /**
+     * Get a single attendance record for the student.
+     */
+    public function attendance(): HasOne
+    {
+        return $this->hasOne(Attendance::class);
+    }
+
+    /**
      * Get the school the student belongs to.
      */
     public function school(): BelongsTo
@@ -71,5 +89,21 @@ class Student extends Model
     public function schoolSupervisor(): BelongsTo
     {
         return $this->belongsTo(SchoolSupervisor::class);
+    }
+
+    /**
+     * Get all attendances for the student.
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Get all logbooks for the student.
+     */
+    public function logbooks(): HasMany
+    {
+        return $this->hasMany(Logbook::class);
     }
 }
