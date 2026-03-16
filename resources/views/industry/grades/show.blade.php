@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <!-- Header Wadah -->
-    <div class="bg-brand-primary p-4 rounded-t-xl shadow-sm text-white mb-6 flex justify-between items-center">
+    <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 rounded-t-xl shadow-sm text-white mb-6 flex justify-between items-center">
         <h2 class="text-xl font-bold m-0">Penilaian Siswa - {{ $school->name }}</h2>
         <a href="{{ route('grades.schools.index') }}" class="text-white hover:text-teal-200 text-sm font-medium transition-colors">
             &larr; Kembali

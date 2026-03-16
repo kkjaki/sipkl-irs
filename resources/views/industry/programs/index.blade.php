@@ -12,100 +12,112 @@
             </div>
         </header>
 
-        <article
-            class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 flex flex-col gap-4">
-            <a href="{{ route('internship-programs.create') }}"
-                class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
-                <span class="justify-start text-white text-lg leading-snug">Buat Program Baru</span>
-                <x-heroicon-o-plus class="w-6 h-6 text-white" stroke-width="3" />
-            </a>
+        <a href="{{ route('internship-programs.create') }}"
+            class="mb-6 w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
+            <span class="justify-start text-white text-lg leading-snug">Buat Program Baru</span>
+            <x-heroicon-o-plus class="w-6 h-6 text-white" stroke-width="3" />
+        </a>
 
-            <section class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
+        <!-- Container & Header Data -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 flex justify-between items-center relative rounded-t-xl text-white font-bold text-lg">
                 Data Program PKL
-            </section>
-            <article class="w-full mx-auto">
+            </div>
 
-                {{-- Cards --}}
-                <article class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    @foreach ($internshipPrograms as $program)
-                        {{-- Card Jumlah Siswa --}}
-                        <section
-                            class="w-full p-5 bg-white rounded-xl shadow-md outline outline-1 outline-offset-1 outline-neutral-300 inline-flex flex-col justify-center items-start gap-2.5">
-                            <h1 class="w-full justify-start text-black text-lg font-bold leading-snug">{{ $program->name }}
-                            </h1>
-                            <span class="self-stretch justify-start text-black text-lg font-normal leading-snug">Periode
-                                Program:</span>
-                            <article class="w-96 inline-flex justify-start items-start gap-2.5">
-                                <section class="flex-1 flex justify-start items-center gap-2.5">
-                                    <span class="justify-start text-black text-lg font-normal leading-snug">Mulai :</span>
-                                    <section
-                                        class="p-1.5 rounded-md outline outline-1 outline-offset-1 outline-emerald-500 flex justify-center items-center gap-2.5">
-                                        <span
-                                            class="justify-start text-emerald-500 text-lg font-normal leading-snug">{{ $program->start_date->format('d-m-Y') }}</span>
+            <!-- Grid Cards Container -->
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($internshipPrograms as $program)
+                    <!-- Desain Card Program -->
+                    <div x-data="{ open: false }" class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all flex flex-col">
+                        
+                        <!-- Header Card -->
+                        <div class="text-lg font-bold text-gray-800 p-4 border-b">
+                            {{ $program->name }}
+                        </div>
+
+                        <!-- Body Card - Kode Undangan (Fitur Copy) -->
+                        <div class="text-sm text-gray-500 mx-4 mt-4">Kode Undangan</div>
+                        
+                        <div x-data="{ copied: false }" class="bg-gray-50 rounded-md p-3 mx-4 mt-1 flex justify-between items-center border border-gray-200">
+                            <span class="font-mono text-xl font-black text-brand-primary tracking-widest">{{ $program->invitation_code }}</span>
+                            
+                            <button @click="navigator.clipboard.writeText('{{ $program->invitation_code }}'); copied = true; setTimeout(() => copied = false, 2000)" 
+                                    class="p-2 rounded-md hover:bg-gray-200 transition-colors text-gray-500">
+                                <template x-if="!copied">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                                    </svg>
+                                </template>
+                                <template x-if="copied">
+                                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </template>
+                            </button>
+                        </div>
+
+                        <!-- Body Card - PERIODE PROGRAM (HIGHLIGHTED) -->
+                        <h4 class="text-sm font-semibold text-gray-700 mx-4 mt-5">Periode Program</h4>
+                        <div class="mx-4 mt-2 mb-4 p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col gap-2.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="flex items-center gap-1.5 text-sm text-slate-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    Mulai
+                                </span>
+                                <span class="px-3 py-1 text-sm font-medium bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100">{{ $program->start_date->format('d M Y') }}</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="flex items-center gap-1.5 text-sm text-slate-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    Selesai
+                                </span>
+                                <span class="px-3 py-1 text-sm font-medium bg-rose-50 text-rose-700 rounded-full border border-rose-100">{{ $program->end_date->format('d M Y') }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons (Footer) -->
+                        <div class="mt-auto flex border-t divide-x divide-gray-100 bg-gray-50 rounded-b-lg">
+                            <a href="{{ route('internship-programs.edit', $program->id) }}" class="w-1/2 flex justify-center items-center gap-2 py-3 text-blue-600 hover:bg-blue-100 transition-colors font-medium rounded-bl-lg">
+                                Edit <x-heroicon-o-pencil-square class="w-5 h-5"/>
+                            </a>
+                            
+                            <button @click="open = true" class="w-1/2 flex justify-center items-center gap-2 py-3 text-red-600 hover:bg-red-100 transition-colors font-medium rounded-br-lg">
+                                Hapus <x-lucide-trash class="w-5 h-5"/>
+                            </button>
+                        </div>
+
+                        <!-- Modal Hapus -->
+                        <template x-if="open">
+                            <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                <div @click.away="open = false" class="w-fit px-32 py-7 bg-white rounded-md flex flex-col justify-center items-center gap-8 shadow-xl">
+                                    <section class="flex flex-col">
+                                        <span class="text-center text-neutral-800 text-xl">
+                                            Apakah Anda yakin ingin menghapus
+                                        </span>
+                                        <span class="text-center text-neutral-800 text-xl font-bold">
+                                            Program PKL ini?
+                                        </span>
                                     </section>
-                                </section>
-                                <section class="flex-1 flex justify-start items-center gap-2.5">
-                                    <div class="justify-start text-black text-lg font-normal leading-snug">Selesai :</div>
-                                    <div
-                                        class="p-1.5 rounded-md outline outline-1 outline-offset-1 outline-red-600 flex justify-center items-center gap-2.5">
-                                        <div class="justify-start text-red-600 text-lg font-normal leading-snug">
-                                            {{ $program->end_date->format('d-m-Y') }}</div>
-                                    </div>
-                                </section>
-                            </article>
-                            <article class="w-96 pt-2.5 inline-flex justify-start items-center gap-2.5">
-                                <a href="{{ route('internship-programs.edit', $program->id) }}"
-                                    class="flex-1 px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-sm flex justify-center items-center gap-2.5">
-                                    <div class="justify-start text-white text-base leading-tight">Edit</div>
-                                    <x-heroicon-o-pencil-square class="w-6 h-6 text-white" stroke-width="2" />
-                                </a>
-                                <section x-data="{ open: false }" class="flex-1">
-                                    <button @click="open = true"
-                                        class="w-full px-2.5 py-1.5 bg-red-400 hover:bg-red-500 rounded-sm flex justify-center items-center gap-2.5">
-                                        <div class="justify-start text-white text-base leading-tight">Hapus</div>
-                                        <x-lucide-trash class="w-6 h-6 text-white" stroke-width="2" />
-                                    </button>
-                                    {{-- Modal --}}
-                                    <template x-if="open">
-                                        <div
-                                            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                                            <div
-                                                class="w-fit px-32 py-7 bg-white rounded-md flex flex-col justify-center items-center gap-8">
-                                                <section class="flex flex-col">
-                                                    <span class="text-center text-neutral-800 text-xl">
-                                                        Apakah Anda yakin ingin menghapus
-                                                    </span>
-                                                    <span class="text-center text-neutral-800 text-xl">
-                                                        Program PKL ini?
-                                                    </span>
-                                                </section>
-                                                <div class="inline-flex justify-between items-center gap-36">
-                                                    {{-- Tombol Tidak --}}
-                                                    <button @click="open = false"
-                                                        class="px-5 py-2 rounded-md outline outline-1 outline-stone-300 hover:bg-gray-400 hover:text-white hover:outline-none text-lg">
-                                                        Tidak
-                                                    </button>
+                                    <div class="inline-flex justify-between items-center gap-36 w-full px-4">
+                                        <button @click="open = false" class="px-5 py-2 rounded-md outline outline-1 outline-stone-300 hover:bg-gray-400 hover:text-white hover:outline-none text-lg transition-colors">
+                                            Tidak
+                                        </button>
 
-                                                    {{-- Tombol Ya --}}
-                                                    <form action="{{ route('internship-programs.destroy', $program->id) }}"
-                                                        method="POST" class="m-0">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="px-7 py-2 rounded-md text-white bg-brand-primary hover:bg-teal-500 hover:text-white">
-                                                            Ya
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </section>
-                            </article>
-                        </section>
-                    @endforeach
-                </article>
-            </article>
-        </article>
+                                        <form action="{{ route('internship-programs.destroy', $program->id) }}" method="POST" class="m-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-7 py-2 rounded-md text-white bg-brand-primary hover:bg-teal-500 hover:text-white transition-colors text-lg">
+                                                Ya
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </main>
 @endsection
