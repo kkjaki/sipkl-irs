@@ -107,6 +107,10 @@ Route::middleware('auth')->group(function () {
             return view('industry.dashboard');
         })->name('industry');
     });
+
+    // Validate Attendance (Owner) List Sekolah routes
+    Route::get('/attendance-validation', [AttendanceController::class, 'index'])
+        ->name('attendance.validate.schools.index');
 });
 
 Route::get('csrf-token', function () {
