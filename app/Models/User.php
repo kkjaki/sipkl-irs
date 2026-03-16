@@ -55,7 +55,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Industry::class, 'owner_id');
     }
-
+    
     public function mentor()
     {
         return $this->hasOne(Mentor::class);
