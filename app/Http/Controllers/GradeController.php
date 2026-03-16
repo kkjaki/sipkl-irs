@@ -25,7 +25,7 @@ class GradeController extends Controller
 
         $school = School::where('industry_id', $user->industry->id)->get();
 
-        return response()->json($school);
+        return view('industry.grades.index', compact('school'));
     }
 
     /**
@@ -55,8 +55,8 @@ class GradeController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $students = Student::where('school_id', $school->id)->get();
-        return response()->json($students);
+        $students = Student::with('grades')->where('school_id', $school->id)->get();
+        return view('industry.grades.show', compact('students', 'school'));
     }
 
     /**
@@ -70,13 +70,25 @@ class GradeController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $grades = Grade::where('student_id', $student->id)->get();
         $criterion = \App\Models\Criterion::where('school_id', $school->id)->get();
-        return response()->json([
-            'student' => $student,
-            'criterion' => $criterion,
-            'grades'  => $grades,
-        ]);
+
+        foreach ($criterion as $crit) {
+            $gradeExists = Grade::where('student_id', $student->id)
+                ->where('criteria_id', $crit->id)
+                ->exists();
+
+            if (!$gradeExists) {
+                Grade::create([
+                    'student_id' => $student->id,
+                    'criteria_id' => $crit->id,
+                    'score' => 0,
+                ]);
+            }
+        }
+
+        $grades = Grade::where('student_id', $student->id)->get();
+
+        return view('industry.grades.edit', compact('student', 'criterion', 'grades', 'school'));
     }
 
     /**

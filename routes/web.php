@@ -51,6 +51,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/attendance-sessions/{session}/validate', 'update')->name('attendance.validate.update');
     });
 
+    // Validasi Presensi (Owner) List Sekolah
+    Route::get('/attendance-validation', [\App\Http\Controllers\AttendanceValidationController::class, 'index'])->name('attendance.validate.schools.index');
+    Route::get('/attendance-validation/{school}', [\App\Http\Controllers\AttendanceValidationController::class, 'show'])->name('attendance.validate.schools.show');
+
     Route::group(['prefix' => 'grades/schools'], function () {
         Route::controller(GradeController::class)->group(function () {
             Route::get('/', 'index')->name('grades.schools.index');
@@ -63,9 +67,11 @@ Route::middleware('auth')->group(function () {
     // Industry/Owner Logbook API Routes
     Route::prefix('industry')->name('industry.')->group(function () {
         Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
+        Route::get('/logbooks/{id}/edit', [LogbookController::class, 'edit'])->name('logbooks.edit');
         Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
         Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
         Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
+        Route::get('/recap', [\App\Http\Controllers\Industry\RecapController::class, 'index'])->name('recap.index');
     });
 
     // Student routes

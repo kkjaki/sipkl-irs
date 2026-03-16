@@ -119,8 +119,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
-                            class="flex items-center px-12 py-4 text-lg font-normal font-sans transition {{ request()->routeIs('attendance.validate.show') ? 'border-l-8 border-brand-primary bg-teal-50 text-brand-primary' : 'border-l-8 border-transparent text-gray-700 hover:border-teal-300 hover:bg-teal-50 hover:text-brand-primary' }}">
+                        <a href="{{ route('attendance.validate.schools.index') }}"
+                            class="flex items-center px-12 py-4 text-lg font-normal font-sans transition {{ request()->routeIs('attendance.validate.schools.*') ? 'border-l-8 border-brand-primary bg-teal-50 text-brand-primary' : 'border-l-8 border-transparent text-gray-700 hover:border-teal-300 hover:bg-teal-50 hover:text-brand-primary' }}">
                             Validasi Presensi
                         </a>
                     </li>
@@ -129,7 +129,7 @@
 
 
             {{-- Validasi Logbook --}}
-            <li onclick="window.location.href='#'" :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+            <li onclick="window.location.href='{{ route('industry.logbooks.index') }}'" :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
                 class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('logbooks.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-s-book-open
                     class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('logbooks.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
@@ -140,18 +140,18 @@
             </li>
 
             {{-- Rekap --}}
-            <li onclick="window.location.href='#'" :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
-                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('recap.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
+            <li onclick="window.location.href='{{ route('industry.recap.index') }}'" :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+                class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('industry.recap.index') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-s-clipboard-document-list
-                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('recap.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
+                    class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('industry.recap.index') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
                 <span x-show="sidebarOpen"
-                    class="text-lg font-normal font-sans transition {{ request()->routeIs('recap.*') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
+                    class="text-lg font-normal font-sans transition {{ request()->routeIs('industry.recap.index') ? 'text-brand-primary' : 'text-neutral-800 group-hover:text-brand-primary' }}">
                     Rekap
                 </span>
             </li>
 
             {{-- Nilai --}}
-            <li onclick="window.location.href='#'" :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
+            <li onclick="window.location.href='{{ route('grades.schools.index') }}'" :class="sidebarOpen ? 'px-4' : 'px-0 justify-center'"
                 class="py-4 flex items-center gap-3.5 cursor-pointer group transition duration-100 {{ request()->routeIs('grades.*') ? 'border-l-8 border-brand-primary bg-teal-50' : 'border-l-8 border-transparent hover:border-teal-300 hover:bg-teal-50' }}">
                 <x-heroicon-s-academic-cap
                     class="w-5 h-5 transition-colors duration-100 {{ request()->routeIs('grades.*') ? 'text-brand-primary' : 'text-stone-900 group-hover:text-brand-primary' }}" />
