@@ -3,20 +3,30 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <!-- Header Data Sekolah -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-        <div class="bg-brand-primary p-4 flex items-center gap-3 text-white">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
-            <h1 class="text-xl font-bold m-0 leading-none">Data Sekolah</h1>
-        </div>
-        <div class="p-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Sekolah</label>
-            <div class="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg px-4 py-3 cursor-default">
-                {{ $school->name }}
+    <div
+            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8 transition-all duration-200 hover:shadow-md">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                        </path>
+                    </svg>
+                    Data Sekolah
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="max-w-md">
+                    <label for="nama_sekolah" class="block text-sm font-medium text-gray-700 mb-2">Nama Sekolah</label>
+                    <div class="relative">
+                        <input type="text" id="nama_sekolah" readonly
+                            value="{{ $school->nama_sekolah ?? $school->name }}"
+                            class="block w-full rounded-lg border-gray-300 bg-gray-50 text-gray-700 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm py-2.5 px-3 cursor-not-allowed">
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
     <!-- Wadah Utama -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6"
@@ -26,7 +36,7 @@
              showFilterModal: false 
          }">
         <!-- Header Wadah -->
-        <div class="bg-brand-primary text-white p-4 flex justify-between items-center relative rounded-t-xl">
+        <div class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 flex justify-between items-center relative rounded-t-xl">
             <h2 class="text-lg font-semibold m-0">Daftar Riwayat Kehadiran Siswa</h2>
             
             <!-- Tombol Filter -->

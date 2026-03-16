@@ -15,7 +15,7 @@
         {{-- Profil Siswa --}}
         <article
             class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 flex flex-col gap-4">
-            <section class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
+            <section class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 font-bold text-lg rounded-t-xl">
                 Data Program
             </section>
             <form method="POST" action="{{ route('internship-programs.store') }}" class="w-full mx-auto space-y-5">

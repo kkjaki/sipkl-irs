@@ -5,7 +5,7 @@
     <!-- Wadah Utama -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
         <!-- Header Wadah -->
-        <div class="bg-brand-primary text-white p-4 relative rounded-t-xl">
+        <div class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 relative rounded-t-xl">
             <h2 class="text-lg font-semibold m-0">Validasi Logbook Harian Siswa</h2>
         </div>
         

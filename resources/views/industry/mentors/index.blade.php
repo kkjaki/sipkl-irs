@@ -23,7 +23,7 @@
                 </a>
 
                 <!-- Label Data Pendamping -->
-                <div class="bg-brand-primary text-white font-semibold px-4 py-2 rounded-t-lg">
+                <div class="bg-gradient-to-r from-teal-500 to-teal-600 text-white font-semibold px-4 py-2 rounded-t-lg">
                     Data Pendamping
                 </div>
 

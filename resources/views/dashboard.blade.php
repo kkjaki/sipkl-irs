@@ -17,7 +17,7 @@
 
                     {{-- Profil Siswa --}}
                     <div class="w-full bg-white rounded-xl shadow-sm border border-gray-100 px-0 py-0 mb-6">
-                        <div class="bg-[#48CFCB] text-white px-6 py-4 font-semibold text-lg rounded-t-xl">
+                        <div class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-4 font-semibold text-lg rounded-t-xl">
                             Profil Industri
                         </div>
                         <div class="p-6">
