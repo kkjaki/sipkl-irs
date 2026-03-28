@@ -2,20 +2,27 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Industry;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $this->call([
-            UserSeeder::class,
-            IndustrySeeder::class,
-            SchoolSeeder::class,
+        // 1. Bikin Akun Owner (Way)
+        $owner = User::create([
+            'name' => 'Way',
+            'email' => 'way@irs.com',
+            'password' => Hash::make('password123'),
+            'role' => 'owner', 
+        ]);
+
+        // 2. Bikin Data Perusahaannya (PT Internet Rakyat Sejahtera)
+        Industry::create([
+            'owner_id' => $owner->id,
+            'name' => 'PT Internet Rakyat Sejahtera',
         ]);
     }
 }
