@@ -28,12 +28,8 @@ class MentorController extends BaseController
         if ($user->role !== 'owner') {
             abort(403, 'Unauthorized action.');
         }
-        // Deny access if user has no industry assigned.
-        if (!$user->industry) {
-            abort(403, 'User tidak memiliki industri yang terdaftar.');
-        }
         // Fetch mentors in the same industry as the owner.
-        $mentors = Mentor::where('industry_id', $user->industry->id)->with('user')->get();
+        $mentors = $user->industry ? Mentor::where('industry_id', $user->industry->id)->with('user')->get() : collect();
 
         return view('industry.mentors.index', compact('mentors'));
     }
@@ -106,7 +102,7 @@ class MentorController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the mentor is not in their industry.
-        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $mentor->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
         $industry = $user->industry;
@@ -121,7 +117,7 @@ class MentorController extends BaseController
     {  
         $user = Auth::user();
         // Deny access if user is not an owner or the mentor is not in their industry.
-        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $mentor->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -152,7 +148,7 @@ class MentorController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the mentor is not in their industry.
-        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $mentor->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -169,7 +165,7 @@ class MentorController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the mentor is not in their industry.
-        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $mentor->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -186,7 +182,7 @@ class MentorController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the mentor is not in their industry.
-        if ($user->role !== 'owner' || $mentor->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $mentor->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 

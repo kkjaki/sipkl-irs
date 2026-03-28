@@ -33,11 +33,9 @@
 
         {{-- Sidebar (role-based) --}}
         @if(auth()->user()->role === 'student')
-        @include('partials.sidebar-student')
-        @elseif(auth()->user()->role === 'mentor')
-        @include('partials.sidebar-mentor')
+            @include('partials.sidebar-student')
         @else
-        @include('partials.sidebar-owner')
+            @include('partials.sidebar-industry')
         @endif
 
         {{-- Konten utama (navbar + isi halaman) --}}

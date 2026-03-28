@@ -70,4 +70,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(AttendanceSession::class, 'opened_by_user_id');
     }
+
+    /**
+     * Helper to get the industry ID regardless of whether the user is an owner or mentor.
+     */
+    public function getIndustryIdAttribute()
+    {
+        if ($this->role === 'owner') {
+            return $this->industry->id ?? null;
+        } elseif ($this->role === 'mentor') {
+            return $this->mentor->industry_id ?? null;
+        }
+        return null;
+    }
 }

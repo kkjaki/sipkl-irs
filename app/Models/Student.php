@@ -20,6 +20,7 @@ class Student extends Model
     protected $fillable = [
         'user_id',
         'internship_program_id',
+        'industry_id',
         'school_id',
         'school_supervisor_id',
         'nis',
@@ -57,6 +58,14 @@ class Student extends Model
     public function internshipProgram(): BelongsTo
     {
         return $this->belongsTo(InternshipProgram::class);
+    }
+
+    /**
+     * Get the industry the student belongs to based on the program
+     */
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class);
     }
 
     /**

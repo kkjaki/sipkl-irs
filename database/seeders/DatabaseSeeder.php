@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
         Industry::create([
             'owner_id' => $owner->id,
             'name' => 'PT Internet Rakyat Sejahtera',
+            'address' => 'RT 4/RW 2, Kec. Susukan, Kab. Banjarnegara, Jawa Tengah, Indonesia',
+            'phone' => '08123456789',
         ]);
     }
 }

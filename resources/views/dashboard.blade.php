@@ -25,23 +25,22 @@
                                 <div class="flex border-b py-2">
                                     <span class="w-40 font-medium text-gray-700">Nama industri</span>
                                     <span class="mx-2">:</span>
-                                    <span class="flex-1 text-gray-900">PT. Internet Rakyat Sejahtera</span>
+                                    <span class="flex-1 text-gray-900">{{ $industry->name ?? 'Belum Diatur' }}</span>
                                 </div>
                                 <div class="flex border-b py-2">
                                     <span class="w-40 font-medium text-gray-700">Alamat</span>
                                     <span class="mx-2">:</span>
-                                    <span class="flex-1 text-gray-900">RT 4/RW 2, Kec. Susukan, Kab. Banjarnegara, Jawa Tengah,
-                                        Indonesia</span>
+                                    <span class="flex-1 text-gray-900">{{ $industry->address ?? '-' }}</span>
                                 </div>
                                 <div class="flex border-b py-2">
                                     <span class="w-40 font-medium text-gray-700">Kontak</span>
                                     <span class="mx-2">:</span>
-                                    <span class="flex-1 text-gray-900">08 Berapa Manis</span>
+                                    <span class="flex-1 text-gray-900">{{ $industry->phone ?? '-' }}</span>
                                 </div>
                                 <div class="flex border-b py-2">
                                     <span class="w-40 font-medium text-gray-700">Nama Pimpinan</span>
                                     <span class="mx-2">:</span>
-                                    <span class="flex-1 text-gray-900">Si Ganteng</span>
+                                    <span class="flex-1 text-gray-900">{{ $industry->owner->name ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -59,7 +58,7 @@
                                     class="w-full h-48 px-7 py-5 bg-white rounded-xl shadow-md outline outline-1 outline-offset-[-1px] outline-gray-300 inline-flex justify-center items-center gap-2.5">
                                     <div class="flex-1 inline-flex flex-col justify-start items-start gap-2.5">
                                         <div class="text-neutral-800 text-2xl font-extrabold leading-7">Jumlah Siswa</div>
-                                        <div class="text-neutral-800 text-2xl font-normal leading-7">120</div>
+                                        <div class="text-neutral-800 text-2xl font-normal leading-7">{{ $jumlahSiswa ?? 0 }}</div>
                                     </div>
                                     <div class="px-5 py-0.5 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
                                         {{-- Icon --}}
@@ -73,7 +72,7 @@
                                     class="w-full h-48 px-7 py-5 bg-white rounded-xl shadow-md outline outline-1 outline-offset-[-1px] outline-gray-300 inline-flex justify-start items-center gap-2.5 flex-wrap content-center">
                                     <div class="flex-1 inline-flex flex-col justify-start items-start gap-2.5">
                                         <div class="text-neutral-800 text-2xl font-bold leading-7">Jumlah Sekolah</div>
-                                        <div class="text-neutral-800 text-2xl font-normal leading-7">3</div>
+                                        <div class="text-neutral-800 text-2xl font-normal leading-7">{{ $jumlahSekolah ?? 0 }}</div>
                                     </div>
                                     <div class="px-5 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
                                         {{-- Icon --}}
@@ -87,7 +86,7 @@
                                     <div class="flex-1 inline-flex flex-col justify-start items-start gap-2.5">
                                         <div class="text-neutral-800 text-2xl font-bold leading-7">Pendamping Industri
                                         </div>
-                                        <div class="text-neutral-800 text-2xl font-normal leading-7">32</div>
+                                        <div class="text-neutral-800 text-2xl font-normal leading-7">{{ $jumlahMentor ?? 0 }}</div>
                                     </div>
                                     <div class="px-5 flex justify-center items-center gap-2.5">
                                         {{-- Icon --}}
@@ -100,7 +99,7 @@
                                     class="w-full h-48 px-7 py-5 bg-white rounded-xl shadow-md outline outline-1 outline-offset-[-1px] outline-gray-300 inline-flex justify-start items-center gap-2.5">
                                     <div class="flex-1 inline-flex flex-col justify-start items-start gap-2.5">
                                         <div class="text-neutral-800 text-2xl font-bold leading-7">Guru Pembimbing</div>
-                                        <div class="text-neutral-800 text-2xl font-normal leading-7">5</div>
+                                        <div class="text-neutral-800 text-2xl font-normal leading-7">{{ $jumlahGuru ?? 0 }}</div>
                                     </div>
                                     <div class="px-5 flex justify-center items-center gap-2.5">
                                         {{-- Icon --}}

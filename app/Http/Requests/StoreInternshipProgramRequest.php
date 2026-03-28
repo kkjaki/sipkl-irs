@@ -30,7 +30,7 @@ class StoreInternshipProgramRequest extends FormRequest
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'invitation_code' => 'nullable|string|max:255',
+            'invitation_code' => 'nullable|string|max:10|unique:internship_programs,invitation_code',
             'is_active' => 'boolean',
         ];
     }

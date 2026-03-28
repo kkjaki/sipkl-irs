@@ -61,9 +61,9 @@ class InternshipProgramController extends BaseController
         }
         $validatedData = $request->validated();
         // Set industry_id from the authenticated user's industry.
-        $validatedData['industry_id'] = $user->industry->id;
+        $validatedData['industry_id'] = $user->industry->id ?? null;
         // Generate a random 6-character invitation code.
-        $validatedData['invitation_code'] = $validatedData['invitation_code'] ??\Illuminate\Support\Str::random(6);
+        $validatedData['invitation_code'] = $validatedData['invitation_code'] ?? strtoupper(\Illuminate\Support\Str::random(6));
         InternshipProgram::create($validatedData);
 
         //return response()->json(['success' => true]);
@@ -77,7 +77,7 @@ class InternshipProgramController extends BaseController
     {
         $user = Auth::user();
         // Ensure the owner can only view internship programs in their industry.
-        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -91,7 +91,7 @@ class InternshipProgramController extends BaseController
     {
         $user = Auth::user();
         // Ensure the owner can only edit internship programs in their industry.
-        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -105,11 +105,16 @@ class InternshipProgramController extends BaseController
     {
         $user = Auth::user();
         // Ensure the owner can only update internship programs in their industry.
-        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
-        $internshipProgram->update($request->validated());
+        $validatedData = $request->validated();
+        if (empty($validatedData['invitation_code'])) {
+            $validatedData['invitation_code'] = strtoupper(\Illuminate\Support\Str::random(6));
+        }
+
+        $internshipProgram->update($validatedData);
 
         return redirect()->route('internship-programs.index')->with('success', 'Program magang berhasil diperbarui.');
     }
@@ -121,7 +126,7 @@ class InternshipProgramController extends BaseController
     {
         $user = Auth::user();
         // Ensure the owner can only delete internship programs in their industry.
-        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -134,7 +139,7 @@ class InternshipProgramController extends BaseController
     {
         $user = Auth::user();
         // Ensure the owner can only deactivate internship programs in their industry.
-        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -147,7 +152,7 @@ class InternshipProgramController extends BaseController
     {
         $user = Auth::user();
         // Ensure the owner can only activate internship programs in their industry.
-        if ($user->role !== 'owner' || $internshipProgram->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
         }
 

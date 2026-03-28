@@ -15,72 +15,59 @@
             <div
                 class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 flex flex-col gap-4">
 
-                <!-- Tombol Tambah Pendamping (di kiri atas) -->
-                <a href="{{ route('mentors.create') }}"
-                    class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
-                    <span class="justify-start text-white text-lg leading-snug">Tambah Pendamping Industri</span>
-                    <x-heroicon-o-plus class="w-6 h-6 text-white" stroke-width="3" />
-                </a>
-
-                <!-- Label Data Pendamping -->
-                <div class="bg-gradient-to-r from-teal-500 to-teal-600 text-white font-semibold px-4 py-2 rounded-t-lg">
-                    Data Pendamping
+                <!-- Header Data -->
+                <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 flex justify-between items-center relative rounded-t-xl text-white">
+                <div class="flex items-center gap-2.5 text-white">
+                    <x-heroicon-o-users class="w-6 h-6"/>
+                    <h2 class="font-bold text-lg m-0">Data Pendamping</h2>
+                </div>
+                    <a href="{{ route('mentors.create') }}" class="bg-white text-teal-600 hover:bg-gray-50 px-4 py-2 rounded-md text-sm font-semibold flex items-center gap-2 transition-colors shadow-sm">
+                        <x-heroicon-o-plus class="w-4 h-4"/> Tambah Pendamping
+                    </a>
                 </div>
 
                 <!-- Grid Data Pendamping -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t-0 rounded-b-lg">
-                    @foreach ($mentors as $mentor)
-                        <div
-                            class="w-full p-5 bg-white/80 rounded-md outline outline-1 outline-offset-[-1px] outline-neutral-400 inline-flex flex-col justify-center items-start gap-3.5">
-                            <div class="self-stretch inline-flex justify-between items-start">
-                                <div class="justify-start text-neutral-800 text-lg font-bold leading-snug">{{ $mentor->user->name }}</div>
-                                <div
-                                    class="w-24 px-3.5 py-[5px] bg-teal-300/20 rounded-md flex justify-center items-center gap-2.5">
-                                    <div class="flex-1 text-center justify-start text-teal-500 text-base leading-tight">
-                                        {{ $mentor->position }}</div>
+                    @forelse ($mentors as $mentor)
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-200 p-5 flex flex-col h-full">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-bold shrink-0">
+                                        {{ strtoupper(substr($mentor->user->name, 0, 1)) }}
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-800">{{ $mentor->user->name }}</h3>
                                 </div>
+                                <span class="bg-teal-50 text-teal-600 px-3 py-1 rounded-full text-xs font-semibold border border-teal-100">{{ $mentor->position }}</span>
                             </div>
-                            <div class="self-stretch justify-start text-neutral-800 text-lg font-normal leading-snug">
-                                {{ $mentor->user->email }}
+                            
+                            <div class="flex items-center gap-3 mb-6 flex-1">
+                                <x-heroicon-o-envelope class="w-5 h-5 text-gray-400 shrink-0" />
+                                <span class="text-sm text-gray-600">{{ $mentor->user->email }}</span>
                             </div>
-                            <div class="w-1/2 inline-flex justify-start items-center gap-2.5">
+                            
+                            <div class="mt-auto pt-4 border-t border-gray-100 flex gap-2">
                                 <a href="{{ route('mentors.edit', ['mentor' => $mentor->id]) }}"
-                                    class="flex-1 px-2.5 py-[5px] bg-blue-500 hover:bg-blue-600 rounded-sm flex justify-center items-center gap-2.5">
-                                    <div class="justify-start text-white text-base leading-tight">Edit</div>
-                                    <x-heroicon-o-pencil-square class="w-6 h-6 text-white" stroke-width="2" />
+                                    class="flex-1 flex justify-center items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                    <x-heroicon-o-pencil class="w-4 h-4" /> Edit
                                 </a>
                                 <section x-data="{ open: false }" class="flex-1">
-                                    {{-- Tombol Hapus --}}
                                     <button @click="open = true"
-                                        class="w-full px-2.5 py-1.5 bg-red-500 hover:bg-red-600 rounded-sm flex justify-center items-center gap-2.5">
-                                        <span class="text-white text-base">Nonaktif</span>
-                                        <x-heroicon-o-x-mark class="w-6 h-6 text-white" stroke-width="2" />
+                                        class="w-full h-full flex justify-center items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                        <x-heroicon-o-x-mark class="w-4 h-4" /> Nonaktif
                                     </button>
-
                                     {{-- Modal --}}
                                     <template x-if="open">
-                                        <div
-                                            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                                            <div
-                                                class="w-fit px-32 py-7 bg-white rounded-md flex flex-col justify-center items-center gap-8">
+                                        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                            <div class="w-fit px-16 sm:px-32 py-7 bg-white rounded-md flex flex-col justify-center items-center gap-8">
                                                 <section class="flex flex-col">
-                                                    <span class="text-center text-neutral-800 text-xl">
-                                                        Apakah Anda yakin ingin menonaktifkan
-                                                    </span>
-                                                    <span class="text-center text-neutral-800 text-xl">
-                                                        Pendamping ini?
-                                                    </span>
+                                                    <span class="text-center text-neutral-800 text-xl">Apakah Anda yakin ingin menonaktifkan</span>
+                                                    <span class="text-center text-neutral-800 text-xl font-bold">Pendamping ini?</span>
                                                 </section>
-                                                <div class="inline-flex justify-between items-center gap-36">
-                                                    {{-- Tombol Tidak --}}
-                                                    <button @click="open = false"
-                                                        class="px-5 py-2 rounded-md outline outline-1 outline-stone-300 hover:bg-gray-400 hover:text-white hover:outline-none text-lg">
+                                                <div class="flex justify-center items-center gap-8 w-full mt-4">
+                                                    <button @click="open = false" type="button" class="px-5 py-2 rounded-md outline outline-1 outline-stone-300 hover:bg-gray-400 hover:text-white hover:outline-none text-lg">
                                                         Tidak
                                                     </button>
-
-                                                    {{-- Tombol Ya --}}
-                                                    <button @click="open = false"
-                                                        class="px-7 py-2 rounded-md text-white bg-brand-primary hover:bg-teal-500 hover:text-white">
+                                                    <button @click="open = false" type="button" class="px-7 py-2 rounded-md text-white bg-brand-primary hover:bg-teal-500 hover:text-white text-lg">
                                                         Ya
                                                     </button>
                                                 </div>
@@ -90,7 +77,9 @@
                                 </section>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-span-full w-full text-center py-10 rounded-xl bg-gray-50 border border-gray-100 mt-4"><p class="text-gray-500">Tidak ada data ditemukan.</p></div>
+                    @endforelse
                 </div>
             </div>
         </div>

@@ -23,10 +23,12 @@ class AttendanceSessionController extends BaseController
         $user = Auth::user();
 
         // Hanya menampilkan sesi milik industri user yang sedang login
-        $attendanceSessions = AttendanceSession::where('industry_id', $user->industry->id)
-            ->with('user')
-            ->latest()
-            ->paginate(15);
+        $attendanceSessions = $user->industry 
+            ? AttendanceSession::where('industry_id', $user->industry->id)
+                ->with('user')
+                ->latest()
+                ->paginate(15)
+            : new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
 
         return view('industry.attendanceSessions.index', compact('attendanceSessions'));
     }

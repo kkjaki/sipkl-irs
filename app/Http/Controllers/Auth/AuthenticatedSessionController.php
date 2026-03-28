@@ -32,6 +32,7 @@ class AuthenticatedSessionController extends Controller
 
         $defaultRoute = match ($user->role) {
             'student' => route('student.dashboard', absolute: false),
+            'mentor'  => route('schools.management', absolute: false),
             default   => route('dashboard', absolute: false),
         };
 

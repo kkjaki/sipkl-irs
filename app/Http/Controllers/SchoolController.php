@@ -24,12 +24,12 @@ class SchoolController extends BaseController
     public function management()
     {
         $user = Auth::user();
-        // Deny access for non-owner roles.
-        if ($user->role !== 'owner') {
+        
+        if (!in_array($user->role, ['owner', 'mentor'])) {
             abort(403, 'Unauthorized action.');
         }
 
-        $schools = School::where('industry_id', $user->industry->id)->get();
+        $schools = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
 
         return view('industry.schools.management', compact('schools'));
     }
@@ -45,7 +45,7 @@ class SchoolController extends BaseController
             abort(403, 'Unauthorized action.');
         }
 
-        $schools = School::where('industry_id', $user->industry->id)->get();
+        $schools = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
 
         return view('industry.schools.index', compact('schools'));
     }
@@ -79,7 +79,7 @@ class SchoolController extends BaseController
         }
         $validatedData = $request->validated();
         // Assign the industry_id from the authenticated owner's industry.
-        $validatedData['industry_id'] = $user->industry->id;
+        $validatedData['industry_id'] = $user->industry_id;
 
         School::create($validatedData);
 
@@ -93,7 +93,7 @@ class SchoolController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the school is not in their industry.
-        if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $school->industry_id !== $user->industry_id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -107,7 +107,7 @@ class SchoolController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the school is not in their industry.
-        if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $school->industry_id !== $user->industry_id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -121,7 +121,7 @@ class SchoolController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the school is not in their industry.
-        if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $school->industry_id !== $user->industry_id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -138,7 +138,7 @@ class SchoolController extends BaseController
     {
         $user = Auth::user();
         // Deny access if user is not an owner or the school is not in their industry.
-        if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
+        if ($user->role !== 'owner' || $school->industry_id !== $user->industry_id) {
             abort(403, 'Unauthorized action.');
         }
 

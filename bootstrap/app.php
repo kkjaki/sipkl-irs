@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //Daftarkan Alias Middleware
         $middleware->alias([
             'is.student' => \App\Http\Middleware\IsStudent::class,
+            'role' => \App\Http\Middleware\CheckRole::class,
+            'profile.completed' => \App\Http\Middleware\EnsureStudentProfileCompleted::class,
         ]);
 
         //Bypass CSRF untuk Postman (Individu & Massal)

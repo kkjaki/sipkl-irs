@@ -12,21 +12,21 @@
             </div>
         </header>
 
-        <a href="{{ route('internship-programs.create') }}"
-            class="mb-6 w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
-            <span class="justify-start text-white text-lg leading-snug">Buat Program Baru</span>
-            <x-heroicon-o-plus class="w-6 h-6 text-white" stroke-width="3" />
-        </a>
-
         <!-- Container & Header Data -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 flex justify-between items-center relative rounded-t-xl text-white font-bold text-lg">
-                Data Program PKL
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 flex justify-between items-center relative rounded-t-xl text-white">
+                <div class="flex items-center gap-2.5 text-white">
+                    <x-heroicon-o-briefcase class="w-6 h-6"/>
+                    <h2 class="font-bold text-lg m-0">Data Program PKL</h2>
+                </div>
+                <a href="{{ route('internship-programs.create') }}" class="bg-white text-teal-600 hover:bg-gray-50 px-4 py-2 rounded-md text-sm font-semibold flex items-center gap-2 transition-colors shadow-sm">
+                    <x-heroicon-o-plus class="w-4 h-4"/> Buat Program
+                </a>
             </div>
 
             <!-- Grid Cards Container -->
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ($internshipPrograms as $program)
+                @forelse ($internshipPrograms as $program)
                     <!-- Desain Card Program -->
                     <div x-data="{ open: false }" class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all flex flex-col">
                         
@@ -116,7 +116,9 @@
                         </template>
 
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-span-full w-full text-center py-10 rounded-xl bg-gray-50 border border-gray-100 mt-4"><p class="text-gray-500">Tidak ada data ditemukan.</p></div>
+                @endforelse
             </div>
         </div>
     </main>

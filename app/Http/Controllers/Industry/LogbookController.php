@@ -14,7 +14,11 @@ class LogbookController extends Controller
      */
     public function index()
     {
-        $logbooks = Logbook::with(['student.user', 'student.school'])
+        $user = auth()->user();
+        $logbooks = Logbook::whereHas('student', function ($query) use ($user) {
+                $query->where('industry_id', $user->industry_id);
+            })
+            ->with(['student.user', 'student.school'])
             ->latest()
             ->paginate(30);
             
@@ -28,7 +32,12 @@ class LogbookController extends Controller
     //  INDIVIDU 
     public function edit($id)
     {
-        $logbook = Logbook::with(['student.user'])->findOrFail($id);
+        $user = auth()->user();
+        $logbook = Logbook::whereHas('student', function ($query) use ($user) {
+                $query->where('industry_id', $user->industry_id);
+            })
+            ->with(['student.user'])
+            ->findOrFail($id);
         return view('industry.logbooks.edit', compact('logbook'));
     }
 
@@ -39,7 +48,11 @@ class LogbookController extends Controller
             'feedback' => 'nullable|string'
         ]);
 
-        $logbook = \App\Models\Logbook::findOrFail($id);
+        $user = auth()->user();
+        $logbook = \App\Models\Logbook::whereHas('student', function ($query) use ($user) {
+                $query->where('industry_id', $user->industry_id);
+            })->findOrFail($id);
+
         $logbook->status = $request->status;
         $logbook->feedback = $request->feedback;
         $logbook->save();
@@ -62,9 +75,15 @@ class LogbookController extends Controller
             'status' => 'required|in:approved,rejected',
         ]);
 
-        \App\Models\Logbook::whereIn('id', $request->ids)->update([
-            'status' => $request->status
-        ]);
+        $user = auth()->user();
+        
+        \App\Models\Logbook::whereIn('id', $request->ids)
+            ->whereHas('student', function ($query) use ($user) {
+                $query->where('industry_id', $user->industry_id);
+            })
+            ->update([
+                'status' => $request->status
+            ]);
 
         if ($request->wantsJson() || $request->header('Accept') == 'application/json') {
             return response()->json([
@@ -81,7 +100,11 @@ class LogbookController extends Controller
      */
     public function recap()
     {
-        $recap = Logbook::with(['student.user'])
+        $user = auth()->user();
+        $recap = Logbook::whereHas('student', function ($query) use ($user) {
+                $query->where('industry_id', $user->industry_id);
+            })
+            ->with(['student.user'])
             ->whereIn('status', ['approved', 'rejected'])
             ->latest()
             ->get();

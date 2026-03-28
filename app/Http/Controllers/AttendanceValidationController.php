@@ -18,11 +18,11 @@ class AttendanceValidationController extends BaseController
     {
         $user = Auth::user();
         
-        if ($user->role !== 'owner') {
+        if (!in_array($user->role, ['owner', 'mentor'])) {
             abort(403, 'Unauthorized action.');
         }
 
-        $schools = School::where('industry_id', $user->industry->id)->get();
+        $schools = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
         
         return view('industry.attendance-validation.index', compact('schools'));
     }
@@ -31,12 +31,13 @@ class AttendanceValidationController extends BaseController
     {
         $user = Auth::user();
         
-        if ($user->role !== 'owner') {
+        if (!in_array($user->role, ['owner', 'mentor'])) {
             abort(403, 'Unauthorized action.');
         }
 
         // Cari School berdasarkan $id, pastikan industry_id sesuai
-        $school = School::where('industry_id', $user->industry->id)->findOrFail($id);
+        $industryId = $user->industry_id ?? -1;
+        $school = School::where('industry_id', $industryId)->findOrFail($id);
 
         // Mengambil data Attendance dimana relasi student-nya memiliki school_id yang sama dengan $id sekolah
         $attendances = \App\Models\Attendance::whereHas('student', function ($query) use ($school) {

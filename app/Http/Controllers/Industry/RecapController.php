@@ -11,9 +11,14 @@ class RecapController extends Controller
 {
     public function index(Request $request)
     {
-        $schools = School::orderBy('name')->get();
+        $user = auth()->user();
+        
+        $schools = School::where('industry_id', $user->industry_id)
+            ->orderBy('name')
+            ->get();
 
-        $query = Student::with(['user', 'school'])
+        $query = Student::where('industry_id', $user->industry_id)
+            ->with(['user', 'school'])
             ->withCount([
                 'attendances as hadir_count' => function ($q) {
                     $q->where('status', 'hadir');

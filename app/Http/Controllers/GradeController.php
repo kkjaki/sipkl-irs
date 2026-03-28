@@ -23,7 +23,7 @@ class GradeController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $school = School::where('industry_id', $user->industry->id)->get();
+        $school = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
 
         return view('industry.grades.index', compact('school'));
     }
@@ -51,7 +51,7 @@ class GradeController extends Controller
     {
         $user = Auth::user();
 
-        if (!in_array($user->role, ['owner', 'mentor'])) {
+        if (!in_array($user->role, ['owner', 'mentor']) || $school->industry_id !== $user->industry_id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -66,7 +66,7 @@ class GradeController extends Controller
     {
         $user = Auth::user();
 
-        if (!in_array($user->role, ['owner', 'mentor'])) {
+        if (!in_array($user->role, ['owner', 'mentor']) || $school->industry_id !== $user->industry_id) {
             abort(403, 'Unauthorized action.');
         }
 

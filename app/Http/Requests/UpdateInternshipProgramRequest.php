@@ -25,11 +25,13 @@ class UpdateInternshipProgramRequest extends FormRequest
      */
     public function rules(): array
     {
+        $programId = $this->route('internship_program') ? $this->route('internship_program')->id : null;
+
         return [
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'invitation_code' => 'nullable|string|max:255',
+            'invitation_code' => 'nullable|string|max:10|unique:internship_programs,invitation_code,' . $programId,
             'is_active' => 'boolean',
         ];
     }

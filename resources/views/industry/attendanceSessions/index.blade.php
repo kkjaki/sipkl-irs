@@ -10,10 +10,13 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
         
         <!-- Header Wadah -->
-        <div class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-4 flex justify-between items-center">
-            <h2 class="text-lg font-semibold">Data Sesi Presensi</h2>
-            <a href="{{ route('attendance-sessions.create') }}" class="bg-white text-brand-primary font-bold rounded px-4 py-2 hover:bg-gray-50 transition-colors text-sm shadow-sm">
-                + Buka Sesi Baru
+        <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white">
+            <div class="flex items-center gap-2.5 text-white">
+                <x-heroicon-o-clipboard-document-list class="w-6 h-6"/>
+                <h2 class="font-bold text-lg m-0">Data Sesi Presensi</h2>
+            </div>
+            <a href="{{ route('attendance-sessions.create') }}" class="bg-white text-teal-600 hover:bg-gray-50 px-4 py-2 rounded-md text-sm font-semibold flex items-center gap-2 transition-colors shadow-sm">
+                <x-heroicon-o-plus class="w-4 h-4"/> Buka Sesi Baru
             </a>
         </div>
 

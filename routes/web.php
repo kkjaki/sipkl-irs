@@ -14,6 +14,7 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 use App\Http\Controllers\Student\AttendanceController as StudentAttendanceController;
 use App\Http\Controllers\Student\LogbookController as StudentLogbookController;
 use App\Http\Controllers\Student\GradeController as StudentGradeController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Industry\LogbookController;
 use Illuminate\Http\Request;
@@ -22,92 +23,99 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    if (Auth::check() && Auth::user()->role === 'student') {
-        return redirect()->route('student.dashboard');
-    }
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/schools/management', [SchoolController::class, 'management'])->name('schools.management');
-    Route::resource('schools', SchoolController::class);
-    Route::resource('schools.supervisors', SchoolSupervisorController::class)->except(['show'])->shallow();
-    Route::resource('schools.criteria', CriterionController::class)->except(['show'])->shallow();
-    Route::resource('mentors', MentorController::class)->except(['show']);
-    Route::post('mentors/{mentor}/deactivate', [MentorController::class, 'deactivate'])->name('mentors.deactivate');
-    Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');
-    Route::resource('internship-programs', InternshipProgramController::class);
+    // SHARED ROUTES (Owner & Mentor)
+    Route::middleware(['role:owner,mentor'])->group(function () {
+        Route::get('/schools/management', [SchoolController::class, 'management'])->name('schools.management');
+        Route::patch('/attendance-sessions/{attendanceSession}/close', [AttendanceSessionController::class, 'close'])->name('attendance-sessions.close');
+        Route::resource('attendance-sessions', AttendanceSessionController::class);
 
-    Route::patch('/attendance-sessions/{attendanceSession}/close', [AttendanceSessionController::class, 'close'])->name('attendance-sessions.close');
-    Route::resource('attendance-sessions', AttendanceSessionController::class);
+        Route::controller(AttendanceController::class)->group(function () {
+            Route::get('/attendance-sessions/{session}/validate', 'show')->name('attendance.validate.show');
+            Route::put('/attendance-sessions/{session}/validate', 'update')->name('attendance.validate.update');
+        });
 
-    Route::controller(AttendanceController::class)->group(function () {
-        Route::get('/attendance-sessions/{session}/validate', 'show')->name('attendance.validate.show');
-        Route::put('/attendance-sessions/{session}/validate', 'update')->name('attendance.validate.update');
-    });
+        // Validasi Presensi (Owner) List Sekolah
+        Route::get('/attendance-validation', [\App\Http\Controllers\AttendanceValidationController::class, 'index'])->name('attendance.validate.schools.index');
+        Route::get('/attendance-validation/{school}', [\App\Http\Controllers\AttendanceValidationController::class, 'show'])->name('attendance.validate.schools.show');
 
-    // Validasi Presensi (Owner) List Sekolah
-    Route::get('/attendance-validation', [\App\Http\Controllers\AttendanceValidationController::class, 'index'])->name('attendance.validate.schools.index');
-    Route::get('/attendance-validation/{school}', [\App\Http\Controllers\AttendanceValidationController::class, 'show'])->name('attendance.validate.schools.show');
+        // Grades
+        Route::group(['prefix' => 'grades/schools'], function () {
+            Route::controller(GradeController::class)->group(function () {
+                Route::get('/', 'index')->name('grades.schools.index');
+                Route::get('/{school}', 'show')->name('grades.schools.show');
+                Route::get('/{school}/student/{student}', 'edit')->name('grades.schools.edit');
+                Route::put('/{school}/student/{student}', 'update')->name('grades.schools.update');
+            });
+        });
 
-    Route::group(['prefix' => 'grades/schools'], function () {
-        Route::controller(GradeController::class)->group(function () {
-            Route::get('/', 'index')->name('grades.schools.index');
-            Route::get('/{school}', 'show')->name('grades.schools.show');
-            Route::get('/{school}/student/{student}', 'edit')->name('grades.schools.edit');
-            Route::put('/{school}/student/{student}', 'update')->name('grades.schools.update');
+        // Industry Logbook API Routes
+        Route::prefix('industry')->name('industry.')->group(function () {
+            Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
+            Route::get('/logbooks/{id}/edit', [LogbookController::class, 'edit'])->name('logbooks.edit');
+            Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
+            Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
+            Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
+            Route::get('/recap', [\App\Http\Controllers\Industry\RecapController::class, 'index'])->name('recap.index');
         });
     });
 
-    // Industry/Owner Logbook API Routes
-    Route::prefix('industry')->name('industry.')->group(function () {
-        Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
-        Route::get('/logbooks/{id}/edit', [LogbookController::class, 'edit'])->name('logbooks.edit');
-        Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
-        Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
-        Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
-        Route::get('/recap', [\App\Http\Controllers\Industry\RecapController::class, 'index'])->name('recap.index');
-    });
-
-    // Student routes
-    Route::middleware(['auth', 'is.student'])->prefix('student')->name('student.')->group(function () {
-        Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
-
-        // Attendance routes
-        Route::controller(StudentAttendanceController::class)->group(function () {
-            Route::get('/presensi/harian', 'presensiHarian')->name('presensi.harian');
-            Route::post('/presensi', 'store')->name('presensi.store');
-            Route::get('/presensi/daftar', 'index')->name('presensi.index');
-        });
-
-        // Logbook routes
-        Route::controller(StudentLogbookController::class)->group(function () {
-            Route::get('/logbook/harian', 'logbookHarian')->name('logbook.harian');
-            Route::post('/logbook', 'store')->name('logbook.store');
-            Route::get('/logbook/daftar', 'index')->name('logbook.index');
-            Route::get('/logbook/{id}/edit', 'edit')->name('logbook.edit');
-            Route::put('/logbook/{id}', 'update')->name('logbook.update');
-        });
-
-        // Grades routes
-        Route::controller(StudentGradeController::class)->group(function () {
-            Route::get('/nilai', 'index')->name('nilai.index');
-            Route::get('/nilai/download', 'downloadPdf')->name('nilai.download');
-        });
-    });
-
-    // Industry/Owner routes
+    // OWNER EXCLUSIVE ROUTES
     Route::middleware(['role:owner'])->group(function () {
+        Route::resource('schools', SchoolController::class);
+        Route::resource('schools.supervisors', SchoolSupervisorController::class)->except(['show'])->shallow();
+        Route::resource('schools.criteria', CriterionController::class)->except(['show'])->shallow();
+        Route::resource('mentors', MentorController::class)->except(['show']);
+        Route::post('mentors/{mentor}/deactivate', [MentorController::class, 'deactivate'])->name('mentors.deactivate');
+        Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');
+        Route::resource('internship-programs', InternshipProgramController::class);
+
         Route::get('/industry', function () {
             return view('industry.dashboard');
         })->name('industry');
     });
 
+    // Student routes
+    Route::middleware(['is.student'])->prefix('student')->name('student.')->group(function () {
+        
+        // Onboarding Setup
+        Route::get('/setup', [\App\Http\Controllers\StudentSetupController::class, 'create'])->name('setup');
+        Route::post('/setup', [\App\Http\Controllers\StudentSetupController::class, 'store'])->name('setup.store');
+
+        Route::middleware(['profile.completed'])->group(function () {
+            Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
+
+            // Attendance routes
+            Route::controller(StudentAttendanceController::class)->group(function () {
+                Route::get('/presensi/harian', 'presensiHarian')->name('presensi.harian');
+                Route::post('/presensi', 'store')->name('presensi.store');
+                Route::get('/presensi/daftar', 'index')->name('presensi.index');
+            });
+
+            // Logbook routes
+            Route::controller(StudentLogbookController::class)->group(function () {
+                Route::get('/logbook/harian', 'logbookHarian')->name('logbook.harian');
+                Route::post('/logbook', 'store')->name('logbook.store');
+                Route::get('/logbook/daftar', 'index')->name('logbook.index');
+                Route::get('/logbook/{id}/edit', 'edit')->name('logbook.edit');
+                Route::put('/logbook/{id}', 'update')->name('logbook.update');
+            });
+
+            // Grades routes
+            Route::controller(StudentGradeController::class)->group(function () {
+                Route::get('/nilai', 'index')->name('nilai.index');
+                Route::get('/nilai/download', 'downloadPdf')->name('nilai.download');
+            });
+        });
+    });
 });
 
 Route::get('csrf-token', function () {

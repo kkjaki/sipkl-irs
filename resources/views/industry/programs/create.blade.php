@@ -41,6 +41,16 @@
                         class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
+                {{-- Kode Undangan --}}
+                <section class="w-full flex items-start gap-6">
+                    <label for="invitation_code" class="w-40 text-neutral-800 text-base mt-2">Kode Undangan<br><span class="text-sm font-normal text-gray-500">(Otomatis jika kosong)</span></label>
+                    <div class="flex flex-col gap-1.5">
+                        <input type="text" id="invitation_code" name="invitation_code" maxlength="10" placeholder="Contoh: IRS2026" value="{{ old('invitation_code') }}"
+                            class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+                        <span class="text-sm text-gray-500">Gunakan kode kustom atau biarkan kosong agar sistem membuatkan kode acak (6 karakter).</span>
+                    </div>
+                </section>
+
                 {{-- Button Grup --}}
                 <section class="pt-5 flex items-center gap-3.5">
                     <button type="submit"
