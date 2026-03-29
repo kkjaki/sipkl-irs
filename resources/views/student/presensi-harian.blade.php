@@ -165,11 +165,11 @@
                 </button>
             </div>
 
-            <form id="attendanceForm" class="p-6 space-y-5">
+            <form id="attendanceForm" class="p-6 space-y-5" x-data="{ status: '' }">
                 @csrf
                 <input type="hidden" id="attendance_session_id" name="attendance_session_id">
 
-                {{-- Camera Section --}}
+                {{-- Status Selection (Pindah ke atas agar logis dipilih duluan) --}}
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Foto
                         Presensi <span class="text-red-500">*</span></label>
@@ -250,6 +250,42 @@
                     </div>
                 </div>
 
+                {{-- Camera Section (Hanya tampil jika Hadir) --}}
+                <div x-show="status === 'hadir'" x-transition class="mt-4">
+                    <label class="block text-gray-700 font-semibold mb-2">Foto Presensi (Selfie) <span class="text-red-500">*</span></label>
+                    <div class="space-y-3">
+                        <div class="relative">
+                            <video id="cameraPreview" class="w-full h-64 bg-black rounded-lg object-cover" autoplay playsinline></video>
+                            <canvas id="photoCanvas" class="hidden"></canvas>
+                            <img id="photoPreview" class="w-full h-64 object-cover rounded-lg hidden">
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" id="startCameraBtn" onclick="startCamera()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">
+                                <i class="fas fa-camera mr-2"></i>Aktifkan Kamera
+                            </button>
+                            <button type="button" id="captureBtn" onclick="capturePhoto()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition hidden">
+                                <i class="fas fa-camera mr-2"></i>Ambil Foto
+                            </button>
+                            <button type="button" id="retakeBtn" onclick="retakePhoto()" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition hidden">
+                                <i class="fas fa-redo mr-2"></i>Ulang Foto
+                            </button>
+                        </div>
+                        <p id="cameraError" class="text-red-500 text-sm hidden"></p>
+                    </div>
+                </div>
+
+                {{-- Upload Section (Hanya tampil jika Izin/Sakit) --}}
+                <div x-show="status === 'izin' || status === 'sakit'" x-transition class="mt-4">
+                    <label class="block text-gray-700 font-semibold mb-2">Upload Surat Keterangan <span class="text-red-500">*</span></label>
+                    <button type="button" onclick="document.getElementById('imageInput').click()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition flex justify-center items-center">
+                        <i class="fas fa-upload mr-2"></i>Pilih File Surat
+                    </button>
+                    <p class="text-xs text-gray-500 mt-2 text-center">Format: JPG, PNG, PDF (Maks 2MB)</p>
+                </div>
+
+                {{-- File Input (hidden untuk fungsi JS bawaan) --}}
+                <input type="file" id="imageInput" name="image" accept="image/*,.pdf" class="hidden" onchange="handleFileSelect(event)">
+
                 {{-- Notes --}}
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Catatan
@@ -264,10 +300,8 @@
                 <input type="hidden" name="longitude" id="longitude_input">
 
                 {{-- Submit Button --}}
-                <button type="submit" id="submitBtn"
-                    class="w-full bg-brand-primary hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                    <i class="fas fa-paper-plane mr-2"></i>
-                    Kirim Presensi
+                <button type="submit" id="submitBtn" class="w-full bg-brand-primary hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    <i class="fas fa-paper-plane mr-2"></i> Kirim Presensi
                 </button>
             </form>
         </div>
@@ -305,6 +339,16 @@
             resetForm();
         }
 
+        // Fungsi Robust buat convert Base64 ke Blob file beneran
+        function dataURLtoBlob(dataurl) {
+            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while(n--){
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], {type:mime});
+        }
+
         async function startCamera() {
             const video = document.getElementById('cameraPreview');
             const errorMsg = document.getElementById('cameraError');
@@ -339,23 +383,81 @@
         function capturePhoto() {
             const video = document.getElementById('cameraPreview');
             const canvas = document.getElementById('photoCanvas');
+            const ctx = canvas.getContext('2d');
             const photoPreview = document.getElementById('photoPreview');
 
+            // 1. Setup Canvas
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-
-            const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            photoDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-            photoPreview.src = photoDataUrl;
+            // 2. Ambil Lokasi & Watermark
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lon = position.coords.longitude.toFixed(6);
 
-            video.classList.add('hidden');
-            photoPreview.classList.remove('hidden');
-            document.getElementById('captureBtn').classList.add('hidden');
-            document.getElementById('retakeBtn').classList.remove('hidden');
+                        const dateOptions = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second:'2-digit' };
+                        const timeNow = new Date().toLocaleDateString('id-ID', dateOptions);
 
-            stopCamera();
+                        const text1 = `Lat: ${lat}, Long: ${lon}`;
+                        const text2 = timeNow;
+
+                        // Styling Watermark
+                        ctx.fillStyle = "white";
+                        ctx.font = "bold 20px Arial"; // Agak gedein dikit biar jelas
+                        ctx.shadowColor = "black";
+                        ctx.shadowBlur = 7;
+                        ctx.shadowOffsetX = 3;
+                        ctx.shadowOffsetY = 3;
+
+                        // Tulis Watermark
+                        ctx.fillText(text1, 20, canvas.height - 50);
+                        ctx.fillText(text2, 20, canvas.height - 20);
+
+                        // 3. Convert ke Gambar & Tampilkan
+                        const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                        photoPreview.src = dataURL;
+
+                        // --- JURUS INJECT FILE ROBUST (LANGKAH INTINYA DI SINI) ---
+                        try {
+                            // Pake fungsi helper dataURLtoBlob yang udah ditambahin sebelumnya
+                            const blob = dataURLtoBlob(dataURL);
+                            const file = new File([blob], "selfie_geotag.jpg", { type: "image/jpeg" });
+
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+
+                            // Tembak file-nya ke input hidden beneran
+                            const fileInput = document.getElementById('imageInput');
+                            fileInput.files = dataTransfer.files;
+                            
+                            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+                            console.log("File sukses di-inject ke input! Siap kirim.");
+                        } catch (e) {
+                            console.error("Gagal inject file:", e);
+                            alert("Waduh gagal ngerubah foto jadi file bre. Cek console F12.");
+                        }
+                        // -----------------------------------------------------------
+
+                        // 4. Update UI
+                        video.classList.add('hidden');
+                        photoPreview.classList.remove('hidden');
+                        document.getElementById('captureBtn').classList.add('hidden');
+                        document.getElementById('retakeBtn').classList.remove('hidden');
+                        document.getElementById('submitBtn').disabled = false; // Aktifin tombol submit
+
+                    },
+                    function(error) {
+                        alert("GPS WAJIB NYALA BRE! refresh halaman trus ijinin lokasi.");
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            } else {
+                alert("Browser lu kaga support GPS bre.");
+            }
         }
 
         function retakePhoto() {

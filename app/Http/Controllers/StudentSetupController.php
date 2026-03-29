@@ -51,14 +51,14 @@ class StudentSetupController extends Controller
 
         // Update Students Table (Kita update row yang sudah dibuat saat register)
         if ($user->student) {
-            // $industryId = $user->student->internshipProgram->industry_id ?? null;
+            $industryId = $user->student->internshipProgram->industry_id ?? null;
             $user->student->update([
-                'nis'     => $validatedData['nis'],
-                'class'   => $validatedData['class'],
-                'address' => $validatedData['address'],
-                'phone'   => $validatedData['phone'],
-                'hobby'   => $validatedData['hobby'],
-                // 'industry_id' => $industryId,
+                'nis'         => $validatedData['nis'],
+                'class'       => $validatedData['class'],
+                'address'     => $validatedData['address'],
+                'phone'       => $validatedData['phone'],
+                'hobby'       => $validatedData['hobby'],
+                'industry_id' => $industryId,
             ]);
         }
 

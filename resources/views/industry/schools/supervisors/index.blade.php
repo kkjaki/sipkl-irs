@@ -70,10 +70,6 @@
                             <x-heroicon-o-phone class="w-5 h-5 text-gray-400 shrink-0" />
                             <span class="text-sm text-gray-600">{{ $supervisor->phone }}</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <x-heroicon-o-envelope class="w-5 h-5 text-gray-400 shrink-0" />
-                            <span class="text-sm text-gray-600 italic">{{ $supervisor->email ?? 'Belum ada email' }}</span>
-                        </div>
                     </div>
 
                     {{-- Action Buttons --}}

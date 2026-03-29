@@ -15,7 +15,7 @@ class GradeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -23,7 +23,15 @@ class GradeController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $school = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
+
+        $query = School::where('industry_id', $userIndustryId);
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $school = $userIndustryId ? $query->get() : collect();
 
         return view('industry.grades.index', compact('school'));
     }
