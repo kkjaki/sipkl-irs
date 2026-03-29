@@ -22,11 +22,18 @@ class AttendanceSessionController extends BaseController
     {
         $user = Auth::user();
 
-        // Hanya menampilkan sesi milik industri user yang sedang login
-        $attendanceSessions = $user->industry
-            ? AttendanceSession::where('industry_id', $user->industry->id)
+        $industryId = null;
+        if ($user->role === 'owner') {
+            $industryId = $user->industry->id ?? null;
+        } elseif ($user->role === 'mentor') {
+            $industryId = $user->mentor->industry_id ?? null;
+        }
+
+        // Menampilkan sesi tanpa mempedulikan status aktif/non-aktif
+        $attendanceSessions = $industryId
+            ? AttendanceSession::where('industry_id', $industryId)
             ->with('user')
-            ->latest()
+            ->orderBy('created_at', 'desc')
             ->paginate(15)
             : new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
 

@@ -104,20 +104,25 @@
         </div>
         
         <div class="p-6">
-            <!-- Grid Layout foreach Attendance -->
+            <!-- Grid Layout foreach Student -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                @forelse($attendances as $attendance)
+                @forelse($students as $student)
+                    @php
+                        $attendance = $student->attendances->first();
+                        $statusRaw = $attendance ? strtolower($attendance->status) : 'alpa';
+                        $statusDisplay = $attendance ? ucfirst($attendance->status) : 'Belum Absen';
+                    @endphp
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative" 
-                         x-show="activeFilter === 'all' || activeFilter === '{{ strtolower($attendance->status) }}'"
+                         x-show="activeFilter === 'all' || activeFilter === '{{ $statusRaw }}'"
                          x-data="{ 
                              showModal: false, 
-                             statusUpdate: '{{ $attendance->status }}' 
+                             statusUpdate: '{{ $statusRaw }}' 
                          }">
                         
                         <!-- Badges Modal Trigger -->
                         <button @click="showModal = true" class="absolute top-4 right-4 focus:outline-none">
                             @php
-                                $badgeClass = match(strtolower($attendance->status)) {
+                                $badgeClass = match($statusRaw) {
                                     'hadir' => 'bg-green-100 text-green-800 border-green-200',
                                     'izin', 'sakit' => 'bg-blue-100 text-blue-800 border-blue-200',
                                     'alpa' => 'bg-red-100 text-red-800 border-red-200',
@@ -125,7 +130,7 @@
                                 };
                             @endphp
                             <span class="px-3 py-1 rounded-full text-xs font-semibold border {{ $badgeClass }} transition-colors hover:opacity-80">
-                                {{ ucfirst($attendance->status) }}
+                                {{ $statusDisplay }}
                                 <svg class="w-4 h-4 ml-1.5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </span>
                         </button>
@@ -136,15 +141,14 @@
                                 <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                <span class="text-blue-700/80 font-semibold text-xs">TANGGAL SESI:</span>
-                                <span class="text-blue-900 font-bold text-sm">{{ \Carbon\Carbon::parse($attendance->session->session_date ?? $attendance->session->created_at)->translatedFormat('l, d F Y') }}</span>
+                                <span class="text-blue-700/80 font-semibold text-xs">SESI PRESENSI AKTIF</span>
                             </div>
 
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $attendance->student->user->name ?? 'Nama Siswa Tidak Ditemukan' }}</h3>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $student->user->name ?? 'Nama Siswa Tidak Ditemukan' }}</h3>
                             
                             <div class="text-sm text-gray-600 space-y-1 mb-4">
-                                <p>NIS: <span class="font-medium">{{ $attendance->student->nis ?? '-' }}</span></p>
-                                @if($attendance->check_in)
+                                <p>NIS: <span class="font-medium">{{ $student->nis ?? '-' }}</span></p>
+                                @if($attendance && $attendance->check_in)
                                     <p>Waktu Check In: <span class="font-medium">{{ \Carbon\Carbon::parse($attendance->check_in)->format('H:i') }} WIB</span></p>
                                 @else
                                     <p>Waktu Check In: <span class="italic text-gray-400">Belum Check In</span></p>
@@ -153,7 +157,7 @@
                         </div>
                         
                         <div class="mt-4 pt-4 border-t border-gray-100">
-                            @if($attendance->image)
+                            @if($attendance && $attendance->image)
                                 <a href="{{ Storage::url($attendance->image) }}" target="_blank" 
                                    class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -180,12 +184,13 @@
                                  class="bg-white rounded-xl shadow-xl transform transition-all sm:max-w-lg sm:w-full p-6 m-4 relative z-50">
                                  
                                  <h3 class="text-lg font-bold text-gray-900 mb-4">Ubah Status Kehadiran</h3>
-                                 <p class="text-sm text-gray-500 mb-4">Siswa: <span class="font-semibold">{{ $attendance->student->user->name ?? '-' }}</span></p>
+                                 <p class="text-sm text-gray-500 mb-4">Siswa: <span class="font-semibold">{{ $student->user->name ?? '-' }}</span></p>
 
                                  <div class="mb-5">
                                      <label class="block text-sm font-medium text-gray-700 mb-1">Status Kehadiran</label>
                                      <select x-model="statusUpdate" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-primary focus:ring-brand-primary focus:ring-opacity-50">
                                         <option value="hadir">Hadir</option>
+                                        <option value="terlambat">Terlambat</option>
                                         <option value="izin">Izin</option>
                                         <option value="sakit">Sakit</option>
                                         <option value="alpa">Alpa</option>
@@ -196,7 +201,7 @@
                                      <button type="button" @click="showModal = false" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded-md transition-colors">
                                          Batal
                                      </button>
-                                     <button type="button" @click="updateAttendance({{ $attendance->student_id }}, {{ $attendance->attendance_session_id }}, statusUpdate)" class="px-4 py-2 bg-brand-primary hover:bg-teal-700 text-white text-sm font-medium rounded-md transition-colors">
+                                     <button type="button" @click="updateAttendance({{ $student->id }}, {{ $sessionId }}, statusUpdate)" class="px-4 py-2 bg-brand-primary hover:bg-teal-700 text-white text-sm font-medium rounded-md transition-colors">
                                          Simpan Perubahan
                                      </button>
                                  </div>
@@ -206,14 +211,14 @@
                 @empty
                     <div class="col-span-full flex flex-col items-center justify-center p-8 bg-gray-50 rounded-xl text-center">
                         <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <p class="text-gray-500 font-medium">Belum ada riwayat presensi siswa untuk sekolah ini.</p>
+                        <p class="text-gray-500 font-medium">Belum ada siswa magang di sekolah ini.</p>
                     </div>
                 @endforelse
             </div>
 
             <!-- Navigasi Pagination -->
             <div class="mt-6">
-                {{ $attendances->links() }}
+                {{ $students->links() }}
             </div>
         </div>
     </div>
