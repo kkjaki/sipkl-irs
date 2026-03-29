@@ -35,10 +35,19 @@
                             {{ $program->name }}
                         </div>
 
+                        <!-- Body Card - Mentor Data -->
+                        <div class="mx-4 mt-5 flex items-center gap-3">
+                            <x-heroicon-o-user-circle class="w-9 h-9 text-gray-400" />
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-gray-500">Mentor:</span>
+                                <span class="text-sm font-bold text-teal-600">{{ $program->mentor->user->name ?? 'Belum ada Mentor' }}</span>
+                            </div>
+                        </div>
+
                         <!-- Body Card - Kode Undangan (Fitur Copy) -->
-                        <div class="text-sm text-gray-500 mx-4 mt-4">Kode Undangan</div>
+                        <div class="text-sm font-medium text-gray-500 mx-4 mt-5">Kode Undangan</div>
                         
-                        <div x-data="{ copied: false }" class="bg-gray-50 rounded-md p-3 mx-4 mt-1 flex justify-between items-center border border-gray-200">
+                        <div x-data="{ copied: false }" class="bg-gray-50 rounded-md p-3 mx-4 mt-1.5 flex justify-between items-center border border-gray-200">
                             <span class="font-mono text-xl font-black text-brand-primary tracking-widest">{{ $program->invitation_code }}</span>
                             
                             <button @click="navigator.clipboard.writeText('{{ $program->invitation_code }}'); copied = true; setTimeout(() => copied = false, 2000)" 
@@ -57,8 +66,8 @@
                         </div>
 
                         <!-- Body Card - PERIODE PROGRAM (HIGHLIGHTED) -->
-                        <h4 class="text-sm font-semibold text-gray-700 mx-4 mt-5">Periode Program</h4>
-                        <div class="mx-4 mt-2 mb-4 p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col gap-2.5">
+                        <h4 class="text-sm font-medium text-gray-500 mx-4 mt-5">Periode Program</h4>
+                        <div class="mx-4 mt-1.5 mb-5 p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col gap-2.5">
                             <div class="flex items-center justify-between gap-2">
                                 <span class="flex items-center gap-1.5 text-sm text-slate-600">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
