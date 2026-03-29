@@ -53,6 +53,14 @@ class InternshipProgram extends Model
     }
 
     /**
+     * Get the mentor that this internship program belongs to.
+     */
+    public function mentor(): BelongsTo
+    {
+        return $this->belongsTo(Mentor::class, 'mentor_id', 'id');
+    }
+
+    /**
      * Get all of the students for the internship program.
      */
     public function students(): HasMany
