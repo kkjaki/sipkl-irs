@@ -37,18 +37,21 @@ class AttendanceValidationController extends BaseController
 
         // Cari School berdasarkan $id, pastikan industry_id sesuai
         $industryId = $user->industry_id ?? -1;
+        if ($user->role === 'mentor' && $user->mentor) {
+            $industryId = $user->mentor->industry_id;
+        }
         $school = School::where('industry_id', $industryId)->findOrFail($id);
 
-        // Mengambil data Attendance dimana relasi student-nya memiliki school_id yang sama dengan $id sekolah
-        $attendances = \App\Models\Attendance::whereHas('student', function ($query) use ($school) {
-            $query->where('school_id', $school->id);
-        })
-        ->with(['student.user', 'session'])
-        ->join('attendance_sessions', 'attendances.attendance_session_id', '=', 'attendance_sessions.id')
-        ->orderBy('attendance_sessions.session_date', 'desc')
-        ->select('attendances.*')
-        ->paginate(30);
+        $sessionId = request('session_id') ?? \App\Models\AttendanceSession::where('industry_id', $industryId)->latest()->value('id');
 
-        return view('industry.attendance-validation.show', compact('school', 'attendances'));
+        $students = \App\Models\Student::where('school_id', $school->id)
+            ->where('industry_id', $industryId)
+            ->with(['attendances' => function($query) use ($sessionId) {
+                // Ambil data absen KHUSUS untuk sesi yang sedang divalidasi
+                $query->where('attendance_session_id', $sessionId); 
+            }, 'user'])
+            ->paginate(30);
+
+        return view('industry.attendance-validation.show', compact('school', 'students', 'sessionId'));
     }
 }
