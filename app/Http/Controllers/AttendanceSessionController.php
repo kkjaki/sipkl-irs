@@ -23,11 +23,11 @@ class AttendanceSessionController extends BaseController
         $user = Auth::user();
 
         // Hanya menampilkan sesi milik industri user yang sedang login
-        $attendanceSessions = $user->industry 
+        $attendanceSessions = $user->industry
             ? AttendanceSession::where('industry_id', $user->industry->id)
-                ->with('user')
-                ->latest()
-                ->paginate(15)
+            ->with('user')
+            ->latest()
+            ->paginate(15)
             : new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
 
         return view('industry.attendanceSessions.index', compact('attendanceSessions'));
@@ -43,25 +43,30 @@ class AttendanceSessionController extends BaseController
      */
     public function store(Request $request)
     {
-        // 1. Validasi HANYA untuk jam (Karena nama dan tanggal di-generate otomatis)
+        // Validasi HANYA untuk jam (Karena nama dan tanggal di-generate otomatis)
         $validated = $request->validate([
             'on_time_deadline' => 'required',
             'closed_at' => 'required',
         ]);
 
         $user = Auth::user();
-        
-        // Ambil ID industri user yang login
-        $industryId = $user->industry->id ?? null;
+
+        // Cek identitas: Dia ini Bos atau Mentor?
+        $industryId = null;
+        if ($user->role === 'owner') {
+            $industryId = $user->industry->id ?? null;
+        } elseif ($user->role === 'mentor') {
+            $industryId = $user->mentor->industry_id ?? null;
+        }
 
         if (!$industryId) {
             return redirect()->back()->withErrors(['error' => 'Industri tidak ditemukan pada akun Anda.'])->withInput();
         }
-        
-        // 2. Set tanggal hari ini secara otomatis
+
+        // Set tanggal hari ini secara otomatis
         $sessionDate = now()->toDateString();
 
-        // 3. Cek sesi ganda: Jangan sampai ada sesi dengan jam buka yang SAMA di hari yang SAMA
+        // Cek sesi ganda: Jangan sampai ada sesi dengan jam buka yang SAMA di hari yang SAMA
         $exists = \App\Models\AttendanceSession::where('industry_id', $industryId)
             ->where('session_date', $sessionDate)
             ->where('on_time_deadline', $validated['on_time_deadline'])
@@ -71,7 +76,7 @@ class AttendanceSessionController extends BaseController
             return redirect()->back()->withErrors(['on_time_deadline' => 'Sesi di jam ini untuk hari ini sudah ada.'])->withInput();
         }
 
-        // 4. Simpan ke database (Tanpa kolom 'name')
+        // Simpan ke database (Tanpa kolom 'name')
         \App\Models\AttendanceSession::create([
             'industry_id' => $industryId,
             'opened_by_user_id' => $user->id,
@@ -81,7 +86,7 @@ class AttendanceSessionController extends BaseController
             'is_open' => true,
         ]);
 
-        // 5. Kembali ke halaman index dengan pesan sukses
+        // Kembali ke halaman index dengan pesan sukses
         return redirect()->route('attendance-sessions.index')
             ->with('success', 'Sesi presensi berhasil dibuka!');
     }

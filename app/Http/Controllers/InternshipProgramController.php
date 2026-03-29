@@ -17,7 +17,7 @@ class InternshipProgramController extends BaseController
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the internship programs.
      */
@@ -46,13 +46,14 @@ class InternshipProgramController extends BaseController
             abort(403, 'Unauthorized action.');
         }
 
-        // Show the form to create a new internship program.
-        return view('industry.programs.create');
+        $mentors = \App\Models\Mentor::where('industry_id', $user->industry->id)->get();
+
+        return view('industry.programs.create', compact('mentors'));
     }
-    
+
     /**
      * Store a newly created internship program in storage.
-    */
+     */
     public function store(StoreInternshipProgramRequest $request)
     {
         $user = Auth::user();
@@ -89,13 +90,21 @@ class InternshipProgramController extends BaseController
      */
     public function edit(InternshipProgram $internshipProgram)
     {
+        // $user = Auth::user();
+        // // Ensure the owner can only edit internship programs in their industry.
+        // if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
+        //     abort(403, 'Unauthorized action.');
+        // }
+
+        // return view('industry.programs.edit', compact('internshipProgram'));
+
         $user = Auth::user();
-        // Ensure the owner can only edit internship programs in their industry.
         if ($user->role !== 'owner' || $internshipProgram->industry_id !== ($user->industry->id ?? null)) {
             abort(403, 'Unauthorized action.');
-        }
+        }        
+        $mentors = \App\Models\Mentor::where('industry_id', $user->industry->id)->get();
 
-        return view('industry.programs.edit', compact('internshipProgram'));
+        return view('industry.programs.edit', compact('internshipProgram', 'mentors'));
     }
 
     /**

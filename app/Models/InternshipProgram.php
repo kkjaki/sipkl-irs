@@ -18,6 +18,7 @@ class InternshipProgram extends Model
      */
     protected $fillable = [
         'industry_id',
+        'mentor_id',
         'name',
         'start_date',
         'end_date',

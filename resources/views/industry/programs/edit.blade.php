@@ -18,37 +18,57 @@
             <section class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 font-bold text-lg rounded-t-xl">
                 Data Program
             </section>
-            <form method="POST" action="{{ route('internship-programs.update',$internshipProgram->id) }}" class="w-full mx-auto space-y-5">
+            <form method="POST" action="{{ route('internship-programs.update', $internshipProgram->id) }}"
+                class="w-full mx-auto space-y-5">
                 @method('PUT')
                 @csrf
                 {{-- Nama Program --}}
                 <section class="w-full flex items-center gap-6">
                     <label for="nama_program" class="w-40 text-neutral-800 text-base">Nama Program</label>
-                    <input type="text" id="nama_program" name="name" value="{{ $internshipProgram->name }}" placeholder="Masukkan nama program" required
+                    <input type="text" id="nama_program" name="name" value="{{ $internshipProgram->name }}"
+                        placeholder="Masukkan nama program" required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+                </section>
+
+                {{-- Pilih Mentor --}}
+                <section class="w-full flex items-center gap-6">
+                    <label for="mentor_id" class="w-40 text-neutral-800 text-base">Pilih Mentor</label>
+                    <select name="mentor_id" id="mentor_id"
+                        class="form-select w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        <option value="">-- Pilih Mentor (Opsional/Wajib) --</option>
+                        @foreach ($mentors as $mentor)
+                            <option value="{{ $mentor->id }}">{{ $mentor->user->name }}</option>
+                        @endforeach
+                    </select>
                 </section>
 
                 {{-- Tanggal Mulai --}}
                 <section class="w-full flex items-center gap-6">
                     <label for="tanggal_mulai" class="w-40 text-neutral-800 text-base">Tanggal Mulai</label>
-                    <input type="date" id="tanggal_mulai" name="start_date" value="{{ date('Y-m-d', strtotime($internshipProgram->start_date)) }}" required
+                    <input type="date" id="tanggal_mulai" name="start_date"
+                        value="{{ date('Y-m-d', strtotime($internshipProgram->start_date)) }}" required
                         class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
                 {{-- Tanggal Selesai --}}
                 <section class="w-full flex items-center gap-6">
                     <label for="tanggal_selesai" class="w-40 text-neutral-800 text-base">Tanggal Selesai</label>
-                    <input type="date" id="tanggal_selesai" name="end_date" value="{{ date('Y-m-d', strtotime($internshipProgram->end_date)) }}" required
+                    <input type="date" id="tanggal_selesai" name="end_date"
+                        value="{{ date('Y-m-d', strtotime($internshipProgram->end_date)) }}" required
                         class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
                 {{-- Kode Undangan --}}
                 <section class="w-full flex items-start gap-6">
-                    <label for="invitation_code" class="w-40 text-neutral-800 text-base mt-2">Kode Undangan<br><span class="text-sm font-normal text-gray-500">(Otomatis jika kosong)</span></label>
+                    <label for="invitation_code" class="w-40 text-neutral-800 text-base mt-2">Kode Undangan<br><span
+                            class="text-sm font-normal text-gray-500">(Otomatis jika kosong)</span></label>
                     <div class="flex flex-col gap-1.5">
-                        <input type="text" id="invitation_code" name="invitation_code" maxlength="10" placeholder="Contoh: IRS2026" value="{{ old('invitation_code', $internshipProgram->invitation_code) }}"
+                        <input type="text" id="invitation_code" name="invitation_code" maxlength="10"
+                            placeholder="Contoh: IRS2026"
+                            value="{{ old('invitation_code', $internshipProgram->invitation_code) }}"
                             class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                        <span class="text-sm text-gray-500">Gunakan kode kustom atau biarkan kosong agar sistem membuatkan kode acak (6 karakter).</span>
+                        <span class="text-sm text-gray-500">Gunakan kode kustom atau biarkan kosong agar sistem membuatkan
+                            kode acak (6 karakter).</span>
                     </div>
                 </section>
 

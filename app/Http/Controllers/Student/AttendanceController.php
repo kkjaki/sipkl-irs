@@ -27,11 +27,31 @@ class AttendanceController extends Controller
         // Get today's date
         $today = now()->toDateString();
 
-        // Get attendance sessions for today that are open
+        $program = $student->internshipProgram;
+        $industryId = $program->industry_id;
+        $mentorId = $program->mentor_id;
+
+        $validCreatorIds =  [];
+
+        $ownerUserId = \App\Models\User::where('role', 'owner')
+            ->whereHas('industry', function ($q) use ($industryId) {
+                $q->where('id', $industryId);
+            })->value('id');
+
+        if ($ownerUserId) $validCreatorIds[] = $ownerUserId;
+
+        if ($mentorId) {
+            $mentorUserId = \App\Models\Mentor::find($mentorId)->user_id ?? null;
+            if ($mentorUserId) $validCreatorIds[] = $mentorUserId;
+        }
+
         $attendanceSessions = AttendanceSession::where('session_date', $today)
             ->where('is_open', true)
+            ->where('industry_id', $industryId)
+            ->whereIn('opened_by_user_id', $validCreatorIds)
             ->with('user')
             ->get();
+
 
         // Check if student already has attendance for each session
         $attendanceSessions->each(function ($session) use ($student) {
@@ -66,10 +86,60 @@ class AttendanceController extends Controller
         }
 
         // Verify the session belongs to the student's industry
+        // $session = AttendanceSession::findOrFail($request->attendance_session_id);
+        // if ($session->industry_id !== $student->internshipProgram->industry_id) {
+        //     return response()->json(['error' => 'Sesi presensi tidak valid.'], 403);
+        // }
+
+
+
+        // $program = $student->internshipProgram;
+        // $industryId = $program->industry_id;
+        // $mentorId = $program->mentor_id;
+
+        // $validCreatorIds =  [];
+
+        // $ownerUserId = \App\Models\User::where('role', 'owner')
+        //     ->whereHas('industry', function ($q) use ($industryId) {
+        //         $q->where('id', $industryId);
+        //     })->value('id');
+
+        // if ($ownerUserId) $validCreatorIds[] = $ownerUserId;
+
+        // if ($mentorId) {
+        //     $mentorUserId = \App\Models\Mentor::find($mentorId)->user_id ?? null;
+        //     if ($mentorUserId) $validCreatorIds[] = $mentorUserId;
+        // }
+
+        // $attendanceSessions = AttendanceSession::where('session_date', $today)
+        // ->where('is_open', true)
+        // ->where('industry_id', $industryId)
+        // ->whereIn('opened_by_user_id', $validCreatorIds)
+        // ->with('user')
+        // ->get();
+
         $session = AttendanceSession::findOrFail($request->attendance_session_id);
-        if ($session->industry_id !== $student->internshipProgram->industry_id) {
-            return response()->json(['error' => 'Sesi presensi tidak valid.'], 403);
+        $program = $student->internshipProgram;
+
+        // 1. Cek industrinya (Pakai == biar aman dari beda tipe data)
+        $isValidIndustry = $session->industry_id == $program->industry_id;
+
+        // 2. Cek Mentornya (Kita pakai cara yang terbukti ampuh di presensiHarian)
+        $mentorId = $program->mentor_id;
+        $mentorUserId = $mentorId ? \App\Models\Mentor::find($mentorId)->user_id ?? null : null;
+        $isCreatedByMentor = $session->opened_by_user_id == $mentorUserId;
+
+        // 3. Cek Ownernya
+        $isCreatedByOwner = \App\Models\User::where('id', $session->opened_by_user_id)->value('role') == 'owner';
+
+        // Kalau industrinya beda, ATAU (bukan dibikin mentor DAN bukan dibikin owner) -> TENDANG!
+        if (!$isValidIndustry || (!$isCreatedByMentor && !$isCreatedByOwner)) {
+            // Sengaja gue tambahin bocoran debug biar kalau masih gagal kita tau apanya yang false wkwk
+            return response()->json(['error' => "Sesi tidak valid. (Debug: Ind=$isValidIndustry, Men=$isCreatedByMentor, Own=$isCreatedByOwner)"], 403);
         }
+
+
+
 
         // Check if already attended
         $existingAttendance = Attendance::where('attendance_session_id', $request->attendance_session_id)
