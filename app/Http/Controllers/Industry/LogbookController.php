@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Industry;
 use App\Http\Controllers\Controller;
 use App\Models\Logbook;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LogbookController extends Controller
 {
@@ -15,8 +16,10 @@ class LogbookController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $logbooks = Logbook::whereHas('student', function ($query) use ($user) {
-                $query->where('industry_id', $user->industry_id);
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
+
+        $logbooks = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
+                $query->where('industry_id', $userIndustryId);
             })
             ->with(['student.user', 'student.school'])
             ->latest()
@@ -33,8 +36,10 @@ class LogbookController extends Controller
     public function edit($id)
     {
         $user = auth()->user();
-        $logbook = Logbook::whereHas('student', function ($query) use ($user) {
-                $query->where('industry_id', $user->industry_id);
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
+
+        $logbook = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
+                $query->where('industry_id', $userIndustryId);
             })
             ->with(['student.user'])
             ->findOrFail($id);
@@ -49,8 +54,10 @@ class LogbookController extends Controller
         ]);
 
         $user = auth()->user();
-        $logbook = \App\Models\Logbook::whereHas('student', function ($query) use ($user) {
-                $query->where('industry_id', $user->industry_id);
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
+
+        $logbook = \App\Models\Logbook::whereHas('student', function ($query) use ($userIndustryId) {
+                $query->where('industry_id', $userIndustryId);
             })->findOrFail($id);
 
         $logbook->status = $request->status;
@@ -76,10 +83,11 @@ class LogbookController extends Controller
         ]);
 
         $user = auth()->user();
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
         
         \App\Models\Logbook::whereIn('id', $request->ids)
-            ->whereHas('student', function ($query) use ($user) {
-                $query->where('industry_id', $user->industry_id);
+            ->whereHas('student', function ($query) use ($userIndustryId) {
+                $query->where('industry_id', $userIndustryId);
             })
             ->update([
                 'status' => $request->status
@@ -101,8 +109,10 @@ class LogbookController extends Controller
     public function recap()
     {
         $user = auth()->user();
-        $recap = Logbook::whereHas('student', function ($query) use ($user) {
-                $query->where('industry_id', $user->industry_id);
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
+
+        $recap = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
+                $query->where('industry_id', $userIndustryId);
             })
             ->with(['student.user'])
             ->whereIn('status', ['approved', 'rejected'])
@@ -110,5 +120,21 @@ class LogbookController extends Controller
             ->get();
 
         return view('industry.logbooks.recap', compact('recap'));
+    }
+
+    public function downloadDocument($id)
+    {
+        $user = auth()->user();
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
+
+        $logbook = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
+                $query->where('industry_id', $userIndustryId);
+            })->findOrFail($id);
+
+        if (!$logbook->documentation_file) {
+            abort(404, 'Dokumen tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($logbook->documentation_file);
     }
 }

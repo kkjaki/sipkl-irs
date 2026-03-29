@@ -61,18 +61,21 @@ Route::middleware('auth')->group(function () {
         Route::prefix('industry')->name('industry.')->group(function () {
             Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
             Route::get('/logbooks/{id}/edit', [LogbookController::class, 'edit'])->name('logbooks.edit');
+            Route::get('/logbooks/{id}/download', [LogbookController::class, 'downloadDocument'])->name('logbooks.download');
             Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
             Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
             Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
             Route::get('/recap', [\App\Http\Controllers\Industry\RecapController::class, 'index'])->name('recap.index');
         });
+
+        // Shared School Management
+        Route::resource('schools.supervisors', SchoolSupervisorController::class)->except(['show'])->shallow();
+        Route::resource('schools.criteria', CriterionController::class)->except(['show'])->shallow();
     });
 
     // OWNER EXCLUSIVE ROUTES
     Route::middleware(['role:owner'])->group(function () {
         Route::resource('schools', SchoolController::class);
-        Route::resource('schools.supervisors', SchoolSupervisorController::class)->except(['show'])->shallow();
-        Route::resource('schools.criteria', CriterionController::class)->except(['show'])->shallow();
         Route::resource('mentors', MentorController::class)->except(['show']);
         Route::post('mentors/{mentor}/deactivate', [MentorController::class, 'deactivate'])->name('mentors.deactivate');
         Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');

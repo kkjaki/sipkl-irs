@@ -131,8 +131,14 @@ class CriterionController extends BaseController
     private function authorizeManagement(School $school)
     {
         $user = Auth::user();
-        // Deny access if the user is not an owner or the school is not in their industry.
-        if ($user->role !== 'owner' || $school->industry_id !== $user->industry->id) {
+        
+        if (! $user || !in_array($user->role, ['owner', 'mentor'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
+
+        if ($school->industry_id !== $userIndustryId) {
             abort(403, 'Unauthorized action.');
         }
     }
