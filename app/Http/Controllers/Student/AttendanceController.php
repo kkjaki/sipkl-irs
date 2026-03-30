@@ -104,7 +104,6 @@ class AttendanceController extends Controller
         $isCreatedByOwner = \App\Models\User::where('id', $session->opened_by_user_id)->value('role') == 'owner';
 
         if (!$isValidIndustry || (!$isCreatedByMentor && !$isCreatedByOwner)) {
-            // Sengaja gue tambahin bocoran debug biar kalau masih gagal kita tau apanya yang false wkwk
             return response()->json(['error' => "Sesi tidak valid. (Debug: Ind=$isValidIndustry, Men=$isCreatedByMentor, Own=$isCreatedByOwner)"], 403);
         }
 
@@ -128,7 +127,7 @@ class AttendanceController extends Controller
             $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
             $distance = $earthRadius * $c;
 
-            $maxRadius = 400;
+            $maxRadius = 250; // Edit sesuai kebutuhan, dalam meter
 
             if ($distance > $maxRadius) {
                 $jarakBulat = round($distance);
