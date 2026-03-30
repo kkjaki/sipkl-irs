@@ -76,6 +76,8 @@ class AttendanceController extends Controller
             'status' => 'required|in:hadir,izin,sakit',
             'image' => 'required|image|max:5120', // Max 5MB
             'notes' => 'nullable|string|max:500',
+            'latitude' => 'required_if:status,hadir|nullable|numeric',
+            'longitude' => 'required_if:status,hadir|nullable|numeric'
         ]);
 
         $user = Auth::user();
@@ -86,23 +88,53 @@ class AttendanceController extends Controller
         }
 
         $session = AttendanceSession::findOrFail($request->attendance_session_id);
+
         $program = $student->internshipProgram;
 
-        // 1. Cek industrinya (Pakai == biar aman dari beda tipe data)
+        $industry = $session->industry;
+
         $isValidIndustry = $session->industry_id == $program->industry_id;
 
-        // 2. Cek Mentornya (Kita pakai cara yang terbukti ampuh di presensiHarian)
         $mentorId = $program->mentor_id;
+
         $mentorUserId = $mentorId ? \App\Models\Mentor::find($mentorId)->user_id ?? null : null;
+
         $isCreatedByMentor = $session->opened_by_user_id == $mentorUserId;
 
-        // 3. Cek Ownernya
         $isCreatedByOwner = \App\Models\User::where('id', $session->opened_by_user_id)->value('role') == 'owner';
 
-        // Kalau industrinya beda, ATAU (bukan dibikin mentor DAN bukan dibikin owner) -> TENDANG!
         if (!$isValidIndustry || (!$isCreatedByMentor && !$isCreatedByOwner)) {
             // Sengaja gue tambahin bocoran debug biar kalau masih gagal kita tau apanya yang false wkwk
             return response()->json(['error' => "Sesi tidak valid. (Debug: Ind=$isValidIndustry, Men=$isCreatedByMentor, Own=$isCreatedByOwner)"], 403);
+        }
+
+        if ($request->status === 'hadir') {
+            if (!$industry->latitude || !$industry->longitude) {
+                return response()->json(['error' => 'Titik kordinat PT belum diatur oleh Admin. Silakan hubungi Mentor/Owner.'], 400);
+            }
+            // Havershine
+            $earthRadius = 6371000;
+            $latFrom = deg2rad((float) $industry->latitude);
+            $lonFrom = deg2rad((float) $industry->longitude);
+            $latTo = deg2rad((float) $request->latitude);
+            $lonTo = deg2rad((float) $request->longitude);
+
+            $latDelta = $latTo - $latFrom;
+            $lonDelta = $lonTo - $lonFrom;
+
+            $a = sin($latDelta / 2) * sin($latDelta / 2) +
+                cos($latFrom) * cos($latTo) * sin($lonDelta / 2) *
+                sin($lonDelta / 2);
+            $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+            $distance = $earthRadius * $c;
+
+            $maxRadius = 400;
+
+            if ($distance > $maxRadius) {
+                $jarakBulat = round($distance);
+                return response()->json(['error' => "Lokasi Anda di luar jangkauan PT! Jarak Anda: {$jarakBulat} meter. (Maksimal jarak: {$maxRadius} meter)"], 400);
+            }
+
         }
 
         // Check if already attended

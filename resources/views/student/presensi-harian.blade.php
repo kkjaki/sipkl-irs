@@ -259,6 +259,19 @@
                         placeholder="Tambahkan catatan jika diperlukan..."></textarea>
                 </div>
 
+                {{-- tes buat presensi lokasi --}}
+                <div class="mt-4 border-2 border-dashed border-yellow-400 p-3 bg-yellow-50 rounded">
+                    <p class="text-sm font-bold text-yellow-700 mb-2">📍 Simulasi Titik GPS Siswa (Testing Backend)</p>
+                    <div class="flex gap-2">
+                        <input type="text" name="latitude" placeholder="Latitude (-7.xxx)"
+                            class="border p-2 text-sm w-full rounded">
+                        <input type="text" name="longitude" placeholder="Longitude (109.xxx)"
+                            class="border p-2 text-sm w-full rounded">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">*Isi kordinat yang beda dikit dari PT buat ngetes error jarak
+                    </p>
+                </div>
+
                 {{-- Submit Button --}}
                 <button type="submit" id="submitBtn"
                     class="w-full bg-brand-primary hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">

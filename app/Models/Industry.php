@@ -21,6 +21,8 @@ class Industry extends Model
         'address',
         'phone',
         'owner_id',
+        'latitude',
+        'longitude',
     ];
 
     /**
