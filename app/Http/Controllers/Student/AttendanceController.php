@@ -68,7 +68,7 @@ class AttendanceController extends Controller
         // Verify the session belongs to the student's industry
         $session = AttendanceSession::findOrFail($request->attendance_session_id);
         if ($session->industry_id !== $student->internshipProgram->industry_id) {
-            return response()->json(['error' => 'Sesi presensi tidak valid.'], 403);
+            return response()->json(['error' => 'Sesi presensi tidak valid. ${$session->industry_id}'], 403);
         }
 
         // Check if already attended
