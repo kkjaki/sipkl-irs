@@ -20,7 +20,7 @@ class StudentRegistrationController extends Controller
      */
     public function create()
     {
-        return view('auth.student-register');
+        return view('auth.register-student');
     }
 
     /**
