@@ -16,15 +16,11 @@ use Illuminate\Support\Facades\Route;
 | Guest Routes (Student)
 |--------------------------------------------------------------------------
 */
+
 Route::middleware('guest')->group(function () {
     // Registration
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
-    
-    // Student-specific registration view
-    Route::get('register/student', function () {
-        return view('auth.register-student');
-    })->name('register.student');
 
     // Login
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -59,6 +55,4 @@ Route::middleware('auth')->group(function () {
 
     // Logout
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-
 });

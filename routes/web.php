@@ -88,7 +88,7 @@ Route::middleware('auth')->group(function () {
 
     // Student routes
     Route::middleware(['is.student'])->prefix('student')->name('student.')->group(function () {
-        
+
         // Onboarding Setup
         Route::get('/setup', [\App\Http\Controllers\StudentSetupController::class, 'create'])->name('setup');
         Route::post('/setup', [\App\Http\Controllers\StudentSetupController::class, 'store'])->name('setup.store');
@@ -125,14 +125,13 @@ Route::get('csrf-token', function () {
     return response()->json(['csrfToken' => csrf_token()]);
 })->name('csrf-token');
 
+// Student Landing Page
+Route::get('/student/landing', function () {
+    return view('landing-student');
+})->name('student.landing');
+
 // Student Registration
 Route::get('register/student', [StudentRegistrationController::class, 'create'])->name('student.register');
-Route::post('register/student', [StudentRegistrationController::class, 'store']);
+Route::post('register/student', [StudentRegistrationController::class, 'store'])->name('student.register.store');
 
 require __DIR__ . '/auth.php';
-
-Route::prefix('student')->name('student.')->group(function () {
-    Route::get('/landing', function () {
-        return view('landing-student');
-    })->name('landing');
-});

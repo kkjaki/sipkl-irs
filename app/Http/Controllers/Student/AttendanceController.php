@@ -66,6 +66,18 @@ class AttendanceController extends Controller
         return view('student.presensi-harian', compact('attendanceSessions', 'student'));
     }
 
+    public function index()
+{
+    $student = auth()->user()->student;
+    
+    // Ambil data presensi si siswa, urutkan dari yang terbaru
+    $attendances = \App\Models\Attendance::where('student_id', $student->id)
+                    ->latest()
+                    ->paginate(10);
+
+    return view('student.presensi.index', compact('attendances', 'student'));
+}
+
     /**
      * Store a new attendance record with image.
      */
@@ -84,39 +96,6 @@ class AttendanceController extends Controller
         if (!$student) {
             return response()->json(['error' => 'Data siswa tidak ditemukan.'], 404);
         }
-
-        // Verify the session belongs to the student's industry
-        // $session = AttendanceSession::findOrFail($request->attendance_session_id);
-        // if ($session->industry_id !== $student->internshipProgram->industry_id) {
-        //     return response()->json(['error' => 'Sesi presensi tidak valid.'], 403);
-        // }
-
-
-
-        // $program = $student->internshipProgram;
-        // $industryId = $program->industry_id;
-        // $mentorId = $program->mentor_id;
-
-        // $validCreatorIds =  [];
-
-        // $ownerUserId = \App\Models\User::where('role', 'owner')
-        //     ->whereHas('industry', function ($q) use ($industryId) {
-        //         $q->where('id', $industryId);
-        //     })->value('id');
-
-        // if ($ownerUserId) $validCreatorIds[] = $ownerUserId;
-
-        // if ($mentorId) {
-        //     $mentorUserId = \App\Models\Mentor::find($mentorId)->user_id ?? null;
-        //     if ($mentorUserId) $validCreatorIds[] = $mentorUserId;
-        // }
-
-        // $attendanceSessions = AttendanceSession::where('session_date', $today)
-        // ->where('is_open', true)
-        // ->where('industry_id', $industryId)
-        // ->whereIn('opened_by_user_id', $validCreatorIds)
-        // ->with('user')
-        // ->get();
 
         $session = AttendanceSession::findOrFail($request->attendance_session_id);
         $program = $student->internshipProgram;
@@ -137,9 +116,6 @@ class AttendanceController extends Controller
             // Sengaja gue tambahin bocoran debug biar kalau masih gagal kita tau apanya yang false wkwk
             return response()->json(['error' => "Sesi tidak valid. (Debug: Ind=$isValidIndustry, Men=$isCreatedByMentor, Own=$isCreatedByOwner)"], 403);
         }
-
-
-
 
         // Check if already attended
         $existingAttendance = Attendance::where('attendance_session_id', $request->attendance_session_id)
@@ -172,26 +148,5 @@ class AttendanceController extends Controller
             'success' => true,
             'message' => 'Presensi berhasil disimpan!'
         ]);
-    }
-
-    /**
-     * Display the attendance history page.
-     */
-    public function index()
-    {
-        $user = Auth::user();
-        $student = $user->student;
-
-        if (!$student) {
-            return redirect()->route('student.dashboard')
-                ->with('error', 'Data siswa tidak ditemukan.');
-        }
-
-        $attendances = Attendance::where('student_id', $student->id)
-            ->with('session')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
-        return view('student.presensi-index', compact('attendances'));
     }
 }
