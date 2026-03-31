@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Industry;
 
 use App\Models\School;
 use App\Models\SchoolSupervisor;

@@ -14,18 +14,44 @@
             <!-- Email Address -->
             <div>
                 <x-input-label for="email" value="Email" class="text-gray-700 font-semibold" />
-                <x-text-input id="email" class="block mt-1 w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm px-4 py-2" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Masukkan email Anda" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <x-text-input
+                    id="email"
+                    class="block mt-1 w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm px-4 py-2 {{ $errors->has('email') ? 'border-red-500' : '' }}"
+                    type="email"
+                    name="email"
+                    :value="old('email')"
+                    required
+                    autofocus
+                    autocomplete="username"
+                    placeholder="Masukkan email Anda"
+                />
+                @error('email')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Password -->
-            <div class="mt-5">
+            <div class="mt-5" x-data="{ show: false }">
                 <x-input-label for="password" value="Password" class="text-gray-700 font-semibold" />
-                <x-text-input id="password" class="block mt-1 w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm px-4 py-2"
-                                type="password"
-                                name="password"
-                                required autocomplete="current-password" placeholder="Masukkan password Anda" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <div class="relative mt-1">
+                    <input
+                        id="password"
+                        :type="show ? 'text' : 'password'"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="Masukkan password Anda"
+                        class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm px-4 py-2 pr-10 {{ $errors->has('password') ? 'border-red-500' : '' }}"
+                    >
+                    <button type="button" @click="show = !show"
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                        tabindex="-1">
+                        <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'" class="text-sm"></i>
+                    </button>
+                </div>
+                @error('password')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Remember Me & Forgot Password -->

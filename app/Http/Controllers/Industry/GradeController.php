@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Industry;
+
+use App\Http\Controllers\Controller;
 
 use App\Http\Requests\StoreGradeRequest;
 use App\Models\Criterion;

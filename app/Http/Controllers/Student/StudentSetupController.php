@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Student;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +26,7 @@ class StudentSetupController extends Controller
             ? $user->student->internshipProgram->invitation_code
             : '';
 
-        return view('student.setup', compact('user', 'invitationCode'));
+        return view('student.setup.index', compact('user', 'invitationCode'));
     }
 
     /**

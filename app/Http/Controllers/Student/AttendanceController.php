@@ -63,7 +63,7 @@ class AttendanceController extends Controller
             $session->attendance_data = $existingAttendance;
         });
 
-        return view('student.presensi-harian', compact('attendanceSessions', 'student'));
+        return view('student.presensi.harian', compact('attendanceSessions', 'student'));
     }
 
     public function index()

@@ -1,23 +1,25 @@
 <?php
 
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\AttendanceSessionController;
+use App\Http\Controllers\Industry\AttendanceController;
+use App\Http\Controllers\Industry\AttendanceSessionController;
+use App\Http\Controllers\Industry\AttendanceValidationController;
+use App\Http\Controllers\Industry\CriterionController;
+use App\Http\Controllers\Industry\DashboardController;
+use App\Http\Controllers\Industry\GradeController;
+use App\Http\Controllers\Industry\InternshipProgramController;
+use App\Http\Controllers\Industry\LogbookController as IndustryLogbookController;
+use App\Http\Controllers\Industry\MentorController;
+use App\Http\Controllers\Industry\RecapController;
+use App\Http\Controllers\Industry\SchoolController;
+use App\Http\Controllers\Industry\SchoolSupervisorController;
 use App\Http\Controllers\Auth\StudentRegistrationController;
-use App\Http\Controllers\CriterionController;
-use App\Http\Controllers\GradeController;
-use App\Http\Controllers\InternshipProgramController;
-use App\Http\Controllers\MentorController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SchoolController;
-use App\Http\Controllers\SchoolSupervisorController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\AttendanceController as StudentAttendanceController;
 use App\Http\Controllers\Student\LogbookController as StudentLogbookController;
 use App\Http\Controllers\Student\GradeController as StudentGradeController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Student\StudentSetupController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Industry\LogbookController;
-use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,8 +46,8 @@ Route::middleware('auth')->group(function () {
         });
 
         // Validasi Presensi (Owner) List Sekolah
-        Route::get('/attendance-validation', [\App\Http\Controllers\AttendanceValidationController::class, 'index'])->name('attendance.validate.schools.index');
-        Route::get('/attendance-validation/{school}', [\App\Http\Controllers\AttendanceValidationController::class, 'show'])->name('attendance.validate.schools.show');
+        Route::get('/attendance-validation', [AttendanceValidationController::class, 'index'])->name('attendance.validate.schools.index');
+        Route::get('/attendance-validation/{school}', [AttendanceValidationController::class, 'show'])->name('attendance.validate.schools.show');
 
         // Grades
         Route::group(['prefix' => 'grades/schools'], function () {
@@ -59,13 +61,13 @@ Route::middleware('auth')->group(function () {
 
         // Industry Logbook API Routes
         Route::prefix('industry')->name('industry.')->group(function () {
-            Route::get('/logbooks', [LogbookController::class, 'index'])->name('logbooks.index');
-            Route::get('/logbooks/{id}/edit', [LogbookController::class, 'edit'])->name('logbooks.edit');
-            Route::get('/logbooks/{id}/download', [LogbookController::class, 'downloadDocument'])->name('logbooks.download');
-            Route::patch('/logbooks/{id}/validate', [LogbookController::class, 'validateLogbook'])->name('logbooks.validate');
-            Route::patch('/logbooks/bulk-validate', [LogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
-            Route::get('/logbooks/recap', [LogbookController::class, 'recap'])->name('logbooks.recap');
-            Route::get('/recap', [\App\Http\Controllers\Industry\RecapController::class, 'index'])->name('recap.index');
+            Route::get('/logbooks', [IndustryLogbookController::class, 'index'])->name('logbooks.index');
+            Route::get('/logbooks/{id}/edit', [IndustryLogbookController::class, 'edit'])->name('logbooks.edit');
+            Route::get('/logbooks/{id}/download', [IndustryLogbookController::class, 'downloadDocument'])->name('logbooks.download');
+            Route::patch('/logbooks/{id}/validate', [IndustryLogbookController::class, 'validateLogbook'])->name('logbooks.validate');
+            Route::patch('/logbooks/bulk-validate', [IndustryLogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
+            Route::get('/logbooks/recap', [IndustryLogbookController::class, 'recap'])->name('logbooks.recap');
+            Route::get('/recap', [RecapController::class, 'index'])->name('recap.index');
         });
 
         // Shared School Management
@@ -82,7 +84,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('internship-programs', InternshipProgramController::class);
 
         Route::get('/industry', function () {
-            return view('industry.dashboard');
+            return view('industry.dashboard.index');
         })->name('industry');
     });
 
@@ -90,8 +92,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['is.student'])->prefix('student')->name('student.')->group(function () {
 
         // Onboarding Setup
-        Route::get('/setup', [\App\Http\Controllers\StudentSetupController::class, 'create'])->name('setup');
-        Route::post('/setup', [\App\Http\Controllers\StudentSetupController::class, 'store'])->name('setup.store');
+        Route::get('/setup', [StudentSetupController::class, 'create'])->name('setup');
+        Route::post('/setup', [StudentSetupController::class, 'store'])->name('setup.store');
 
         Route::middleware(['profile.completed'])->group(function () {
             Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');

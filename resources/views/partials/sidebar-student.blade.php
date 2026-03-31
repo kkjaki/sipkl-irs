@@ -75,7 +75,7 @@
                     <li>
                         <a href="{{ route('student.logbook.harian') }}"
                             class="flex items-center px-12 py-4 text-lg font-normal font-sans transition {{ request()->routeIs('student.logbook.harian') ? 'border-l-8 border-brand-primary bg-teal-50 text-brand-primary' : 'border-l-8 border-transparent text-gray-700 hover:border-teal-300 hover:bg-teal-50 hover:text-brand-primary' }}">
-                            Logbook Harian
+                            Tambah Logbook
                         </a>
                     </li>
                     <li>

@@ -1,351 +1,303 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<title>Cetak Nilai PKL</title>
-
-<!-- ===================== SCRIPT ===================== -->
-<script>
-
-window.onload = function () {
-    hitungNilai();
-    setTanggal();
-    window.print();
-};
-
-function hitungNilai() {
-
-    const scores = document.querySelectorAll(".score");
-
-    let total = 0;
-    let count = 0;
-
-    scores.forEach(el => {
-
-        const val = parseFloat(el.innerText);
-
-        if (!isNaN(val)) {
-            total += val;
-            count++;
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <title>Laporan Nilai - {{ $user->name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-    });
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+        }
 
-    const avg = count ? Math.round(total / count) : 0;
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #0d9488;
+            padding-bottom: 20px;
+        }
 
-    document.getElementById("nilaiAkhir").innerText = avg;
-}
+        .header h1 {
+            font-size: 24px;
+            color: #0d9488;
+            margin-bottom: 10px;
+        }
 
-function setTanggal() {
+        .header p {
+            font-size: 14px;
+            color: #666;
+        }
 
-    const today = new Date();
+        .student-info {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
 
-    document.getElementById("tanggal").innerText =
-        today.toLocaleDateString("id-ID");
-}
+        .student-info table {
+            width: 100%;
+        }
 
-</script>
+        .student-info td {
+            padding: 5px 0;
+        }
 
-<style>
+        .student-info .label {
+            font-weight: bold;
+            width: 150px;
+        }
 
-/* ===================== GLOBAL ===================== */
+        .summary {
+            margin-bottom: 20px;
+        }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 30px;
-    background: #f4f6f9;
-}
+        .summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-    background: white;
-    padding: 30px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+        .summary td {
+            width: 25%;
+            padding: 5px;
+        }
 
-/* ===================== KOP SURAT ===================== */
+        .summary-box {
+            background-color: #f0fdfa;
+            border: 1px solid #0d9488;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
 
-.kop {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
+        .summary-box h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
 
-.kop img {
-    width: 80px;
-}
+        .summary-box p {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0d9488;
+        }
 
-.kop-text {
-    flex: 1;
-    text-align: center;
-}
+        table.grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
 
-.kop-text h1 {
-    font-size: 26px;
-    margin: 0;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
+        table.grades-table th,
+        table.grades-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
 
-.kop-text p {
-    margin: 4px 0;
-    font-size: 14px;
-}
+        table.grades-table th {
+            background-color: #0d9488;
+            color: white;
+            font-weight: bold;
+        }
 
-.line {
-    margin-top: 10px;
-}
+        table.grades-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
-.line .top {
-    border-top: 3px solid black;
-}
+        .grade-excellent {
+            background-color: #dcfce7 !important;
+        }
 
-.line .bottom {
-    border-top: 1px solid black;
-    margin-top: 3px;
-}
+        .grade-good {
+            background-color: #dbeafe !important;
+        }
 
-/* ===================== JUDUL ===================== */
+        .grade-fair {
+            background-color: #fef9c3 !important;
+        }
 
-.title {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    margin: 25px 0;
-}
+        .grade-poor {
+            background-color: #fee2e2 !important;
+        }
 
-/* ===================== DATA SISWA ===================== */
+        .score {
+            font-size: 18px;
+            font-weight: bold;
+        }
 
-.info {
-    display: grid;
-    grid-template-columns: 160px 10px 1fr;
-    gap: 6px;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
+        .category {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+        }
 
-/* ===================== TABEL NILAI ===================== */
+        .category-excellent {
+            background-color: #22c55e;
+            color: white;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
+        .category-good {
+            background-color: #3b82f6;
+            color: white;
+        }
 
-table th {
-    background: #f1f5f9;
-}
+        .category-fair {
+            background-color: #eab308;
+            color: white;
+        }
 
-table th,
-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    font-size: 14px;
-}
+        .category-poor {
+            background-color: #ef4444;
+            color: white;
+        }
 
-.text-left {
-    text-align: left;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.nilai-akhir {
-    font-weight: bold;
-    background: #f9fafb;
-}
-
-/* ===================== FOOTER ===================== */
-
-.footer {
-    margin-top: 40px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.ttd {
-    text-align: center;
-    margin-top: 50px;
-}
-
-/* ===================== RESPONSIVE ===================== */
-
-@media (max-width:768px) {
-
-    .kop {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .kop img {
-        width: 60px;
-    }
-
-    .kop-text h1 {
-        font-size: 20px;
-    }
-
-    table th,
-    table td {
-        font-size: 13px;
-        padding: 8px;
-    }
-
-    .info {
-        grid-template-columns: 120px 10px 1fr;
-    }
-
-}
-
-/* ===================== PRINT ===================== */
-
-@media print {
-
-    body {
-        background: white;
-        padding: 0;
-    }
-
-    .container {
-        box-shadow: none;
-    }
-
-}
-
-</style>
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 10px;
+        }
+    </style>
 </head>
 
-
 <body>
-
-<div class="container">
-
-    <!-- ===================== KOP SURAT ===================== -->
-    <div class="kop">
-
-        <img src="/images/logo-irs.png" alt="Logo IRS">
-
-        <div class="kop-text">
-
-            <h1>PT. INTERNET RAKYAT SEJAHTERA</h1>
-
-            <p>
-                Alamat: Desa Kedawung, RT 04 RW 02 Kec. Susukan Kab. Banjarnegara,
-                Kode Pos 53475 Telp. 081229482102
-            </p>
-
-        </div>
-
+    <div class="header">
+        <h1>LAPORAN NILAI MAHASISWA</h1>
+        <p>Sistem Informasi Praktek Kerja Lapangan</p>
     </div>
 
-    <div class="line">
-        <div class="top"></div>
-        <div class="bottom"></div>
+    <div class="student-info">
+        <table>
+            <tr>
+                <td class="label">Nama</td>
+                <td>: {{ $user->name }}</td>
+            </tr>
+            <tr>
+                <td class="label">NIS</td>
+                <td>: {{ $student->nis ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Kelas</td>
+                <td>: {{ $student->class ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Sekolah</td>
+                <td>: {{ $student->school->name ?? '-' }}
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Program Magang</td>
+                <td>: {{ $student->internshipProgram->name
+                    ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Industri</td>
+                <td>: {{
+                    $student->internshipProgram->industry->name
+                    ?? '-' }}</td>
+            </tr>
+        </table>
     </div>
 
-
-    <!-- ===================== JUDUL ===================== -->
-
-    <div class="title">
-        LAPORAN NILAI SISWA PKL
+    <div class="summary">
+        <table>
+            <tr>
+                <td>
+                    <div class="summary-box">
+                        <h3>Rata-rata</h3>
+                        <p>{{ number_format($averageScore,
+                            1) }}</p>
+                    </div>
+                </td>
+                <td>
+                    <div class="summary-box">
+                        <h3>Tertinggi</h3>
+                        <p>{{ $grades->max('score') ?? 0 }}
+                        </p>
+                    </div>
+                </td>
+                <td>
+                    <div class="summary-box">
+                        <h3>Terendah</h3>
+                        <p>{{ $grades->min('score') ?? 0 }}
+                        </p>
+                    </div>
+                </td>
+                <td>
+                    <div class="summary-box">
+                        <h3>Total Kriteria</h3>
+                        <p>{{ $gradeCount }}</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-
-    <!-- ===================== DATA SISWA ===================== -->
-
-    <div class="info">
-
-        <div>NIS</div>
-        <div>:</div>
-        <div>76521</div>
-
-        <div>Nama</div>
-        <div>:</div>
-        <div>John Doe</div>
-
-        <div>Kelas</div>
-        <div>:</div>
-        <div>XII RPL 2</div>
-
-        <div>Guru Pembimbing</div>
-        <div>:</div>
-        <div>Lorem Ipsum, S.Pd.</div>
-
-        <div>Sekolah</div>
-        <div>:</div>
-        <div>SMK IT Informatika AL-GPT</div>
-
-    </div>
-
-
-    <!-- ===================== TABEL NILAI ===================== -->
-
-    <table>
-
+    <table class="grades-table">
         <thead>
             <tr>
-                <th width="60">No</th>
-                <th>Kriteria</th>
-                <th width="120">Skor</th>
+                <th style="width: 50px;">No</th>
+                <th>Kriteria Penilaian</th>
+                <th
+                    style="width: 100px; text-align: center;">
+                    Nilai</th>
             </tr>
         </thead>
-
         <tbody>
-
-            <tr>
-                <td class="text-center">1</td>
-                <td class="text-left">Kriteria A</td>
-                <td class="text-center score">80</td>
+            @foreach($grades as $index => $grade)
+            <tr
+                class="@if($grade->score >= 90) grade-excellent @elseif($grade->score >= 80) grade-good @elseif($grade->score >= 70) grade-fair @else grade-poor @endif">
+                <td>{{ $index + 1 }}</td>
+                <td>
+                    <strong>{{ $grade->criterion->name ??
+                        '-' }}</strong>
+                    @if($grade->criterion->description)
+                    <br><small style="color: #666;">{{
+                        $grade->criterion->description
+                        }}</small>
+                    @endif
+                </td>
+                <td style="text-align: center;">
+                    <span class="score">{{ $grade->score
+                        }}</span>
+                </td>
             </tr>
-
-            <tr>
-                <td class="text-center">2</td>
-                <td class="text-left">Kriteria B</td>
-                <td class="text-center score">85</td>
-            </tr>
-
-            <tr>
-                <td class="text-center">3</td>
-                <td class="text-left">Kriteria C</td>
-                <td class="text-center score">90</td>
-            </tr>
-
-            <tr class="nilai-akhir">
-                <td colspan="2">NILAI AKHIR</td>
-                <td class="text-center" id="nilaiAkhir">0</td>
-            </tr>
-
+            @endforeach
         </tbody>
-
+        <tfoot>
+            <tr
+                style="background-color: #f0fdfa; font-weight: bold;">
+                <td colspan="2" style="text-align: right;">
+                    Rata-rata Keseluruhan</td>
+                <td colspan="2"
+                    style="text-align: center; font-size: 18px; color: #0d9488;">
+                    {{ number_format($averageScore, 1) }}
+                </td>
+            </tr>
+        </tfoot>
     </table>
 
-
-    <!-- ===================== FOOTER ===================== -->
-
     <div class="footer">
-
-        <div>
-            Keterangan:<br>
-            Nilai akhir merupakan rata-rata dari seluruh kriteria penilaian.
-        </div>
-
-        <div class="ttd">
-
-            Banjarnegara, <span id="tanggal"></span><br>
-            Pembimbing Industri
-
-            <br><br><br>
-
-            ( __________________ )
-
-        </div>
-
+        <p>Laporan ini digenerate secara otomatis oleh
+            Sistem Informasi Praktek Kerja Lapangan</p>
+        <p>Tanggal Cetak: {{ $date }}</p>
     </div>
-
-</div>
-
 </body>
+
 </html>

@@ -127,7 +127,7 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        return view('student.dashboard', compact(
+        return view('student.dashboard.index', compact(
             'user',
             'student',
             'attendanceCounts',

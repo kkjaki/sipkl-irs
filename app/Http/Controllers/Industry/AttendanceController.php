@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Industry;
+
+use App\Http\Controllers\Controller;
 
 use App\Models\Attendance; 
 use App\Models\AttendanceSession;

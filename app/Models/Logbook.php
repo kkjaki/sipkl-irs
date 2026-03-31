@@ -19,7 +19,8 @@ class Logbook extends Model
         'mentor_id',
         'notes',
         'documentation_file',
-        'status'
+        'status',
+        'feedback',
     ];
 
     /**

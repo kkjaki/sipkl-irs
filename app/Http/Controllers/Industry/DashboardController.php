@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Industry;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +42,6 @@ class DashboardController extends Controller
             })->count();
         }
 
-        return view('dashboard', compact('industry', 'jumlahSiswa', 'jumlahSekolah', 'jumlahMentor', 'jumlahGuru'));
+        return view('industry.dashboard.index', compact('industry', 'jumlahSiswa', 'jumlahSekolah', 'jumlahMentor', 'jumlahGuru'));
     }
 }

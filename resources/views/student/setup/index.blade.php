@@ -83,13 +83,15 @@
                             id="nis" 
                             name="nis" 
                             type="text" 
-                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm" 
+                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm {{ $errors->has('nis') ? 'border-red-500' : '' }}" 
                             :value="old('nis', $user->student->nis ?? '')" 
                             required 
                             autofocus 
                             placeholder="Contoh: 123456789"
                         />
-                        <x-input-error class="mt-2" :messages="$errors->get('nis')" />
+                        @error('nis')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Nama Lengkap -->
@@ -101,11 +103,13 @@
                             id="name" 
                             name="name" 
                             type="text" 
-                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm" 
+                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm {{ $errors->has('name') ? 'border-red-500' : '' }}" 
                             :value="old('name', $user->name)" 
                             required 
                         />
-                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                        @error('name')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Kelas -->
@@ -117,12 +121,14 @@
                             id="class" 
                             name="class" 
                             type="text" 
-                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm" 
+                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm {{ $errors->has('class') ? 'border-red-500' : '' }}" 
                             :value="old('class', $user->student->class ?? '')" 
                             required 
                             placeholder="Contoh: XII RPL 1"
                         />
-                        <x-input-error class="mt-2" :messages="$errors->get('class')" />
+                        @error('class')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Nomor HP -->
@@ -134,12 +140,14 @@
                             id="phone" 
                             name="phone" 
                             type="text" 
-                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm" 
+                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm {{ $errors->has('phone') ? 'border-red-500' : '' }}" 
                             :value="old('phone', $user->student->phone ?? '')" 
                             required 
                             placeholder="Contoh: 081234567890"
                         />
-                        <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+                        @error('phone')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Alamat Lengkap -->
@@ -151,11 +159,13 @@
                             id="address" 
                             name="address" 
                             rows="3" 
-                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm resize-none" 
+                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm resize-none {{ $errors->has('address') ? 'border-red-500' : '' }}" 
                             required 
                             placeholder="Alamat rumah atau tempat singgah PKL saat ini..."
                         >{{ old('address', $user->student->address ?? '') }}</textarea>
-                        <x-input-error class="mt-2" :messages="$errors->get('address')" />
+                        @error('address')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Hobby / Talenta -->
@@ -170,11 +180,13 @@
                             id="hobby" 
                             name="hobby" 
                             type="text" 
-                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm" 
+                            class="block w-full border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm {{ $errors->has('hobby') ? 'border-red-500' : '' }}" 
                             :value="old('hobby', $user->student->hobby ?? '')" 
                             placeholder="Contoh: Desain Grafis, Main Musik, Coding HTML"
                         />
-                        <x-input-error class="mt-2" :messages="$errors->get('hobby')" />
+                        @error('hobby')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                 </div>

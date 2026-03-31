@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Industry;
 
 use App\Models\Criterion;
 use App\Models\Grade;

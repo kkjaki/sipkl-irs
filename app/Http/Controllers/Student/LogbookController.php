@@ -31,13 +31,7 @@ class LogbookController extends Controller
             ->with('user')
             ->get();
 
-        // Check if student already submitted logbook today
-        $today = now()->toDateString();
-        $existingLogbook = Logbook::where('student_id', $student->id)
-            ->whereDate('created_at', $today)
-            ->first();
-
-        return view('student.logbook-harian', compact('mentors', 'student', 'existingLogbook'));
+        return view('student.logbook.create', compact('mentors', 'student'));
     }
 
     /**
@@ -64,16 +58,6 @@ class LogbookController extends Controller
 
         if (!$mentor) {
             return response()->json(['error' => 'Mentor tidak valid.'], 403);
-        }
-
-        // Check if already submitted today
-        $today = now()->toDateString();
-        $existingLogbook = Logbook::where('student_id', $student->id)
-            ->whereDate('created_at', $today)
-            ->first();
-
-        if ($existingLogbook) {
-            return response()->json(['error' => 'Anda sudah mengirim logbook hari ini.'], 400);
         }
 
         // Handle documentation file upload
@@ -117,7 +101,7 @@ class LogbookController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('student.logbook-index', compact('logbooks'));
+        return view('student.logbook.index', compact('logbooks'));
     }
 
     /**
@@ -150,7 +134,7 @@ class LogbookController extends Controller
             ->with('user')
             ->get();
 
-        return view('student.logbook-edit', compact('logbook', 'mentors'));
+        return view('student.logbook.edit', compact('logbook', 'mentors'));
     }
 
     /**
@@ -209,9 +193,7 @@ class LogbookController extends Controller
             'status' => 'pending', // Reset to pending when resubmitting
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logbook berhasil diperbarui dan menunggu validasi mentor!'
-        ]);
+        return redirect()->route('student.logbook.index')
+            ->with('success', 'Logbook berhasil diperbarui dan menunggu validasi mentor!');
     }
 }

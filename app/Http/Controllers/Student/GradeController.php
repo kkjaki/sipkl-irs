@@ -41,7 +41,7 @@ class GradeController extends Controller
         $fairCount = $grades->whereBetween('score', [70, 79])->count();
         $poorCount = $grades->where('score', '<', 70)->count();
 
-        return view('student.grades', compact(
+        return view('student.nilai.index', compact(
             'grades',
             'student',
             'totalScore',
@@ -91,7 +91,7 @@ class GradeController extends Controller
         ];
 
         // Generate PDF
-        $pdf = PDF::loadView('student.grades-pdf', $data);
+        $pdf = PDF::loadView('student.nilai.print', $data);
 
         // Download PDF
         $fileName = 'nilai_' . str_replace(' ', '_', strtolower($user->name)) . '_' . now()->format('Y-m-d') . '.pdf';

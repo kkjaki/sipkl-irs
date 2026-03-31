@@ -1,10 +1,16 @@
-@extends('layouts.student')
-
-@section('header')
-Daftar Kehadiran
-@endsection
-
-@section('content')
+<x-app-layout>
+    <div class="min-h-screen bg-brand-bg px-10">
+        {{-- Header --}}
+        <header>
+            <div class="w-full py-6">
+                <h2 class="font-extrabold text-3xl text-gray-800 leading-tight">
+                    {{ __('Daftar Kehadiran') }}
+                </h2>
+                <p class="text-gray-600 mt-2">
+                    Riwayat presensi Anda
+                </p>
+            </div>
+        </header>
 
 <div class="bg-white shadow-md rounded-xl overflow-hidden relative">
 
@@ -60,12 +66,17 @@ Daftar Kehadiran
 
             <button class="filter-pill px-3 py-1 text-xs rounded-full bg-gray-200"
                 data-filter="izin">
-                Izin/Sakit
+                Izin
             </button>
 
             <button class="filter-pill px-3 py-1 text-xs rounded-full bg-gray-200"
-                data-filter="tidak">
-                Tidak Hadir
+                data-filter="sakit">
+                Sakit
+            </button>
+
+            <button class="filter-pill px-3 py-1 text-xs rounded-full bg-gray-200"
+                data-filter="alpa">
+                Alpa
             </button>
 
         </div>
@@ -92,64 +103,90 @@ Daftar Kehadiran
     {{-- LIST KEHADIRAN --}}
     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        @php
-            $status = ['terlambat','hadir','izin','tidak','hadir','hadir'];
-        @endphp
-
-        @foreach($status as $item)
+        @forelse($attendances as $attendance)
 
         <div class="kehadiran-card border rounded-lg p-4 flex flex-col justify-between"
-            data-status="{{ $item }}">
+            data-status="{{ $attendance->status }}">
 
             <div class="flex justify-between items-start mb-3">
 
                 <div>
                     <p class="font-semibold text-gray-800">
-                        Jumat, 27-06-2025
+                        {{ \Carbon\Carbon::parse($attendance->check_in)->translatedFormat('l, d-m-Y') }}
                     </p>
 
                     <p class="text-sm text-gray-500">
-                        08.20
+                        {{ \Carbon\Carbon::parse($attendance->check_in)->format('H:i') }}
                     </p>
                 </div>
 
-                {{-- STATUS --}}
-                @if($item == 'hadir')
-                    <span class="bg-green-200 text-green-700 text-xs px-3 py-1 rounded-full">
+                {{-- STATUS BADGE --}}
+                @if($attendance->status === 'hadir')
+                    <span class="bg-green-200 text-green-700 text-xs px-3 py-1 rounded-full font-medium">
                         Hadir
                     </span>
 
-                @elseif($item == 'terlambat')
-                    <span class="bg-yellow-200 text-yellow-700 text-xs px-3 py-1 rounded-full">
+                @elseif($attendance->status === 'terlambat')
+                    <span class="bg-yellow-200 text-yellow-700 text-xs px-3 py-1 rounded-full font-medium">
                         Terlambat
                     </span>
 
-                @elseif($item == 'izin')
-                    <span class="bg-blue-200 text-blue-700 text-xs px-3 py-1 rounded-full">
-                        Izin/Sakit
+                @elseif($attendance->status === 'izin')
+                    <span class="bg-blue-200 text-blue-700 text-xs px-3 py-1 rounded-full font-medium">
+                        Izin
+                    </span>
+
+                @elseif($attendance->status === 'sakit')
+                    <span class="bg-purple-200 text-purple-700 text-xs px-3 py-1 rounded-full font-medium">
+                        Sakit
                     </span>
 
                 @else
-                    <span class="bg-red-200 text-red-700 text-xs px-3 py-1 rounded-full">
-                        Tidak Hadir
+                    <span class="bg-red-200 text-red-700 text-xs px-3 py-1 rounded-full font-medium">
+                        Alpa
                     </span>
                 @endif
 
             </div>
 
-            <button
-                class="inline-flex items-center gap-2 text-sm border px-3 py-1.5 rounded hover:bg-gray-100 transition">
-
-                <i class="fa fa-image"></i>
-                Bukti Presensi
-
-            </button>
+            {{-- BUKTI PRESENSI --}}
+            @if($attendance->image)
+                <a href="{{ asset('storage/' . $attendance->image) }}"
+                    target="_blank"
+                    class="inline-flex items-center gap-2 text-sm border border-teal-400 text-teal-600 px-3 py-1.5 rounded hover:bg-teal-50 transition">
+                    <i class="fa fa-image"></i>
+                    Lihat Bukti Presensi
+                </a>
+            @else
+                <span class="inline-flex items-center gap-2 text-sm border border-gray-200 text-gray-400 px-3 py-1.5 rounded cursor-not-allowed">
+                    <i class="fa fa-image"></i>
+                    Tidak Ada Bukti
+                </span>
+            @endif
 
         </div>
 
-        @endforeach
+        @empty
+
+        {{-- EMPTY STATE --}}
+        <div class="col-span-1 md:col-span-2 flex flex-col items-center justify-center py-16 text-center">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fa fa-calendar-xmark text-3xl text-gray-300"></i>
+            </div>
+            <p class="text-gray-500 font-medium text-lg">Belum ada data kehadiran</p>
+            <p class="text-gray-400 text-sm mt-1">Mulai lakukan presensi harian Anda di halaman Presensi Harian.</p>
+        </div>
+
+        @endforelse
 
     </div>
+
+    {{-- PAGINATION --}}
+    @if($attendances->hasPages())
+    <div class="px-6 pb-6 border-t border-gray-100 pt-4">
+        {{ $attendances->links() }}
+    </div>
+    @endif
 
 </div>
 
@@ -162,7 +199,6 @@ const filterBtn = document.getElementById("filterBtn");
 const popup = document.getElementById("filterPopup");
 const closeBtn = document.getElementById("closeFilter");
 const pills = document.querySelectorAll(".filter-pill");
-const cards = document.querySelectorAll(".kehadiran-card");
 
 let selectedFilter = null;
 
@@ -197,6 +233,8 @@ pills.forEach(pill => {
 // apply filter
 document.getElementById("applyFilter").addEventListener("click", () => {
 
+    const cards = document.querySelectorAll(".kehadiran-card");
+
     cards.forEach(card => {
 
         if(!selectedFilter){
@@ -223,7 +261,7 @@ document.getElementById("resetFilter").addEventListener("click", () => {
 
     pills.forEach(p => p.classList.remove("bg-teal-400","text-white"));
 
-    cards.forEach(card => {
+    document.querySelectorAll(".kehadiran-card").forEach(card => {
         card.style.display = "block";
     });
 
@@ -231,4 +269,5 @@ document.getElementById("resetFilter").addEventListener("click", () => {
 
 </script>
 
-@endsection
+    </div>
+</x-app-layout>
