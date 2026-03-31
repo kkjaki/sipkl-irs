@@ -171,80 +171,27 @@
 
                 {{-- Status Selection (Pindah ke atas agar logis dipilih duluan) --}}
                 <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Foto
-                        Presensi <span class="text-red-500">*</span></label>
-                    <div class="space-y-3">
-                        {{-- Video/Camera Preview --}}
-                        <div class="relative">
-                            <video id="cameraPreview" class="w-full h-64 bg-black rounded-lg object-cover" autoplay
-                                playsinline></video>
-                            <canvas id="photoCanvas" class="hidden"></canvas>
-                            <img id="photoPreview" class="w-full h-64 object-cover rounded-lg hidden">
-                        </div>
-
-                        {{-- Camera Controls --}}
-                        <div class="flex gap-2">
-                            <button type="button" id="startCameraBtn" onclick="startCamera()"
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">
-                                <i class="fas fa-camera mr-2"></i>Aktifkan
-                                Kamera
-                            </button>
-                            <button type="button" id="captureBtn" onclick="capturePhoto()"
-                                class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition hidden">
-                                <i class="fas fa-camera mr-2"></i>Ambil
-                                Foto
-                            </button>
-                            <button type="button" id="retakeBtn" onclick="retakePhoto()"
-                                class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition hidden">
-                                <i class="fas fa-redo mr-2"></i>Ulang
-                                Foto
-                            </button>
-                            <button type="button" onclick="document.getElementById('imageInput').click()"
-                                class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition">
-                                <i class="fas fa-upload mr-2"></i>Upload
-                            </button>
-                        </div>
-
-                        {{-- File Input (hidden) --}}
-                        <input type="file" id="imageInput" name="image" accept="image/*" class="hidden"
-                            onchange="handleFileSelect(event)">
-
-                        {{-- Error/Info Message --}}
-                        <p id="cameraError" class="text-red-500 text-sm hidden">
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Status Selection --}}
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Status
-                        Kehadiran <span class="text-red-500">*</span></label>
+                    <label class="block text-gray-700 font-semibold mb-2">Status Kehadiran <span class="text-red-500">*</span></label>
                     <div class="grid grid-cols-3 gap-3">
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="hadir" class="hidden peer" required>
-                            <div
-                                class="peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 border-2 border-gray-200 rounded-lg p-3 text-center transition hover:border-green-300">
+                            <input type="radio" x-model="status" name="status" value="hadir" class="hidden peer" required>
+                            <div class="peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 border-2 border-gray-200 rounded-lg p-3 text-center transition hover:border-green-300">
                                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                                <div class="font-medium">
-                                    Hadir</div>
+                                <div class="font-medium">Hadir</div>
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="izin" class="hidden peer">
-                            <div
-                                class="peer-checked:bg-blue-100 peer-checked:border-blue-500 peer-checked:text-blue-700 border-2 border-gray-200 rounded-lg p-3 text-center transition hover:border-blue-300">
+                            <input type="radio" x-model="status" name="status" value="izin" class="hidden peer">
+                            <div class="peer-checked:bg-blue-100 peer-checked:border-blue-500 peer-checked:text-blue-700 border-2 border-gray-200 rounded-lg p-3 text-center transition hover:border-blue-300">
                                 <i class="fas fa-file-alt text-2xl mb-1"></i>
-                                <div class="font-medium">
-                                    Izin</div>
+                                <div class="font-medium">Izin</div>
                             </div>
                         </label>
                         <label class="cursor-pointer">
-                            <input type="radio" name="status" value="sakit" class="hidden peer">
-                            <div
-                                class="peer-checked:bg-yellow-100 peer-checked:border-yellow-500 peer-checked:text-yellow-700 border-2 border-gray-200 rounded-lg p-3 text-center transition hover:border-yellow-300">
+                            <input type="radio" x-model="status" name="status" value="sakit" class="hidden peer">
+                            <div class="peer-checked:bg-yellow-100 peer-checked:border-yellow-500 peer-checked:text-yellow-700 border-2 border-gray-200 rounded-lg p-3 text-center transition hover:border-yellow-300">
                                 <i class="fas fa-briefcase-medical text-2xl mb-1"></i>
-                                <div class="font-medium">
-                                    Sakit</div>
+                                <div class="font-medium">Sakit</div>
                             </div>
                         </label>
                     </div>
@@ -288,11 +235,8 @@
 
                 {{-- Notes --}}
                 <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Catatan
-                        (Opsional)</label>
-                    <textarea name="notes" rows="3"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent"
-                        placeholder="Tambahkan catatan jika diperlukan..."></textarea>
+                    <label class="block text-gray-700 font-semibold mb-2">Catatan (Opsional)</label>
+                    <textarea name="notes" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" placeholder="Tambahkan catatan jika diperlukan..."></textarea>
                 </div>
 
                 {{-- TODO FRONTEND (Tanu): Isi value latitude & longitude ini otomatis pake navigator.geolocation JS pas tombol Hadir diklik --}}

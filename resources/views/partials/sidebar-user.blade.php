@@ -51,8 +51,8 @@
                         class="dropdown-menu {{ $presensiActive ? 'open' : '' }}">
 
                         <li>
-                            <a href="{{ route('student.presensi.create') }}"
-                               class="submenu {{ request()->routeIs('student.presensi.create') ? 'active' : '' }}">
+                            <a href="{{ route('student.presensi.harian') }}"
+                               class="submenu {{ request()->routeIs('student.presensi.harian') ? 'active' : '' }}">
                                 Presensi Harian
                             </a>
                         </li>
@@ -94,8 +94,8 @@
                         class="dropdown-menu {{ $logbookActive ? 'open' : '' }}">
 
                         <li>
-                            <a href="{{ route('student.logbook.create') }}"
-                               class="submenu {{ request()->routeIs('student.logbook.create') ? 'active' : '' }}">
+                            <a href="{{ route('student.logbook.harian') }}"
+                               class="submenu {{ request()->routeIs('student.logbook.harian') ? 'active' : '' }}">
                                 Logbook Harian
                             </a>
                         </li>

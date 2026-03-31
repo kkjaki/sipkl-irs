@@ -66,6 +66,18 @@ class AttendanceController extends Controller
         return view('student.presensi-harian', compact('attendanceSessions', 'student'));
     }
 
+    public function index()
+{
+    $student = auth()->user()->student;
+    
+    // Ambil data presensi si siswa, urutkan dari yang terbaru
+    $attendances = \App\Models\Attendance::where('student_id', $student->id)
+                    ->latest()
+                    ->paginate(10);
+
+    return view('student.presensi.index', compact('attendances', 'student'));
+}
+
     /**
      * Store a new attendance record with image.
      */
