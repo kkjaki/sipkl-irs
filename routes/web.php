@@ -25,9 +25,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/dashboard', [DashboardController::class, 'index'])
-//     ->middleware(['auth', 'verified', 'role:owner'])
-//     ->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -85,9 +85,9 @@ Route::middleware('auth')->group(function () {
         Route::post('mentors/{mentor}/activate', [MentorController::class, 'activate'])->name('mentors.activate');
         Route::resource('internship-programs', InternshipProgramController::class);
 
-        Route::get('/industry', function () {
-            return view('industry.dashboard.index');
-        })->name('industry');
+        // Route::get('/industry', function () {
+        //     return view('industry.dashboard.index');
+        // })->name('industry');
     });
 
     // Student routes

@@ -20,6 +20,10 @@ class DashboardController extends Controller
             return redirect()->route('student.dashboard');
         }
 
+        if (Auth::check() && Auth::user()->role === 'mentor') {
+            return redirect()->route('schools.management');
+        }
+
         $user = Auth::user();
         $industry = Industry::where('owner_id', $user->id)->first();
 

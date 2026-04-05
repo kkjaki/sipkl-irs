@@ -30,13 +30,13 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        $defaultRoute = match ($user->role) {
-            'student' => route('student.dashboard', absolute: false),
-            'mentor'  => route('schools.management', absolute: false),
-            default   => route('dashboard', absolute: false),
-        };
+        // $defaultRoute = match ($user->role) {
+        //     'student' => route('student.dashboard', absolute: false),
+        //     'mentor'  => route('schools.management', absolute: false),
+        //     default   => route('dashboard', absolute: false),
+        // };
 
-        return redirect()->intended($defaultRoute);
+        return redirect()->route('dashboard')->with('success', 'Login successful!'); 
     }
 
     /**
