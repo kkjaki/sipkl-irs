@@ -20,20 +20,34 @@
             </section>
             <form method="POST" action="{{ route('internship-programs.store') }}" class="w-full mx-auto space-y-5">
                 @csrf
+                @if ($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                        <strong class="font-bold">Oops! Ada masalah:</strong>
+                        <ul class="mt-2 list-disc list-inside text-sm">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 {{-- Nama Program --}}
                 <section class="w-full flex items-center gap-6">
                     <label for="nama_program" class="w-40 text-neutral-800 text-base">Nama Program</label>
-                    <input type="text" id="nama_program" name="name" placeholder="Masukkan nama program" required
+                    <input value="{{ old('name') }}" type="text" id="nama_program" name="name"
+                        placeholder="Masukkan nama program" required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
-                {{-- Pilih Mentor --}}
+                {{-- Pilih Pendamping --}}
                 <section class="w-full flex items-center gap-6">
-                    <label for="mentor_id" class="w-40 text-neutral-800 text-base">Pilih Mentor</label>
-                    <select name="mentor_id" id="mentor_id" class="form-select w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-primary">
-                        <option value="">-- Pilih Mentor (Opsional/Wajib) --</option>
+                    <label for="mentor_id" class="w-40 text-neutral-800 text-base">Pilih Pendamping</label>
+                    <select name="mentor_id" id="mentor_id"
+                        class="form-select w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        <option value="">-- Pilih Pendamping (Opsional/Wajib) --</option>
                         @foreach ($mentors as $mentor)
-                            <option value="{{ $mentor->id }}">{{ $mentor->user->name }}</option>
+                            <option value="{{ $mentor->id }}" {{ old('mentor_id') == $mentor->id ? 'selected' : '' }}>
+                                {{ $mentor->user->name }}
+                            </option>
                         @endforeach
                     </select>
                 </section>
@@ -41,14 +55,14 @@
                 {{-- Tanggal Mulai --}}
                 <section class="w-full flex items-center gap-6">
                     <label for="tanggal_mulai" class="w-40 text-neutral-800 text-base">Tanggal Mulai</label>
-                    <input type="date" id="tanggal_mulai" name="start_date" required
+                    <input value="{{ old('start_date') }}" type="date" id="tanggal_mulai" name="start_date" required
                         class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
                 {{-- Tanggal Selesai --}}
                 <section class="w-full flex items-center gap-6">
                     <label for="tanggal_selesai" class="w-40 text-neutral-800 text-base">Tanggal Selesai</label>
-                    <input type="date" id="tanggal_selesai" name="end_date" required
+                    <input value="{{ old('end_date') }}" type="date" id="tanggal_selesai" name="end_date" required
                         class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
@@ -69,7 +83,7 @@
                 <section class="pt-5 flex items-center gap-3.5">
                     <button type="submit"
                         class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
-                        <span class="justify-start text-white text-lg leading-snug">Simpan</span>
+                        <span class="justify-start text-white text-lg leading-snug">Tambah</span>
                     </button>
                     <a href="{{ route('internship-programs.index') }}"
                         class="w-max px-5 py-2 border border-gray-400 text-gray-500 bg-white rounded-md inline-flex justify-center items-center gap-2.5 hover:bg-gray-400 hover:text-white hover:border-transparent transition">

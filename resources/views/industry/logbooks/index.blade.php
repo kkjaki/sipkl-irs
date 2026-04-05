@@ -1,243 +1,230 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8" x-data="{
-        search: '',
-        get hasVisible() {
-            if (this.search === '') return true;
-            const term = this.search.toLowerCase();
-            return Array.from(this.$refs.grid.querySelectorAll('.student-card-data')).some(el => el.innerText.toLowerCase().includes(term));
-        }
-    }">
-        <!-- Header Wadah -->
-        <div
-            class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 {{ count($logbooks) > 0 ? 'rounded-t-xl rounded-b-none border-b border-teal-600/50' : 'rounded-xl mb-6 shadow-sm' }} flex flex-col sm:flex-row justify-between items-center text-white gap-4 transition-all">
-            <div class="flex items-center gap-2.5 text-white w-full sm:w-auto">
-                <x-heroicon-o-book-open class="w-6 h-6 shrink-0" />
-                <h2 class="font-bold text-lg m-0 shrink-0">Validasi Logbook Harian Siswa</h2>
+    <main class="min-h-screen bg-brand-bg px-10 pb-10 w-full" 
+        x-data="{
+            search: '',
+            successAlert: false,
+            showConfirmBulk: false,
+            bulkTarget: '', 
+            get hasVisible() {
+                if (this.search === '') return true;
+                const term = this.search.toLowerCase();
+                return Array.from(this.$refs.grid.querySelectorAll('.student-card-data')).some(el => 
+                    el.innerText.toLowerCase().includes(term)
+                );
+            }
+        }"
+        @success-modal.window="successAlert = true; showConfirmBulk = false">
+        
+        <header>
+            <div class="py-6">
+                <h2 class="font-black text-3xl text-gray-800 leading-tight">
+                    {{ __('Validasi Logbook Siswa') }}
+                </h2>
+            </div>
+        </header>
+
+        <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+            {{-- Header Card Teal --}}
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-6 flex flex-col md:flex-row justify-between items-center text-white gap-4">
+                <div class="flex items-center gap-2.5">
+                    <x-heroicon-o-book-open class="w-6 h-6 shrink-0" />
+                    <h2 class="font-bold text-lg m-0 leading-none">Antrean Validasi Logbook</h2>
+                </div>
+
+                <div class="relative w-full md:w-80 shrink-0">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                        <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+                    </span>
+                    <input x-model.live.debounce.150ms="search" type="text"
+                        @keydown.enter.prevent
+                        class="block w-full pl-11 pr-4 py-2.5 bg-white border border-transparent rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 sm:text-sm transition-all shadow-sm"
+                        placeholder="Cari nama siswa...">
+                </div>
             </div>
 
-            <!-- High-Contrast Search bar di Header -->
-            <div class="relative w-full md:w-64 shrink-0">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <x-heroicon-o-magnifying-glass class="w-5 h-5" />
-                </span>
-                <input x-model.debounce.500ms="search" type="text"
-                    class="block w-full pl-11 pr-4 py-2 bg-white/95 border border-white/40 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 sm:text-sm transition-colors"
-                    placeholder="Cari nama siswa...">
+            <div class="p-6">
+                @if (count($logbooks) > 0)
+                    {{-- Bulk Action --}}
+                    <div class="mb-8 flex flex-col sm:flex-row items-center justify-between bg-gray-50 p-5 rounded-2xl border border-gray-200 shadow-inner gap-4">
+                        <div class="flex items-center gap-4 text-gray-700">
+                            <input type="checkbox" id="selectAll" class="rounded-md border-gray-300 text-teal-600 focus:ring-teal-500 w-6 h-6 cursor-pointer">
+                            <div class="flex flex-col">
+                                <label for="selectAll" class="text-sm font-black cursor-pointer">Pilih Semua</label>
+                                <span id="selectedCount" class="text-[10px] font-bold text-teal-600 uppercase hidden">0 Terpilih</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 w-full sm:w-auto">
+                            <button @click="bulkTarget = 'approved'; showConfirmBulk = true" id="btnApproveBulk" disabled class="flex-1 sm:flex-none bg-white text-green-600 border border-green-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 hover:bg-green-600 hover:text-white shadow-sm active:scale-95">Setujui</button>
+                            <button @click="bulkTarget = 'rejected'; showConfirmBulk = true" id="btnRejectBulk" disabled class="flex-1 sm:flex-none bg-white text-rose-600 border border-rose-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 hover:bg-rose-600 hover:text-white shadow-sm active:scale-95">Tolak</button>
+                        </div>
+                    </div>
+
+                    {{-- Daftar Grid Logbook --}}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" x-ref="grid">
+                        @foreach($logbooks as $logbook)
+                            <section 
+                                x-show="search === '' || $el.innerText.toLowerCase().includes(search.toLowerCase())"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-data="{ showModal: false, statusUpdate: '{{ $logbook->status }}' }"
+                                class="student-card-data bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 p-6 relative flex flex-col group">
+
+                                <div class="absolute top-6 left-6 z-10">
+                                    <input type="checkbox" value="{{ $logbook->id }}" class="logbook-checkbox rounded-md border-gray-300 text-teal-600 focus:ring-teal-500 w-5 h-5 cursor-pointer shadow-sm">
+                                </div>
+
+                                <div class="absolute top-6 right-6">
+                                    <button @click="showModal = true" class="focus:outline-none">
+                                        @php
+                                            $textColor = match ($logbook->status) {
+                                                'approved' => 'text-green-600',
+                                                'pending' => 'text-amber-600',
+                                                'rejected' => 'text-rose-600',
+                                                default => 'text-gray-500',
+                                            };
+                                        @endphp
+                                        <span class="px-2 py-1 text-[10px] font-black uppercase tracking-widest {{ $textColor }} flex items-center gap-1 hover:bg-gray-50 rounded-lg transition-all">
+                                            {{ $logbook->status === 'approved' ? 'Disetujui' : ($logbook->status === 'rejected' ? 'Ditolak' : 'Menunggu') }}
+                                            <x-heroicon-o-chevron-down class="w-3 h-3" />
+                                        </span>
+                                    </button>
+                                </div>
+
+                                <div class="mt-10">
+                                    <h3 class="text-xl font-black text-gray-900 group-hover:text-teal-600 transition-colors">{{ $logbook->student->user->name ?? '-' }}</h3>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1 mb-5">{{ $logbook->student->school->name ?? '-' }}</p>
+                                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 group-hover:bg-white transition-colors">
+                                        <p class="text-sm text-gray-700 font-medium whitespace-pre-wrap leading-relaxed">{{ $logbook->notes }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-auto pt-5 border-t border-gray-100 flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-xs font-bold">
+                                        @if ($logbook->documentation_file)
+                                            <a href="{{ route('industry.logbooks.download', $logbook->id) }}" target="_blank" class="text-blue-600 bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 hover:bg-blue-600 hover:text-white transition-all">Dokumen</a>
+                                        @endif
+                                        <a href="{{ route('industry.logbooks.edit', $logbook->id) }}" class="text-teal-700 bg-teal-50 px-4 py-2 rounded-lg border border-teal-100 hover:bg-teal-600 hover:text-white transition-all">Feedback</a>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-gray-400 italic">{{ $logbook->created_at->translatedFormat('d M Y') }}</span>
+                                </div>
+
+                                {{-- Modal Ganti Status Individu --}}
+                                <div x-cloak x-show="showModal" class="fixed inset-0 z-[9999] overflow-y-auto">
+                                    <div class="flex items-center justify-center min-h-screen p-4">
+                                        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showModal = false"></div>
+                                        <div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-[10000] shadow-2xl">
+                                            <h3 class="text-xl font-black text-gray-900 mb-6">Ubah Status</h3>
+                                            <div class="mb-8 text-left">
+                                                <select x-model="statusUpdate" class="w-full rounded-xl border-gray-200 bg-gray-50 py-3 px-4 font-bold text-gray-800 focus:ring-teal-500 focus:border-teal-500 transition-all">
+                                                    <option value="pending">Menunggu</option>
+                                                    <option value="approved">Disetujui</option>
+                                                    <option value="rejected">Ditolak</option>
+                                                </select>
+                                            </div>
+                                            <div class="flex gap-3">
+                                                <button @click="showModal = false" class="flex-1 px-4 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-all">Batal</button>
+                                                <button @click="updateLogbook({{ $logbook->id }}, statusUpdate); showModal = false" class="flex-1 px-4 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-teal-700 active:scale-95 transition-all">Simpan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </article>
+
+        {{-- MODAL KONFIRMASI MASSAL --}}
+        <div x-cloak x-show="showConfirmBulk" class="fixed inset-0 z-[10001] flex items-center justify-center px-4">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showConfirmBulk = false"></div>
+            <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-100"
+                x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
+                
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 mb-6">
+                    <x-heroicon-o-exclamation-triangle class="h-10 w-10 text-amber-600" />
+                </div>
+                <h3 class="text-xl font-black text-gray-900 mb-2">Konfirmasi Validasi Massal</h3>
+                <p class="text-sm text-gray-500 font-medium leading-relaxed mb-8">
+                    Apakah Anda yakin ingin memproses <span class="font-black text-teal-600" id="bulkConfirmCount">0</span> logbook terpilih untuk 
+                    <span class="font-black" :class="bulkTarget === 'approved' ? 'text-green-600' : 'text-rose-600'" x-text="bulkTarget === 'approved' ? 'DISETUJUI' : 'DITOLAK'"></span>?
+                </p>
+                <div class="flex gap-3">
+                    <button @click="showConfirmBulk = false" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-all">Batal</button>
+                    <button @click="submitBulk(bulkTarget)" class="flex-1 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-teal-700 active:scale-95 transition-all">Ya, Proses Semua</button>
+                </div>
             </div>
         </div>
 
-        @if (count($logbooks) > 0)
-            <!-- Connected Data Container -->
-            <div class="bg-white rounded-b-xl border border-gray-100 shadow-sm p-6 mb-6">
-                <!-- Grid Layout foreach Logbook -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4" x-ref="grid">
-                    @forelse($logbooks as $logbook)
-                        <div x-show="search === '' || $el.innerText.toLowerCase().includes(search.toLowerCase())"
-                            x-transition:enter="transition ease-out duration-200"
-                            x-transition:enter-start="opacity-0 transform scale-95"
-                            class="student-card-data bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-200 p-5 relative flex flex-col h-full"
-                            x-data="{ showModal: false, statusUpdate: '{{ $logbook->status }}' }">
-
-                            <!-- Badges Status Trigger/Button -->
-                            <div class="absolute top-4 right-4">
-                                <button @click="showModal = true" class="focus:outline-none">
-                                    @php
-                                        $currentStatus = $logbook->status;
-                                        $badgeClass = match ($currentStatus) {
-                                            'approved' => 'bg-green-100 text-green-800 border-green-200',
-                                            'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                                            'rejected' => 'bg-red-100 text-red-800 border-red-200',
-                                            default => 'bg-gray-100 text-gray-800 border-gray-200',
-                                        };
-
-                                        $statusLabel = match ($currentStatus) {
-                                            'approved' => 'Disetujui',
-                                            'pending' => 'Menunggu',
-                                            'rejected' => 'Ditolak',
-                                            default => ucfirst($currentStatus),
-                                        };
-                                    @endphp
-                                    <span
-                                        class="px-3 py-1 rounded-full text-xs font-semibold border {{ $badgeClass }} transition-colors hover:opacity-80 flex items-center gap-1">
-                                        {{ $statusLabel }}
-                                        <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </div>
-
-                            <div class="pr-36 flex-grow">
-                                <!-- Badge Tanggal Sesi -->
-                                <div
-                                    class="flex items-center gap-2 bg-blue-50/50 border border-blue-100/50 rounded-lg p-2 mb-3 w-max">
-                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <span
-                                        class="text-blue-900 font-bold text-sm">{{ $logbook->created_at->translatedFormat('l, d F Y') }}</span>
-                                </div>
-
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">{{ $logbook->student->user->name ?? '-' }}
-                                </h3>
-                                <p class="text-sm text-gray-500 font-medium mb-4">
-                                    {{ $logbook->student->school->name ?? '-' }}</p>
-
-                                <div class="text-sm text-gray-600 mb-4">
-                                    <span class="font-bold text-gray-800 block mb-1">Deskripsi Kegiatan:</span>
-                                    <p class="whitespace-pre-wrap">{{ $logbook->notes }}</p>
-                                </div>
-                            </div>
-
-                            <!-- Footer Card (Border Top) -->
-                            <div
-                                class="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    @if ($logbook->documentation_file)
-                                        <a href="{{ route('industry.logbooks.download', $logbook->id) }}" target="_blank"
-                                            class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
-                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                                </path>
-                                            </svg>
-                                            Lihat Dokumen
-                                        </a>
-                                    @endif
-
-                                    <a href="{{ route('industry.logbooks.edit', $logbook->id) }}"
-                                        class="inline-flex items-center text-sm text-teal-700 bg-teal-50 hover:bg-teal-100 font-medium px-3 py-1.5 rounded-lg transition-colors">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                                            </path>
-                                        </svg>
-                                        Umpan Balik
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Modal Konfirmasi Status Logbook -->
-                            <div x-show="showModal"
-                                class="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 break-words"
-                                style="display: none;">
-                                <div x-show="showModal" x-transition:enter="transition ease-out duration-300 transform"
-                                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                    x-transition:leave="transition ease-in duration-200 transform"
-                                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                    @click.away="showModal = false"
-                                    class="bg-white rounded-xl shadow-xl transform transition-all sm:max-w-lg sm:w-full p-6 m-4 relative z-50">
-
-                                    <h3 class="text-lg font-bold text-gray-900 mb-4">Ubah Status Logbook</h3>
-                                    <p class="text-sm text-gray-500 mb-4">Siswa: <span
-                                            class="font-semibold">{{ $logbook->student->user->name ?? '-' }}</span></p>
-
-                                    <div class="mb-5">
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Status Validasi</label>
-                                        <select x-model="statusUpdate"
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-primary focus:ring-brand-primary focus:ring-opacity-50 text-gray-800">
-                                            <option value="pending">Menunggu</option>
-                                            <option value="approved">Disetujui</option>
-                                            <option value="rejected">Ditolak</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="flex justify-end gap-3 mt-6">
-                                        <button type="button" @click="showModal = false"
-                                            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded-md transition-colors">
-                                            Batal
-                                        </button>
-                                        <button type="button" @click="updateLogbook({{ $logbook->id }}, statusUpdate)"
-                                            class="px-4 py-2 bg-brand-primary hover:bg-teal-700 text-white text-sm font-medium rounded-md transition-colors">
-                                            Simpan Perubahan
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                    @endforelse
+        {{-- MODAL ALERT SUKSES --}}
+        <div x-cloak x-show="successAlert" class="fixed inset-0 z-[10002] flex items-center justify-center px-4" style="display: none;">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="successAlert = false; location.reload();"></div>
+            <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-gray-100">
+                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-100 mb-6">
+                    <x-heroicon-s-check-circle class="h-12 w-12 text-green-600" />
                 </div>
-
-                <!-- Search Empty State -->
-                <div x-show="!hasVisible" style="display: none;"
-                    class="col-span-full w-full text-center py-12 rounded-xl bg-gray-50 border border-dashed border-gray-200 mt-4">
-                    <p class="text-gray-500">Logbook siswa dengan nama tersebut tidak ditemukan.</p>
-                </div>
-
-                <!-- Navigasi Pagination -->
-                <div class="mt-6">
-                    {{ $logbooks->links() }}
-                </div>
+                <h3 class="text-2xl font-black text-gray-900 mb-2">Berhasil!</h3>
+                <p class="text-sm text-gray-500 font-medium leading-relaxed mb-8">Data validasi logbook telah berhasil diperbarui!</p>
+                <button @click="successAlert = false; location.reload();" class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95">Mantap!</button>
             </div>
-        @else
-            <!-- Empty State Terpisah -->
-            <div class="text-center py-12 bg-white rounded-xl shadow-sm border border-dashed border-gray-200">
-                <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                    </path>
-                </svg>
-                <p class="text-gray-500 font-medium">Belum ada data riwayat logbook siswa.</p>
-            </div>
-        @endif
-    </div>
+        </div>
+    </main>
 
-    <!-- Script Update Logbook Menggunakan Fetch API -->
     <script>
-        function updateLogbook(logbookId, status) {
-            // Ambil elemen Meta CSRF Token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        // Fungsi Update Individu 
+        function updateLogbook(id, status) {
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            let url = "{{ route('industry.logbooks.validate', ':id') }}".replace(':id', id);
+            fetch(url, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                body: JSON.stringify({ status })
+            })
+            .then(res => res.ok ? res.json() : Promise.reject())
+            .then(() => { window.dispatchEvent(new Event('success-modal')); })
+            .catch(() => { console.error('Gagal update data.'); });
+        }
 
-            let updateUrl = "{{ route('industry.logbooks.validate', '_id_') }}";
-            updateUrl = updateUrl.replace('_id_', logbookId);
+        // Fungsi Update Massal
+        function submitBulk(status) {
+            const ids = Array.from(document.querySelectorAll('.logbook-checkbox:checked')).map(c => c.value);
+            if (!ids.length) return;
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            fetch('{{ route("industry.logbooks.bulkValidate") }}', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                body: JSON.stringify({ ids, status })
+            })
+            .then(res => res.ok ? res.json() : Promise.reject())
+            .then(() => { window.dispatchEvent(new Event('success-modal')); })
+            .catch(() => { console.error('Gagal proses massal.'); });
+        }
 
-            // Atur payload status
-            const payload = {
-                status: status
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.logbook-checkbox');
+            const btns = [document.getElementById('btnApproveBulk'), document.getElementById('btnRejectBulk')];
+            const label = document.getElementById('selectedCount');
+            const confirmCount = document.getElementById('bulkConfirmCount');
+
+            const updateUI = () => {
+                const count = document.querySelectorAll('.logbook-checkbox:checked').length;
+                btns.forEach(b => b.disabled = count === 0);
+                if(label) {
+                    label.textContent = count + ' Terpilih';
+                    label.classList.toggle('hidden', count === 0);
+                }
+                if(confirmCount) confirmCount.textContent = count;
             };
 
-            // Mulai Fetch Request
-            fetch(updateUrl, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        // Return json data if validation error exists
-                        return response.json().then(err => {
-                            throw err;
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert('Status logbook berhasil diubah!');
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menyimpan data: ' + (error.message || 'Unknown error'));
-                });
-        }
+            if(selectAll) selectAll.addEventListener('change', () => {
+                checkboxes.forEach(c => c.checked = selectAll.checked);
+                updateUI();
+            });
+            checkboxes.forEach(c => c.addEventListener('change', updateUI));
+        });
     </script>
 
+    <style> [x-cloak] { display: none !important; } </style>
 @endsection

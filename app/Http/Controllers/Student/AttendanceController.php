@@ -68,7 +68,7 @@ class AttendanceController extends Controller
 
     public function index()
 {
-    $student = auth()->user()->student;
+    $student = Auth::user()->student;
     
     // Ambil data presensi si siswa, urutkan dari yang terbaru
     $attendances = \App\Models\Attendance::where('student_id', $student->id)

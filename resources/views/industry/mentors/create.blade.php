@@ -20,11 +20,20 @@
             </section>
             <form method="POST" action="{{ route('mentors.store') }}" class="w-full mx-auto space-y-5">
                 @csrf
+                @if ($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                        <strong class="font-bold">Oops! Ada masalah:</strong>
+                        <ul class="mt-2 list-disc list-inside text-sm">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 {{-- Nama Guru Pembimbing --}}
-                <section class="w-full flex items-center gap-2">
+                <section class="w0-full flex items-center gap-2">
                     <label for="name" class="w-40 text-neutral-800 text-base">Nama Pembimbing</label>
-                    <input type="text" id="name" name="name" placeholder="Masukkan Nama Pendamping"
-                        required
+                    <input type="text" id="name" name="name" placeholder="Masukkan Nama Pendamping" required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 

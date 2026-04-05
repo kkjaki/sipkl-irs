@@ -21,8 +21,11 @@ class DashboardController extends Controller
         }
 
         $user = Auth::user();
-        $industry = $user->industry ?? Industry::first();
+        $industry = Industry::where('owner_id', $user->id)->first();
 
+        if (!$industry) {
+            $industry = Industry::first();
+        }
         $jumlahSiswa = 0;
         $jumlahSekolah = 0;
         $jumlahMentor = 0;
@@ -34,13 +37,14 @@ class DashboardController extends Controller
             })->count();
 
             $jumlahSekolah = School::where('industry_id', $industry->id)->count();
-            
+
             $jumlahMentor = Mentor::where('industry_id', $industry->id)->count();
 
             $jumlahGuru = SchoolSupervisor::whereHas('school', function ($query) use ($industry) {
                 $query->where('industry_id', $industry->id);
             })->count();
         }
+
 
         return view('industry.dashboard.index', compact('industry', 'jumlahSiswa', 'jumlahSekolah', 'jumlahMentor', 'jumlahGuru'));
     }

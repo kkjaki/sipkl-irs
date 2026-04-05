@@ -17,20 +17,20 @@ class AttendanceValidationController extends BaseController
     public function index()
     {
         $user = Auth::user();
-        
+
         if (!in_array($user->role, ['owner', 'mentor'])) {
             abort(403, 'Unauthorized action.');
         }
 
         $schools = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
-        
+
         return view('industry.attendance-validation.index', compact('schools'));
     }
 
     public function show($id)
     {
         $user = Auth::user();
-        
+
         if (!in_array($user->role, ['owner', 'mentor'])) {
             abort(403, 'Unauthorized action.');
         }
@@ -46,9 +46,9 @@ class AttendanceValidationController extends BaseController
 
         $students = \App\Models\Student::where('school_id', $school->id)
             ->where('industry_id', $industryId)
-            ->with(['attendances' => function($query) use ($sessionId) {
+            ->with(['attendances' => function ($query) use ($sessionId) {
                 // Ambil data absen KHUSUS untuk sesi yang sedang divalidasi
-                $query->where('attendance_session_id', $sessionId); 
+                $query->where('attendance_session_id', $sessionId);
             }, 'user'])
             ->paginate(30);
 

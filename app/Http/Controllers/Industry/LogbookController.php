@@ -10,39 +10,54 @@ use Illuminate\Support\Facades\Storage;
 class LogbookController extends Controller
 {
     /**
-     * 1. Mengambil data logbook yang perlu divalidasi
-     * Sesuai panah: getLogbook()
+     * Helper function biar nggak ngulang kodingan filter yang panjang
+     * Ini level dewa: DRY (Don't Repeat Yourself) 🚀
+     */
+    private function getLogbookBaseQuery()
+    {
+        $user = auth()->user();
+        $isMentor = $user->role === 'mentor';
+
+        $mentorId = $isMentor ? ($user->mentor->id ?? null) : null;
+        $userIndustryId = $isMentor ? ($user->mentor->industry_id ?? null) : ($user->industry->id ?? null);
+
+        return Logbook::whereHas('student', function ($query) use ($isMentor, $mentorId, $userIndustryId) {
+            if ($isMentor) {
+                $query->whereHas('internshipProgram', function ($q) use ($mentorId) {
+                    $q->where('mentor_id', $mentorId);
+                });
+            } else {
+                $query->where('industry_id', $userIndustryId)
+                    ->orWhereHas('internshipProgram', function ($q) use ($userIndustryId) {
+                        $q->where('industry_id', $userIndustryId);
+                    });
+            }
+        });
+    }
+
+    /**
+     *  Mengambil data logbook yang perlu divalidasi
      */
     public function index()
     {
-        $user = auth()->user();
-        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
-
-        $logbooks = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
-                $query->where('industry_id', $userIndustryId);
-            })
+        $logbooks = $this->getLogbookBaseQuery()
             ->with(['student.user', 'student.school'])
             ->latest()
             ->paginate(30);
-            
+
         return view('industry.logbooks.index', compact('logbooks'));
     }
 
     /**
      * 2. Memproses validasi (Approve atau Reject)
-     * Sesuai panah: validateLogbook(status)
      */
     //  INDIVIDU 
     public function edit($id)
     {
-        $user = auth()->user();
-        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
-
-        $logbook = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
-                $query->where('industry_id', $userIndustryId);
-            })
+        $logbook = $this->getLogbookBaseQuery()
             ->with(['student.user'])
             ->findOrFail($id);
+            
         return view('industry.logbooks.edit', compact('logbook'));
     }
 
@@ -53,12 +68,7 @@ class LogbookController extends Controller
             'feedback' => 'nullable|string'
         ]);
 
-        $user = auth()->user();
-        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
-
-        $logbook = \App\Models\Logbook::whereHas('student', function ($query) use ($userIndustryId) {
-                $query->where('industry_id', $userIndustryId);
-            })->findOrFail($id);
+        $logbook = $this->getLogbookBaseQuery()->findOrFail($id);
 
         $logbook->status = $request->status;
         $logbook->feedback = $request->feedback;
@@ -77,18 +87,13 @@ class LogbookController extends Controller
     public function bulkValidate(Request $request)
     {
         $request->validate([
-            'ids' => 'required|array',       
-            'ids.*' => 'exists:logbooks,id', 
+            'ids' => 'required|array',
+            'ids.*' => 'exists:logbooks,id',
             'status' => 'required|in:approved,rejected',
         ]);
 
-        $user = auth()->user();
-        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
-        
-        \App\Models\Logbook::whereIn('id', $request->ids)
-            ->whereHas('student', function ($query) use ($userIndustryId) {
-                $query->where('industry_id', $userIndustryId);
-            })
+        $this->getLogbookBaseQuery()
+            ->whereIn('id', $request->ids)
             ->update([
                 'status' => $request->status
             ]);
@@ -104,16 +109,10 @@ class LogbookController extends Controller
 
     /**
      * 3. Menampilkan rekap aktivitas yang sudah diproses
-     * Sesuai panah: getStudentActivityRecap()
      */
     public function recap()
     {
-        $user = auth()->user();
-        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
-
-        $recap = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
-                $query->where('industry_id', $userIndustryId);
-            })
+        $recap = $this->getLogbookBaseQuery()
             ->with(['student.user'])
             ->whereIn('status', ['approved', 'rejected'])
             ->latest()
@@ -124,12 +123,7 @@ class LogbookController extends Controller
 
     public function downloadDocument($id)
     {
-        $user = auth()->user();
-        $userIndustryId = $user->role === 'mentor' ? ($user->mentor->industry_id ?? null) : $user->industry_id;
-
-        $logbook = Logbook::whereHas('student', function ($query) use ($userIndustryId) {
-                $query->where('industry_id', $userIndustryId);
-            })->findOrFail($id);
+        $logbook = $this->getLogbookBaseQuery()->findOrFail($id);
 
         if (!$logbook->documentation_file) {
             abort(404, 'Dokumen tidak ditemukan.');

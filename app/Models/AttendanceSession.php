@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,13 +11,9 @@ class AttendanceSession extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'industry_id',
+        'school_id', // Pastikan kolom ini ada di database lo ya
         'opened_by_user_id',
         'session_date',
         'on_time_deadline',
@@ -26,32 +21,12 @@ class AttendanceSession extends Model
         'is_open',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'is_open' => 'boolean',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Get the user who opened the attendance session.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Relasi ke User yang membuka sesi
      */
     public function user(): BelongsTo
     {
@@ -59,22 +34,26 @@ class AttendanceSession extends Model
     }
 
     /**
-     * Get the industry this attendance session belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Relasi ke Industri
      */
     public function industry(): BelongsTo
     {
         return $this->belongsTo(Industry::class);
     }
 
-    // /**
-    //  * Get all of the children for the AttendanceSession
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function children(): HasMany
-    // {
-    //     return $this->hasMany(Child::class, 'foreign_key', 'local_key');
-    // }
+    /**
+     * Relasi ke Sekolah (Krusial buat halaman Validasi)
+     */
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    /**
+     * Relasi ke Data Kehadiran Siswa
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class, 'attendance_session_id');
+    }
 }

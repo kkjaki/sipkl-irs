@@ -25,13 +25,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Route::get('/dashboard', [DashboardController::class, 'index'])
+//     ->middleware(['auth', 'verified', 'role:owner'])
+//     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/industry', [ProfileController::class, 'updateIndustry'])->name('industry.profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // SHARED ROUTES (Owner & Mentor)
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(AttendanceController::class)->group(function () {
             Route::get('/attendance-sessions/{session}/validate', 'show')->name('attendance.validate.show');
+            Route::get('attendance-sessions/{id}/validate', [AttendanceController::class, 'show'])->name('attendance.validate.show');
             Route::put('/attendance-sessions/{session}/validate', 'update')->name('attendance.validate.update');
         });
 
@@ -65,7 +67,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/logbooks/{id}/edit', [IndustryLogbookController::class, 'edit'])->name('logbooks.edit');
             Route::get('/logbooks/{id}/download', [IndustryLogbookController::class, 'downloadDocument'])->name('logbooks.download');
             Route::patch('/logbooks/{id}/validate', [IndustryLogbookController::class, 'validateLogbook'])->name('logbooks.validate');
-            Route::patch('/logbooks/bulk-validate', [IndustryLogbookController::class, 'bulkValidate'])->name('logbooks.bulk_validate');
+            Route::patch('/logbooks/bulk-validate', [IndustryLogbookController::class, 'bulkValidate'])->name('logbooks.bulkValidate');
             Route::get('/logbooks/recap', [IndustryLogbookController::class, 'recap'])->name('logbooks.recap');
             Route::get('/recap', [RecapController::class, 'index'])->name('recap.index');
         });

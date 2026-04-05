@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('attendance_session_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa'])->default('alpa');
+            $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa', 'terlambat'])->default('alpa');
             $table->timestamp('check_in')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

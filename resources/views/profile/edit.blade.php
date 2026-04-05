@@ -12,6 +12,13 @@
                     @include('partials.update-profile-information-form')
                 </div>
             </div>
+            @if(Auth::user()->role === 'owner')
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @include('partials.update-industry-information-form')
+                </div>
+            </div>
+            @endif
 
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">

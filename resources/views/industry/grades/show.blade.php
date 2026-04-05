@@ -69,10 +69,5 @@
             </div>
         @endif
 
-        <!-- Navigation Kembali -->
-        <a href="{{ route('grades.schools.index') }}"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm mt-8">
-            <x-heroicon-o-arrow-left class="w-4 h-4" /> Kembali
-        </a>
     </div>
 @endsection

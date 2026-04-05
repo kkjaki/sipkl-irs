@@ -19,33 +19,25 @@ class StoreSchoolRequest extends FormRequest
         return false;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
-     */
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            // Tambahin 'unique:schools,name' biar gak ada nama sekolah kembar
+            'name' => ['required', 'string', 'max:255', 'unique:schools,name'],
             'address' => ['required', 'string', 'max:1000'],
             'phone' => ['nullable', 'string', 'max:20'],
         ];
     }
 
     /**
-     * Handle a failed validation attempt.
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Custom pesan error biar user nggak bingung
      */
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    public function messages(): array
     {
-        session()->flash('error', 'Data gagal disimpan karena data yang dimasukkan tidak valid.');
-
-        throw (new \Illuminate\Validation\ValidationException($validator))
-            ->errorBag($this->errorBag)
-            ->redirectTo($this->getRedirectUrl());
+        return [
+            'name.unique' => 'Nama sekolah ini sudah terdaftar di sistem!',
+            'name.required' => 'Nama sekolah wajib diisi.',
+            'address.required' => 'Alamat sekolah tidak boleh kosong.',
+        ];
     }
 }

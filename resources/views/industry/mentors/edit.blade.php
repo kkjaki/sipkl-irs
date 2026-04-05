@@ -23,27 +23,27 @@
                 @csrf
                 {{-- Nama Guru Pembimbing --}}
                 <section class="w-full flex items-center gap-2">
-                    <label for="name" class="w-40 text-neutral-800 text-base">Nama Pembimbing</label>
+                    <label for="name" class="w-40 text-neutral-800 text-base">Nama Pendamping</label>
                     <input type="text" id="name" name="name" value="{{ $mentor->user->name }}" placeholder="Masukkan Nama Pendamping"
                         required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
-                {{-- Asal Sekolah --}}
+                {{-- Email --}}
                 <section class="w-full flex items-center gap-2">
                     <label for="email" class="w-40 text-neutral-800 text-base">Email</label>
                     <input type="email" id="email" name="email" value="{{ $mentor->user->email }}" placeholder="Masukkan Email" required
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-stone-700 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
-                {{-- Kontak Guru Pembimbing --}}
+                {{-- Kata Sandi --}}
                 <section class="w-full flex items-center gap-2">
-                    <label for="password" class="w-40 text-neutral-800 text-base">Password</label>
-                    <input type="password" id="password" name="password" value="{{ $mentor->user->password }}" placeholder="Masukkan Password" required disabled
+                    <label for="password" class="w-40 text-neutral-800 text-base">Kata Sandi</label>
+                    <input type="password" id="password" name="password"  placeholder="Ubah kata sandi melalui profil!" required disabled
                         class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                 </section>
 
-                {{-- Kontak Guru Pembimbing --}}
+                {{-- Jabatan --}}
                 <section class="w-full flex items-center gap-2">
                     <label for="position" class="w-40 text-neutral-800 text-base">Jabatan</label>
                     <input type="text" id="position" name="position" value="{{ $mentor->position }}" placeholder="Masukkan Jabatan" required

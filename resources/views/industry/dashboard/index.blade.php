@@ -23,24 +23,24 @@
                         <div class="p-6">
                             <div class="space-y-2">
                                 <div class="flex border-b py-2">
-                                    <span class="w-40 font-medium text-gray-700">Nama industri</span>
+                                    <span class="w-40 font-medium text-gray-700">Nama Industri</span>
                                     <span class="mx-2">:</span>
                                     <span class="flex-1 text-gray-900">{{ $industry->name ?? 'Belum Diatur' }}</span>
                                 </div>
                                 <div class="flex border-b py-2">
-                                    <span class="w-40 font-medium text-gray-700">Alamat</span>
+                                    <span class="w-40 font-medium text-gray-700">Alamat Industri</span>
                                     <span class="mx-2">:</span>
                                     <span class="flex-1 text-gray-900">{{ $industry->address ?? '-' }}</span>
                                 </div>
                                 <div class="flex border-b py-2">
-                                    <span class="w-40 font-medium text-gray-700">Kontak</span>
+                                    <span class="w-40 font-medium text-gray-700">Kontak Industri</span>
                                     <span class="mx-2">:</span>
                                     <span class="flex-1 text-gray-900">{{ $industry->phone ?? '-' }}</span>
                                 </div>
                                 <div class="flex border-b py-2">
-                                    <span class="w-40 font-medium text-gray-700">Nama Pimpinan</span>
+                                    <span class="w-40 font-medium text-gray-700">Pemilik Industri</span>
                                     <span class="mx-2">:</span>
-                                    <span class="flex-1 text-gray-900">{{ $industry->owner->name ?? '-' }}</span>
+                                    <span class="flex-1 text-gray-900">{{ $industry->user->name ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>

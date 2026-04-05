@@ -1,88 +1,117 @@
 @extends('layouts.app')
 
 @section('content')
-    <main class="min-h-screen bg-brand-bg px-10">
-        {{-- Header --}}
+    <main class="min-h-screen bg-brand-bg px-10 pb-10">
+        {{-- Header Halaman --}}
         <header>
-            <div class="w-full py-6">
+            <div class="py-6">
                 <h2 class="font-black text-3xl text-gray-800 leading-tight">
                     {{ __('Pendamping Industri') }}
                 </h2>
             </div>
         </header>
 
-        <div class="w-full mx-auto">
-            <div
-                class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 flex flex-col gap-4">
-
-                <!-- Header Data -->
-                <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 flex justify-between items-center relative rounded-t-xl text-white">
-                <div class="flex items-center gap-2.5 text-white">
-                    <x-heroicon-o-users class="w-6 h-6"/>
+        {{-- Container Utama --}}
+        <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+            
+            {{-- Header Data --}}
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white">
+                <div class="flex items-center gap-2.5">
+                    <x-heroicon-o-users class="w-6 h-6" />
                     <h2 class="font-bold text-lg m-0">Data Pendamping</h2>
                 </div>
-                    <a href="{{ route('mentors.create') }}" class="bg-white text-teal-600 hover:bg-gray-50 px-4 py-2 rounded-md text-sm font-semibold flex items-center gap-2 transition-colors shadow-sm">
-                        <x-heroicon-o-plus class="w-4 h-4"/> Tambah Pendamping
-                    </a>
-                </div>
+                <a href="{{ route('mentors.create') }}"
+                    class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all shadow-sm border border-white/30">
+                    <x-heroicon-o-plus class="w-4 h-4" /> Tambah Pendamping
+                </a>
+            </div>
 
-                <!-- Grid Data Pendamping -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t-0 rounded-b-lg">
+            {{-- Grid Konten --}}
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse ($mentors as $mentor)
-                        <div class="bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-200 p-5 flex flex-col h-full">
+                        <section class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col h-full group">
+                            
                             <div class="flex justify-between items-start mb-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-bold shrink-0">
+                                    <div class="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center text-teal-700 font-bold border border-teal-100 group-hover:bg-teal-100 transition-colors shadow-sm">
                                         {{ strtoupper(substr($mentor->user->name, 0, 1)) }}
                                     </div>
-                                    <h3 class="text-lg font-bold text-gray-800">{{ $mentor->user->name }}</h3>
+                                    <div class="flex flex-col">
+                                        <h3 class="text-lg font-bold text-gray-800 leading-tight">{{ $mentor->user->name }}</h3>
+                                        <span class="text-xs text-teal-600 font-semibold uppercase tracking-wider">{{ $mentor->position }}</span>
+                                    </div>
                                 </div>
-                                <span class="bg-teal-50 text-teal-600 px-3 py-1 rounded-full text-xs font-semibold border border-teal-100">{{ $mentor->position }}</span>
                             </div>
-                            
+
                             <div class="flex items-center gap-3 mb-6 flex-1">
-                                <x-heroicon-o-envelope class="w-5 h-5 text-gray-400 shrink-0" />
-                                <span class="text-sm text-gray-600">{{ $mentor->user->email }}</span>
+                                <div class="p-2 bg-gray-50 rounded-lg">
+                                    <x-heroicon-o-envelope class="w-5 h-5 text-gray-400 shrink-0" />
+                                </div>
+                                <span class="text-sm text-gray-600 font-medium">{{ $mentor->user->email }}</span>
                             </div>
-                            
-                            <div class="mt-auto pt-4 border-t border-gray-100 flex gap-2">
+
+                            {{-- Tombol Aksi --}}
+                            <div class="mt-auto pt-4 border-t border-gray-100 flex gap-3" x-data="{ openDelete: false }">
                                 <a href="{{ route('mentors.edit', ['mentor' => $mentor->id]) }}"
-                                    class="flex-1 flex justify-center items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                    class="flex-1 flex justify-center items-center gap-2 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-600 border border-blue-200 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all">
                                     <x-heroicon-o-pencil class="w-4 h-4" /> Edit
                                 </a>
-                                <section x-data="{ open: false }" class="flex-1">
-                                    <button @click="open = true"
-                                        class="w-full h-full flex justify-center items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                                        <x-heroicon-o-x-mark class="w-4 h-4" /> Nonaktif
-                                    </button>
-                                    {{-- Modal --}}
-                                    <template x-if="open">
-                                        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                                            <div class="w-fit px-16 sm:px-32 py-7 bg-white rounded-md flex flex-col justify-center items-center gap-8">
-                                                <section class="flex flex-col">
-                                                    <span class="text-center text-neutral-800 text-xl">Apakah Anda yakin ingin menonaktifkan</span>
-                                                    <span class="text-center text-neutral-800 text-xl font-bold">Pendamping ini?</span>
-                                                </section>
-                                                <div class="flex justify-center items-center gap-8 w-full mt-4">
-                                                    <button @click="open = false" type="button" class="px-5 py-2 rounded-md outline outline-1 outline-stone-300 hover:bg-gray-400 hover:text-white hover:outline-none text-lg">
-                                                        Tidak
-                                                    </button>
-                                                    <button @click="open = false" type="button" class="px-7 py-2 rounded-md text-white bg-brand-primary hover:bg-teal-500 hover:text-white text-lg">
-                                                        Ya
-                                                    </button>
-                                                </div>
-                                            </div>
+
+                                <button type="button" @click="openDelete = true"
+                                    class="flex-1 flex justify-center items-center gap-2 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all">
+                                    <x-heroicon-o-trash class="w-4 h-4" /> Hapus
+                                </button>
+
+                                {{-- Modal Hapus --}}
+                                <div x-show="openDelete" x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                                    x-transition:leave="transition ease-in duration-200"
+                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                                    class="fixed inset-0 flex items-center justify-center bg-black/50 z-[9999] px-4"
+                                    style="display: none;">
+
+                                    <div @click.away="openDelete = false"
+                                        class="w-full max-w-md px-6 py-8 bg-white rounded-xl shadow-2xl flex flex-col justify-center items-center gap-6">
+
+                                        <div class="bg-red-100 text-red-600 p-4 rounded-full">
+                                            <x-heroicon-o-exclamation-triangle class="w-10 h-10" />
                                         </div>
-                                    </template>
-                                </section>
+
+                                        <div class="text-center px-4">
+                                            <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Mentor?</h3>
+                                            <p class="text-gray-500 text-sm leading-relaxed">
+                                                Aksi ini akan menghapus permanen data <span class="font-bold text-gray-800">{{ $mentor->user->name }}</span>. Akses mentor tersebut ke sistem akan dicabut.
+                                            </p>
+                                        </div>
+
+                                        <div class="w-full flex justify-center items-center gap-4 mt-2 px-4">
+                                            <button @click="openDelete = false" type="button"
+                                                class="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-all">
+                                                Batal
+                                            </button>
+
+                                            <form action="{{ route('mentors.destroy', $mentor->id) }}" method="POST" class="flex-1 m-0">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="w-full px-4 py-2.5 rounded-lg text-white font-semibold bg-red-600 hover:bg-red-700 shadow-md shadow-red-200 transition-all">
+                                                    Ya, Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </section>
                     @empty
-                        <div class="col-span-full w-full text-center py-10 rounded-xl bg-gray-50 border border-gray-100 mt-4"><p class="text-gray-500">Tidak ada data ditemukan.</p></div>
+                        <div class="col-span-full w-full text-center py-16 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+                            <x-heroicon-o-user-minus class="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                            <p class="text-gray-500 font-medium">Tidak ada data pendamping industri ditemukan.</p>
+                        </div>
                     @endforelse
                 </div>
             </div>
-        </div>
-        </div>
+        </article>
     </main>
 @endsection

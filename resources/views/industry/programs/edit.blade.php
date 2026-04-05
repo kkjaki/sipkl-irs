@@ -32,10 +32,10 @@
 
                 {{-- Pilih Mentor --}}
                 <section class="w-full flex items-center gap-6">
-                    <label for="mentor_id" class="w-40 text-neutral-800 text-base">Pilih Mentor</label>
+                    <label for="mentor_id" class="w-40 text-neutral-800 text-base">Pilih Pendamping</label>
                     <select name="mentor_id" id="mentor_id"
                         class="form-select w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-primary">
-                        <option value="">-- Pilih Mentor (Opsional/Wajib) --</option>
+                        <option value="">-- Pilih Pendamping (Opsional/Wajib) --</option>
                         @foreach ($mentors as $mentor)
                             <option value="{{ $mentor->id }}">{{ $mentor->user->name }}</option>
                         @endforeach

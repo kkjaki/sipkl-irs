@@ -29,10 +29,11 @@ class AttendanceSessionController extends BaseController
             $industryId = $user->mentor->industry_id ?? null;
         }
 
-        // Menampilkan sesi tanpa mempedulikan status aktif/non-aktif
+        // Ambil data sesi milik industri tersebut
         $attendanceSessions = $industryId
             ? AttendanceSession::where('industry_id', $industryId)
             ->with('user')
+            ->orderBy('session_date', 'desc') // Urutkan berdasarkan tanggal terbaru
             ->orderBy('created_at', 'desc')
             ->paginate(15)
             : new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
@@ -127,7 +128,7 @@ class AttendanceSessionController extends BaseController
         $validatedData['is_open'] = $request->has('is_open');
         $attendanceSession->update($validatedData);
 
-        return redirect()->route('attendanceSessions.index')->with('success', 'Sesi Presensi berhasil diperbarui.');
+        return redirect()->route('attendance-sessions.index')->with('success', 'Sesi Presensi berhasil diperbarui.');
     }
 
     public function destroy(AttendanceSession $attendanceSession)
@@ -135,7 +136,7 @@ class AttendanceSessionController extends BaseController
         $this->authorizeAccess($attendanceSession);
 
         $attendanceSession->delete();
-        return redirect()->route('attendanceSessions.index')->with('success', 'Sesi Presensi berhasil dihapus.');
+        return redirect()->route('attendance-sessions.index')->with('success', 'Sesi Presensi berhasil dihapus.');
     }
 
     /**
