@@ -26,7 +26,7 @@
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
 
             <div
-                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex flex-col md:flex-row justify-between items-center text-white gap-4">
+                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex flex-col md:flex-row justify-between items-center text-white">
                 <div class="flex items-center gap-2.5 text-white w-full md:w-auto">
                     <x-heroicon-o-chart-bar class="w-6 h-6 shrink-0" />
                     <h1 class="text-xl font-bold m-0 shrink-0">Data Rekapitulasi</h1>
@@ -38,14 +38,14 @@
                             <x-heroicon-o-magnifying-glass class="w-5 h-5" />
                         </span>
                         <input x-model.live.debounce.300ms="search" type="text"
-                            class="block w-full pl-11 pr-4 py-2.5 bg-white border border-transparent rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 sm:text-sm transition-all shadow-sm"
+                            class="block w-full pl-11 pr-4 py-1.5 bg-white border border-transparent rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 sm:text-sm transition-all shadow-sm"
                             placeholder="Cari nama siswa...">
                     </div>
 
                     {{-- Dropdown Filter Sekolah --}}
                     <div x-data="{ openDropdown: false, selectedSchoolName: '{{ $schools->where('id', request('school_id'))->first()->name ?? 'Semua Sekolah' }}' }" class="relative w-full sm:w-auto">
                         <button type="button" @click="openDropdown = !openDropdown" @click.away="openDropdown = false"
-                            class="bg-white/20 hover:bg-white/30 border border-white/20 rounded-xl px-4 py-2.5 text-sm font-bold flex items-center justify-between gap-2 transition-all w-full text-white">
+                            class="bg-white/20 hover:bg-white/30 border border-white/20 rounded-xl px-4 py-1.5 text-sm font-bold flex items-center justify-between gap-2 transition-all w-full text-white">
                             <span x-text="selectedSchoolName"></span>
                             <x-heroicon-o-chevron-down class="w-4 h-4 transition-transform" ::class="openDropdown ? 'rotate-180' : ''" />
                         </button>

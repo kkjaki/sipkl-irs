@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Edit Pendamping Industri')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10">
@@ -13,54 +14,56 @@
         </header>
 
         {{-- Profil Siswa --}}
-        <article
-            class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 flex flex-col gap-4">
-            <section class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 font-bold text-lg rounded-t-xl">
-                Data Pendamping Industri
+        <article class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col mb-8">
+            <section class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex items-center text-white font-bold text-lg">
+                <x-heroicon-o-pencil-square class="w-6 h-6 mr-2.5 opacity-90" />
+                Edit Pendamping Industri
             </section>
-            <form method="POST" action="{{ route('mentors.update', $mentor->id) }}" class="w-full mx-auto space-y-5">
+            
+            <form method="POST" action="{{ route('mentors.update', $mentor->id) }}" class="p-6 flex flex-col gap-6">
                 @method('PUT')
                 @csrf
+                
                 {{-- Nama Guru Pembimbing --}}
-                <section class="w-full flex items-center gap-2">
-                    <label for="name" class="w-40 text-neutral-800 text-base">Nama Pendamping</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="name" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Nama Pendamping</label>
                     <input type="text" id="name" name="name" value="{{ $mentor->user->name }}" placeholder="Masukkan Nama Pendamping"
                         required
-                        class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                </section>
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                </div>
 
                 {{-- Email --}}
-                <section class="w-full flex items-center gap-2">
-                    <label for="email" class="w-40 text-neutral-800 text-base">Email</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="email" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Email</label>
                     <input type="email" id="email" name="email" value="{{ $mentor->user->email }}" placeholder="Masukkan Email" required
-                        class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-stone-700 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                </section>
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                </div>
 
                 {{-- Kata Sandi --}}
-                <section class="w-full flex items-center gap-2">
-                    <label for="password" class="w-40 text-neutral-800 text-base">Kata Sandi</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="password" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Kata Sandi</label>
                     <input type="password" id="password" name="password"  placeholder="Ubah kata sandi melalui profil!" required disabled
-                        class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                </section>
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-500 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                </div>
 
                 {{-- Jabatan --}}
-                <section class="w-full flex items-center gap-2">
-                    <label for="position" class="w-40 text-neutral-800 text-base">Jabatan</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="position" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Jabatan</label>
                     <input type="text" id="position" name="position" value="{{ $mentor->position }}" placeholder="Masukkan Jabatan" required
-                        class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                </section>
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                </div>
 
                 {{-- Button Grup --}}
-                <section class="pt-5 flex items-center gap-3.5">
+                <div class="flex justify-start gap-3 mt-4">
                     <button type="submit"
-                        class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
-                        <span class="justify-start text-white text-lg leading-snug">Simpan</span>
+                        class="bg-teal-500 hover:bg-teal-600 text-white px-5 py-2 rounded-md font-medium text-lg">
+                        Simpan
                     </button>
                     <a href="{{ route('mentors.index') }}"
-                        class="w-max px-5 py-2 border border-gray-400 text-gray-500 bg-white rounded-md inline-flex justify-center items-center gap-2.5 hover:bg-gray-400 hover:text-white hover:border-transparent transition">
-                        <span class="text-lg leading-snug">Batal</span>
+                        class="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-md font-medium text-lg">
+                        Batal
                     </a>
-                </section>
+                </div>
             </form>
         </article>
     </main>

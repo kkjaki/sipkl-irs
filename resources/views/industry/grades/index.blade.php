@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Penilaian Siswa')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10 pb-10 w-full" x-data="{
@@ -25,15 +26,12 @@
 
             {{-- Header Card Teal: py-6 biar tingginya sama kayak modul Sesi Presensi --}}
             <div
-                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-white">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-white/20 rounded-lg">
-                        <x-heroicon-o-academic-cap class="w-6 h-6 text-white" />
-                    </div>
+                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4 text-white">
+                <div class="flex items-center gap-2.5">
+                    <x-heroicon-o-academic-cap class="w-6 h-6 text-white" />
                     <h2 class="font-bold text-lg m-0 leading-none">Daftar Sekolah</h2>
                 </div>
 
-                {{-- Search Bar: Tanpa tag <form> & Live Search --}}
                 {{-- Search Bar - Warna Putih Solid & High Contrast --}}
                 <div class="relative w-full md:w-80 shrink-0">
                     {{-- Ikon Magnifying Glass Abu-abu --}}
@@ -41,9 +39,9 @@
                         <x-heroicon-o-magnifying-glass class="w-5 h-5" />
                     </span>
 
-                    <input x-model.live.debounce.150ms="search" type="text" @keydown.enter.prevent {{-- Class bg-white buat warna putih solid, text-gray-900 buat teks gelap --}}
-                        class="block w-full pl-11 pr-4 py-2.5 bg-white border border-transparent rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 transition-all sm:text-sm shadow-sm"
-                        placeholder="Cari nama siswa...">
+                    <input x-model.live.debounce.150ms="search" type="text" @keydown.enter.prevent 
+                        class="block w-full pl-11 pr-4 py-2 bg-white border border-transparent rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 transition-all sm:text-sm shadow-sm"
+                        placeholder="Cari nama sekolah...">
                 </div>
             </div>
 

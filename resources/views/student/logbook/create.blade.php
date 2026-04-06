@@ -1,4 +1,5 @@
 <x-app-layout>
+@section('title', 'Tambah Logbook')
     <div class="min-h-screen bg-brand-bg px-10">
         {{-- Header --}}
         <header>
@@ -19,11 +20,10 @@
             </div>
         </header>
 
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                <div class="bg-brand-primary text-white p-4 font-bold text-lg">
-                    Buat Logbook Baru
-                </div>
+        <article class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col mb-8">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
+                Buat Logbook Baru
+            </div>
 
                 <form id="logbookForm" class="p-6 space-y-6">
                     @csrf
@@ -121,8 +121,7 @@
                         </a>
                     </div>
                 </form>
-            </div>
-        </div>
+        </article>
     </div>
 
     {{-- Loading Overlay --}}

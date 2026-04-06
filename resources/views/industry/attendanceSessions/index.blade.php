@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Kelola Sesi Presensi')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10 pb-10 w-full">
@@ -15,13 +16,13 @@
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
 
             {{-- Header Card Teal --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-5 flex justify-between items-center text-white">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex justify-between items-center text-white">
                 <div class="flex items-center gap-2.5">
                     <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
                     <h2 class="font-bold text-lg m-0 leading-none">Riwayat Sesi Presensi</h2>
                 </div>
                 <a href="{{ route('attendance-sessions.create') }}"
-                    class="bg-white/20 hover:bg-white/30 text-white px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-sm border border-white/30 active:scale-95">
+                    class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm">
                     <x-heroicon-o-plus class="w-4 h-4" /> Buka Sesi Baru
                 </a>
             </div>

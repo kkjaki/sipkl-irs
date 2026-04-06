@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Manajemen Pendamping PKL')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10">
@@ -39,7 +40,7 @@
         {{-- Data Section --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
             <div
-                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white">
+                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex justify-between items-center text-white">
                 <div class="flex items-center gap-2.5">
                     <x-heroicon-o-user-group class="w-6 h-6" />
                     <h2 class="font-bold text-lg m-0">Data Guru Pendamping</h2>
@@ -97,7 +98,7 @@
                                 </button>
                             </div>
 
-                            {{-- MODAL DESAIN KECE (Pake x-show + transition) --}}
+                            {{-- MODAL DESAIN --}}
                             <div x-show="open" x-transition:enter="transition ease-out duration-300"
                                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                                 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"

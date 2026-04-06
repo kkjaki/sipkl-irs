@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Pendamping Industri')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10 pb-10">
@@ -15,13 +16,13 @@
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
             
             {{-- Header Data --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex justify-between items-center text-white rounded-t-xl">
                 <div class="flex items-center gap-2.5">
                     <x-heroicon-o-users class="w-6 h-6" />
                     <h2 class="font-bold text-lg m-0">Data Pendamping</h2>
                 </div>
                 <a href="{{ route('mentors.create') }}"
-                    class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all shadow-sm border border-white/30">
+                    class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent leading-none flex items-center gap-2">
                     <x-heroicon-o-plus class="w-4 h-4" /> Tambah Pendamping
                 </a>
             </div>

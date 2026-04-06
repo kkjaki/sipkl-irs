@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Tambah Sekolah')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10">
@@ -13,7 +14,8 @@
         </header>
 
         <article class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col">
-            <section class="bg-brand-primary text-white p-4 font-bold text-lg">
+            <section class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex items-center text-white font-bold text-lg">
+                <x-heroicon-o-building-library class="w-6 h-6 mr-2.5 opacity-90" />
                 Data Sekolah
             </section>
 
@@ -59,7 +61,7 @@
                 {{-- Tombol --}}
                 <div class="flex justify-start gap-3 mt-4">
                     <button type="submit"
-                        class="px-5 py-2 bg-brand-primary hover:bg-teal-500 text-white rounded-md font-medium text-lg transition-colors">
+                        class="px-5 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-md font-medium text-lg transition-colors">
                         Simpan
                     </button>
                     <a href="{{ route('schools.index') }}"

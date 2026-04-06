@@ -1,27 +1,13 @@
 <x-app-layout>
+@section('title', 'Data Nilai')
     <div class="min-h-screen bg-brand-bg px-10">
         {{-- Header --}}
-        <header>
-            <div
-                class="w-full py-6 flex justify-between items-center">
-                <div>
-                    <h2
-                        class="font-extrabold text-3xl text-gray-800 leading-tight">
-                        {{ __('Nilai') }}
-                    </h2>
-                    <p class="text-gray-600 mt-2">
-                        Daftar nilai penilaian Anda
-                    </p>
-                </div>
-                @if($gradeCount > 0)
-                <a href="{{ route('student.nilai.download') }}"
-                    class="bg-brand-primary hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center gap-2">
-                    <i class="fas fa-file-pdf"></i>
-                    Download PDF
-                </a>
-                @endif
-            </div>
-        </header>
+        {{-- Header Halaman (Dihapus H2 sesuai instruksi) --}}
+        
+        <div class="mb-6 pt-6">
+            <h1 class="text-2xl font-bold text-gray-800">Data Nilai</h1>
+            <p class="text-sm text-gray-500 mt-1">Rekapitulasi nilai PKL Anda</p>
+        </div>
 
         @if($gradeCount > 0)
         {{-- Statistics Cards --}}
@@ -120,8 +106,17 @@
 
 
         {{-- Grades Table --}}
-        <div
-            class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+        <article class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col mb-8">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
+                <span>Daftar Nilai</span>
+                @if($gradeCount > 0)
+                <a href="{{ route('student.nilai.download') }}"
+                    class="bg-white text-teal-700 hover:bg-teal-50 px-4 py-2 rounded-lg text-sm font-bold shadow-sm flex items-center gap-2 transition-all">
+                    <i class="fas fa-file-pdf w-4 h-4"></i>
+                    Download PDF
+                </a>
+                @endif
+            </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
@@ -187,7 +182,7 @@
                     </tfoot>
                 </table>
             </div>
-        </div>
+        </article>
         @else
         {{-- No Grades --}}
         <div

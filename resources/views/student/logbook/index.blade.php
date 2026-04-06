@@ -1,4 +1,5 @@
 <x-app-layout>
+@section('title', 'Daftar Logbook')
     <div class="min-h-screen bg-brand-bg px-10">
         {{-- Header --}}
         <header>
@@ -10,8 +11,8 @@
                     <p class="text-gray-600 mt-2">Riwayat logbook Anda</p>
                 </div>
                 <a href="{{ route('student.logbook.harian') }}"
-                   class="bg-brand-primary hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200 inline-flex items-center">
-                    <i class="fas fa-plus mr-2"></i>
+                   class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                    <i class="fas fa-plus"></i>
                     Tambah Logbook
                 </a>
             </div>
@@ -26,11 +27,11 @@
         @endif
 
         {{-- Card Container --}}
-        <div class="bg-white shadow-md rounded-xl overflow-hidden relative">
+        <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 mb-8 overflow-hidden relative flex flex-col">
 
             {{-- HEADER CARD --}}
-            <div class="bg-teal-400 text-white px-4 md:px-6 py-4 flex flex-wrap gap-3 justify-between items-center">
-                <h3 class="font-semibold text-lg">Daftar Logbook</h3>
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex flex-wrap gap-3 justify-between items-center text-white font-bold text-lg rounded-t-xl">
+                <span>Daftar Logbook</span>
 
                 <div class="flex items-center gap-3">
                     {{-- SORT --}}
@@ -40,7 +41,7 @@
 
                     {{-- FILTER --}}
                     <button id="filterBtn"
-                        class="flex items-center gap-2 border border-white px-4 py-1 rounded hover:bg-white hover:text-teal-500 transition">
+                        class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center gap-2">
                         <i class="fa fa-sliders"></i>
                         Filter
                     </button>
@@ -187,7 +188,7 @@
             </div>
             @endif
 
-        </div>
+        </article>
     </div>
 
 

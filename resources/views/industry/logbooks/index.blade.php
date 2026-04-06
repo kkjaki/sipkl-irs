@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Validasi Logbook Siswa')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10 pb-10 w-full" 
@@ -27,19 +28,19 @@
 
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
             {{-- Header Card Teal --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-6 flex flex-col md:flex-row justify-between items-center text-white gap-4">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex flex-col md:flex-row justify-between items-center text-white gap-4">
                 <div class="flex items-center gap-2.5">
                     <x-heroicon-o-book-open class="w-6 h-6 shrink-0" />
                     <h2 class="font-bold text-lg m-0 leading-none">Antrean Validasi Logbook</h2>
                 </div>
 
-                <div class="relative w-full md:w-80 shrink-0">
+                <div class="relative w-full max-w-xs shrink-0">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
                         <x-heroicon-o-magnifying-glass class="w-5 h-5" />
                     </span>
                     <input x-model.live.debounce.150ms="search" type="text"
                         @keydown.enter.prevent
-                        class="block w-full pl-11 pr-4 py-2.5 bg-white border border-transparent rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 sm:text-sm transition-all shadow-sm"
+                        class="block w-full pl-11 pr-4 py-1.5 bg-white border border-transparent rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300 sm:text-sm transition-all shadow-sm"
                         placeholder="Cari nama siswa...">
                 </div>
             </div>

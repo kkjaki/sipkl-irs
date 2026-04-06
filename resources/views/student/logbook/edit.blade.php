@@ -1,4 +1,5 @@
 <x-app-layout>
+@section('title', 'Edit Logbook')
     <div class="min-h-screen bg-brand-bg px-10">
         {{-- Header --}}
         <header>
@@ -19,12 +20,10 @@
             </div>
         </header>
 
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                <div class="bg-brand-primary text-white p-4 font-bold text-lg flex items-center gap-2">
-                    <i class="fas fa-edit"></i>
-                    Edit & Kirim Ulang Logbook
-                </div>
+        <article class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col mb-8">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
+                Edit Logbook
+            </div>
 
                 <div class="p-6 space-y-6">
 
@@ -168,15 +167,14 @@
                             </div>
                         </div>
 
-                        {{-- Tombol --}}
                         <div class="flex flex-col sm:flex-row gap-3 pt-2">
                             <button type="submit" id="submitBtn"
-                                    class="flex-1 bg-brand-primary hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                    class="flex-1 bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                                 <i class="fas fa-paper-plane mr-2"></i>
-                                Simpan & Kirim Ulang
+                                Simpan
                             </button>
                             <a href="{{ route('student.logbook.index') }}"
-                               class="inline-flex items-center justify-center px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition">
+                               class="inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg transition">
                                 <i class="fas fa-times mr-2"></i>
                                 Batal
                             </a>
@@ -184,8 +182,7 @@
 
                     </form>
                 </div>
-            </div>
-        </div>
+        </article>
     </div>
 
     <script>

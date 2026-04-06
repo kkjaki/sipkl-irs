@@ -1,4 +1,5 @@
 <x-app-layout>
+@section('title', 'Presensi Harian')
     <div class="min-h-screen bg-brand-bg px-10">
         {{-- Header --}}
         <header>

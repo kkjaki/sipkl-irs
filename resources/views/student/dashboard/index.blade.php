@@ -1,4 +1,5 @@
 <x-app-layout>
+@section('title', 'Dashboard Siswa')
     <div class="min-h-screen bg-brand-bg px-10">
 
         {{-- Header --}}
@@ -11,8 +12,8 @@
         </header>
 
         {{-- Profil Siswa --}}
-        <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 mb-6">
-            <div class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
+        <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 mb-6">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
                 Profil Siswa
             </div>
             <div class="p-4">
@@ -63,8 +64,8 @@
 
         {{-- Program Magang --}}
         @if ($student && $student->internshipProgram)
-            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 mb-6">
-                <div class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
+            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 mb-6">
+                <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
                     Program Magang
                 </div>
                 <div class="p-4">
@@ -176,7 +177,7 @@
 
         {{-- Nilai Kedisiplinan --}}
         <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 mb-6">
-            <div class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
                 Nilai Kedisiplinan
             </div>
             <div class="p-6">
@@ -275,8 +276,8 @@
 
         {{-- Nilai --}}
         @if ($grades->count() > 0)
-            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 mb-6">
-                <div class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
+            <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 mb-6">
+                <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
                     Nilai
                 </div>
                 <div class="p-4">
@@ -320,12 +321,11 @@
         @endif
 
         {{-- Daftar Logbook --}}
-        <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5">
-            <div
-                class="flex justify-between items-center bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl">
+        <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 mb-6">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
                 <span>Daftar Logbook</span>
                 <a href="{{ route('student.logbook.index') }}"
-                    class="text-sm bg-white text-brand-primary px-4 py-2 rounded-lg hover:bg-gray-100 transition">
+                    class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
                     Lihat Semua
                 </a>
             </div>

@@ -1,4 +1,5 @@
 <x-app-layout>
+@section('title', 'Daftar Kehadiran')
     <div class="min-h-screen bg-brand-bg px-10">
         {{-- Header --}}
         <header>
@@ -12,17 +13,15 @@
             </div>
         </header>
 
-<div class="bg-white shadow-md rounded-xl overflow-hidden relative">
+<article class="w-full bg-white rounded-xl shadow-md border border-gray-200 mb-8 flex flex-col overflow-hidden relative">
 
     {{-- HEADER --}}
-    <div class="bg-teal-400 text-white px-6 py-4 flex justify-between items-center">
+    <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white font-bold text-lg rounded-t-xl">
 
-        <h3 class="font-semibold text-lg">
-            Daftar Hadir
-        </h3>
+        Daftar Presensi
 
         <button id="filterBtn"
-            class="flex items-center gap-2 border border-white px-4 py-1 rounded hover:bg-white hover:text-teal-500 transition">
+            class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center gap-2">
 
             <i class="fa fa-sliders"></i>
             Filter
@@ -188,7 +187,7 @@
     </div>
     @endif
 
-</div>
+</article>
 
 
 

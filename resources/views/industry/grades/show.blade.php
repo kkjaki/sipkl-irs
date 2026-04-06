@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Penilaian Siswa')
 
 @section('content')
     <div class="container mx-auto px-4 py-8" x-data="{
@@ -11,9 +12,11 @@
     }">
         <!-- Header Wadah -->
         <div
-            class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 {{ count($students) > 0 ? 'rounded-t-xl rounded-b-none border-b border-teal-600/50' : 'rounded-xl mb-6 shadow-sm' }} text-white flex flex-col sm:flex-row justify-between items-center gap-4 transition-all">
-            <h2 class="text-xl font-bold m-0 w-full sm:w-auto">Penilaian Siswa - {{ $school->name }}</h2>
-
+            class="bg-gradient-to-r from-teal-500 to-teal-600 p-3 {{ count($students) > 0 ? 'rounded-t-xl rounded-b-none border-b border-teal-600/50' : 'rounded-xl mb-6 shadow-sm' }} text-white flex flex-col sm:flex-row justify-between items-center gap-4 transition-all">
+            <div class="flex items-center gap-2.5">
+                <x-heroicon-o-academic-cap class="w-6 h-6 text-white" />
+                <h2 class="font-bold text-lg m-0 leading-none">Penilaian Siswa - {{ $school->name }}</h2>
+            </div>
             <!-- Search bar di Header -->
             <div class="relative w-full md:w-64 shrink-0">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
@@ -41,13 +44,13 @@
                                 <div class="my-4">
                                     <span class="text-sm text-gray-500 block mb-1">Rata-rata Nilai</span>
                                     <span
-                                        class="text-3xl font-black text-brand-primary">{{ number_format($student->grades->avg('score') ?? 0, 0) }}</span>
+                                        class="text-3xl font-black text-teal-600">{{ number_format($student->grades->avg('score') ?? 0, 0) }}</span>
                                 </div>
                             </div>
 
                             <div class="mt-4 pt-4 border-t border-gray-100">
                                 <a href="{{ route('grades.schools.edit', [$school->id, $student->id]) }}"
-                                    class="block w-full text-center bg-brand-primary hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                                    class="flex-1 flex justify-center items-center gap-2 bg-teal-100 hover:bg-teal-600 hover:text-white text-teal-700 border border-teal-200 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all">
                                     Kelola Nilai
                                 </a>
                             </div>

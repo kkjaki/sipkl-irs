@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Edit Sekolah')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10">
@@ -13,7 +14,8 @@
         </header>
 
         <article class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col">
-            <section class="bg-brand-primary text-white p-4 font-bold text-lg">
+            <section class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex items-center text-white font-bold text-lg">
+                <x-heroicon-o-building-library class="w-6 h-6 mr-2.5 opacity-90" />
                 Data Sekolah
             </section>
 

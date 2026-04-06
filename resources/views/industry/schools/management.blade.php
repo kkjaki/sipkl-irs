@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Manajemen Sekolah')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10 pb-10">
@@ -16,7 +17,7 @@
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
 
             {{-- Header Card --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-5 flex justify-between items-center text-white">
+            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white">
                 <div class="flex items-center gap-2.5">
                     <x-heroicon-o-building-library class="w-6 h-6" />
                     <h2 class="font-bold text-lg m-0">Data Sekolah</h2>

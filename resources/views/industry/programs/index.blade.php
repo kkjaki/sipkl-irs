@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Manajemen Program PKL')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10">
@@ -21,7 +22,7 @@
                     <h2 class="font-bold text-lg m-0">Data Program PKL</h2>
                 </div>
                 <a href="{{ route('internship-programs.create') }}"
-                   class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all shadow-sm border border-white/30">
+                   class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent flex items-center gap-2">
                     <x-heroicon-o-plus class="w-4 h-4" /> Buat Program
                 </a>
             </div>

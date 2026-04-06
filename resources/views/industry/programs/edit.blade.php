@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Edit Program')
 
 @section('content')
     <main class="min-h-screen bg-brand-bg px-10">
@@ -13,76 +14,76 @@
         </header>
 
         {{-- Profil Siswa --}}
-        <article
-            class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 px-5 py-5 flex flex-col gap-4">
-            <section class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 font-bold text-lg rounded-t-xl">
-                Data Program
+        <article class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col mb-8">
+            <section class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex items-center text-white font-bold text-lg">
+                <x-heroicon-o-pencil-square class="w-6 h-6 mr-2.5 opacity-90" />
+                Edit Program
             </section>
-            <form method="POST" action="{{ route('internship-programs.update', $internshipProgram->id) }}"
-                class="w-full mx-auto space-y-5">
+            
+            <form method="POST" action="{{ route('internship-programs.update', $internshipProgram->id) }}" class="p-6 flex flex-col gap-6">
                 @method('PUT')
                 @csrf
+                
                 {{-- Nama Program --}}
-                <section class="w-full flex items-center gap-6">
-                    <label for="nama_program" class="w-40 text-neutral-800 text-base">Nama Program</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="nama_program" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Nama Program</label>
                     <input type="text" id="nama_program" name="name" value="{{ $internshipProgram->name }}"
                         placeholder="Masukkan nama program" required
-                        class="w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                </section>
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                </div>
 
                 {{-- Pilih Mentor --}}
-                <section class="w-full flex items-center gap-6">
-                    <label for="mentor_id" class="w-40 text-neutral-800 text-base">Pilih Pendamping</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="mentor_id" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Pilih Pendamping</label>
                     <select name="mentor_id" id="mentor_id"
-                        class="form-select w-1/3 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        class="form-select flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                         <option value="">-- Pilih Pendamping (Opsional/Wajib) --</option>
                         @foreach ($mentors as $mentor)
-                            <option value="{{ $mentor->id }}">{{ $mentor->user->name }}</option>
+                            <option value="{{ $mentor->id }}" {{ $internshipProgram->mentor_id == $mentor->id ? 'selected' : '' }}>{{ $mentor->user->name }}</option>
                         @endforeach
                     </select>
-                </section>
+                </div>
 
                 {{-- Tanggal Mulai --}}
-                <section class="w-full flex items-center gap-6">
-                    <label for="tanggal_mulai" class="w-40 text-neutral-800 text-base">Tanggal Mulai</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="tanggal_mulai" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Tanggal Mulai</label>
                     <input type="date" id="tanggal_mulai" name="start_date"
                         value="{{ date('Y-m-d', strtotime($internshipProgram->start_date)) }}" required
-                        class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                </section>
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                </div>
 
                 {{-- Tanggal Selesai --}}
-                <section class="w-full flex items-center gap-6">
-                    <label for="tanggal_selesai" class="w-40 text-neutral-800 text-base">Tanggal Selesai</label>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label for="tanggal_selesai" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0">Tanggal Selesai</label>
                     <input type="date" id="tanggal_selesai" name="end_date"
                         value="{{ date('Y-m-d', strtotime($internshipProgram->end_date)) }}" required
-                        class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                </section>
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                </div>
 
                 {{-- Kode Undangan --}}
-                <section class="w-full flex items-start gap-6">
-                    <label for="invitation_code" class="w-40 text-neutral-800 text-base mt-2">Kode Undangan<br><span
+                <div class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+                    <label for="invitation_code" class="w-full sm:w-40 text-gray-700 font-medium text-lg shrink-0 mt-2">Kode Undangan<br><span
                             class="text-sm font-normal text-gray-500">(Otomatis jika kosong)</span></label>
-                    <div class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-2 flex-1">
                         <input type="text" id="invitation_code" name="invitation_code" maxlength="10"
                             placeholder="Contoh: IRS2026"
                             value="{{ old('invitation_code', $internshipProgram->invitation_code) }}"
-                            class="w-64 h-10 px-3.5 rounded-md border border-gray-400 text-neutral-800 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                        <span class="text-sm text-gray-500">Gunakan kode kustom atau biarkan kosong agar sistem membuatkan
-                            kode acak (6 karakter).</span>
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                        <span class="text-sm text-gray-500">Gunakan kode kustom atau biarkan kosong agar sistem membuatkan kode acak (6 karakter).</span>
                     </div>
-                </section>
+                </div>
 
                 {{-- Button Grup --}}
-                <section class="pt-5 flex items-center gap-3.5">
+                <div class="flex justify-start gap-3 mt-4">
                     <button type="submit"
-                        class="w-max px-5 py-2 bg-brand-primary hover:bg-teal-500 rounded-md inline-flex justify-center items-center gap-2.5">
-                        <span class="justify-start text-white text-lg leading-snug">Simpan</span>
+                        class="bg-teal-500 hover:bg-teal-600 text-white px-5 py-2 rounded-md font-medium text-lg">
+                        Simpan
                     </button>
                     <a href="{{ route('internship-programs.index') }}"
-                        class="w-max px-5 py-2 border border-gray-400 text-gray-500 bg-white rounded-md inline-flex justify-center items-center gap-2.5 hover:bg-gray-400 hover:text-white hover:border-transparent transition">
-                        <span class="text-lg leading-snug">Batal</span>
+                        class="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-md font-medium text-lg">
+                        Batal
                     </a>
-                </section>
+                </div>
             </form>
         </article>
     </main>
