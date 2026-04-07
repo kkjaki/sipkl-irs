@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Logbook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth; // 🔥 TAMBAHIN BARIS INI!
+use App\Models\School;
 
 class LogbookController extends Controller
 {
@@ -15,7 +17,7 @@ class LogbookController extends Controller
      */
     private function getLogbookBaseQuery()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $isMentor = $user->role === 'mentor';
 
         $mentorId = $isMentor ? ($user->mentor->id ?? null) : null;
@@ -38,14 +40,32 @@ class LogbookController extends Controller
     /**
      *  Mengambil data logbook yang perlu divalidasi
      */
-    public function index()
+    public function index(Request $request) // Tambahin Request $request
     {
-        $logbooks = $this->getLogbookBaseQuery()
-            ->with(['student.user', 'student.school'])
-            ->latest()
-            ->paginate(30);
+        $user = Auth::user();
+        $schoolId = $request->get('school_id'); // Ambil ID sekolah dari URL
 
-        return view('industry.logbooks.index', compact('logbooks'));
+        // 1. Ambil daftar sekolah buat ditampilin di Dropdown Filter
+        // (Cuma sekolah yang ada anak bimbingan si Tanu)
+        $schools = \App\Models\School::whereHas('students.internshipProgram', function ($q) use ($user) {
+            $q->where('mentor_id', $user->mentor->id);
+        })->get();
+
+        // 2. Modifikasi Query Logbook buat dukung filter
+        $query = $this->getLogbookBaseQuery()
+            ->with(['student.user', 'student.school']);
+
+        // JIKA ada filter sekolah, saring datanya
+        if ($schoolId) {
+            $query->whereHas('student', function ($q) use ($schoolId) {
+                $q->where('school_id', $schoolId);
+            });
+        }
+
+        $logbooks = $query->latest()->paginate(30);
+
+        // Kirim variabel $schools juga ke view biar dropdown-nya muncul isi
+        return view('industry.logbooks.index', compact('logbooks', 'schools'));
     }
 
     /**
@@ -57,7 +77,7 @@ class LogbookController extends Controller
         $logbook = $this->getLogbookBaseQuery()
             ->with(['student.user'])
             ->findOrFail($id);
-            
+
         return view('industry.logbooks.edit', compact('logbook'));
     }
 

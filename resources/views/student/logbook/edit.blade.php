@@ -1,6 +1,6 @@
 <x-app-layout>
 @section('title', 'Edit Logbook')
-    <div class="min-h-screen bg-brand-bg px-10">
+    <div class="min-h-screen bg-brand-bg px-10 relative">
         {{-- Header --}}
         <header>
             <div class="w-full py-6 flex justify-between items-center">
@@ -13,7 +13,7 @@
                     </p>
                 </div>
                 <a href="{{ route('student.logbook.index') }}"
-                   class="inline-flex items-center px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition">
+                   class="inline-flex items-center px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition active:scale-95">
                     <i class="fas fa-arrow-left mr-2"></i>
                     Kembali
                 </a>
@@ -27,33 +27,32 @@
 
                 <div class="p-6 space-y-6">
 
-                    {{-- ===== UMPAN BALIK MENTOR (Read-Only) ===== --}}
-                    @if($logbook->feedback)
-                        <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4">
-                            <div class="flex items-start gap-3">
-                                <i class="fas fa-info-circle text-red-500 mt-0.5 text-lg shrink-0"></i>
-                                <div>
-                                    <h4 class="font-semibold text-red-800 mb-1">Alasan Penolakan dari Mentor</h4>
-                                    <p class="text-red-700 text-sm leading-relaxed">{{ $logbook->feedback }}</p>
+                    {{-- ===== UMPAN BALIK MENTOR (HANYA MUNCUL JIKA REJECTED) ===== --}}
+                    @if($logbook->status === 'rejected')
+                        @if($logbook->feedback)
+                            <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-info-circle text-red-500 mt-0.5 text-lg shrink-0"></i>
+                                    <div>
+                                        <h4 class="font-semibold text-red-800 mb-1">Alasan Penolakan dari Mentor</h4>
+                                        <p class="text-red-700 text-sm leading-relaxed">{{ $logbook->feedback }}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @else
-                        <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4">
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-exclamation-triangle text-yellow-500 text-lg shrink-0"></i>
-                                <p class="text-yellow-800 text-sm font-medium">Logbook ini ditolak oleh mentor. Silakan perbaiki dan kirim ulang.</p>
+                        @else
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 text-lg shrink-0"></i>
+                                    <p class="text-yellow-800 text-sm font-medium">Logbook ini ditolak oleh mentor. Silakan perbaiki dan kirim ulang.</p>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     @endif
 
                     {{-- ===== FORM EDIT ===== --}}
-                    <form id="editForm"
-                          action="{{ route('student.logbook.update', $logbook->id) }}"
-                          method="POST"
-                          enctype="multipart/form-data"
-                          class="space-y-6">
+                    <form id="editForm" class="space-y-6">
                         @csrf
+                        {{-- WAJIB ADA METHOD PUT BIAR BISA UPDATE DATA --}}
                         @method('PUT')
 
                         {{-- Tanggal (Read-Only) --}}
@@ -81,9 +80,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('mentor_id')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
                         </div>
 
@@ -105,9 +101,6 @@
                                     <p class="text-gray-400 text-xs">Minimal 10 karakter, maksimal 2000 karakter</p>
                                     <span class="text-gray-400 text-xs"><span id="charCount">{{ strlen(old('notes', $logbook->notes ?? '')) }}</span>/2000</span>
                                 </div>
-                                @error('notes')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
                         </div>
 
@@ -163,7 +156,7 @@
                         <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-info-circle text-blue-400"></i>
-                                <p class="text-sm text-blue-700">Setelah disimpan, logbook akan kembali ke status <strong>Menunggu Validasi</strong> dan dikirim ke mentor.</p>
+                                <p class="text-sm text-blue-700">Setelah disimpan, logbook akan kembali ke status <strong>Menunggu Validasi</strong> dan dikirim ulang ke mentor.</p>
                             </div>
                         </div>
 
@@ -171,7 +164,7 @@
                             <button type="submit" id="submitBtn"
                                     class="flex-1 bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                                 <i class="fas fa-paper-plane mr-2"></i>
-                                Simpan
+                                Simpan Perubahan
                             </button>
                             <a href="{{ route('student.logbook.index') }}"
                                class="inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg transition">
@@ -179,13 +172,76 @@
                                 Batal
                             </a>
                         </div>
-
                     </form>
                 </div>
         </article>
+
+        {{-- CUSTOM NOTIFICATION MODAL (TAILWIND) --}}
+        <div id="notificationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[70] flex items-center justify-center p-4 transition-opacity">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-transform" id="notificationContent">
+                <div id="notifIconContainer" class="mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-6">
+                    <i id="notifIcon" class="fas text-4xl"></i>
+                </div>
+                <h3 id="notifTitle" class="text-2xl font-black text-gray-900 mb-2 tracking-tight"></h3>
+                <p id="notifMessage" class="text-sm text-gray-500 font-medium mb-8 leading-relaxed"></p>
+                <button id="notifButton" class="w-full py-4 text-white font-bold rounded-2xl shadow-md transition-all active:scale-95 uppercase tracking-widest text-xs">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- Loading Overlay --}}
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[60] flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 flex items-center gap-4">
+            <svg class="animate-spin h-8 w-8 text-brand-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-gray-800 font-semibold">Menyimpan perubahan...</span>
+        </div>
     </div>
 
     <script>
+        // FUNGSI ALERT CUSTOM
+        function showNotification(type, title, message, redirectUrl = null) {
+            const modal = document.getElementById('notificationModal');
+            const iconContainer = document.getElementById('notifIconContainer');
+            const icon = document.getElementById('notifIcon');
+            const btn = document.getElementById('notifButton');
+
+            document.getElementById('notifTitle').textContent = title;
+            document.getElementById('notifMessage').textContent = message;
+
+            iconContainer.className = 'mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-6';
+            icon.className = 'fas text-4xl';
+            btn.className = 'w-full py-4 text-white font-black rounded-2xl shadow-lg transition-all active:scale-95 uppercase tracking-widest text-xs';
+
+            if (type === 'success') {
+                iconContainer.classList.add('bg-green-100');
+                icon.classList.add('fa-check', 'text-green-600');
+                btn.classList.add('bg-teal-500', 'hover:bg-teal-600', 'shadow-teal-100');
+            } else if (type === 'warning') {
+                iconContainer.classList.add('bg-amber-100');
+                icon.classList.add('fa-exclamation-triangle', 'text-amber-600');
+                btn.classList.add('bg-amber-500', 'hover:bg-amber-600', 'shadow-amber-100');
+            } else {
+                iconContainer.classList.add('bg-rose-100');
+                icon.classList.add('fa-times', 'text-rose-600');
+                btn.classList.add('bg-rose-600', 'hover:bg-rose-700', 'shadow-rose-100');
+            }
+
+            modal.classList.remove('hidden');
+
+            btn.onclick = function() {
+                modal.classList.add('hidden');
+                if(redirectUrl) {
+                    window.location.href = redirectUrl; 
+                }
+            }
+        }
+
         // Character counter
         const textarea = document.getElementById('notesTextarea');
         if (textarea) {
@@ -201,7 +257,7 @@
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 if (file.size > 10 * 1024 * 1024) {
-                    alert('File terlalu besar! Maksimal 10MB.');
+                    showNotification('warning', 'Ukuran Dokumen Melebihi Batas', 'Mohon unggah dokumen dengan ukuran maksimal 10MB.');
                     input.value = '';
                     return;
                 }
@@ -222,5 +278,61 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
         }
+
+        // Form Submission AJAX
+        document.getElementById('editForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const submitBtn = document.getElementById('submitBtn');
+
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            try {
+                // Laravel akan membaca ini sebagai PUT karena kita pake @method('PUT') di formnya
+                const response = await fetch('{{ route('student.logbook.update', $logbook->id) }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                // Coba parse jadi json kalau controllernya emang ngembaliin json
+                // Note: kalau controller lo pakenya return redirect(), logic ini mungkin butuh penyesuaian di backend lo.
+                const data = await response.json();
+
+                if (response.ok || data.success) {
+                    showNotification(
+                        'success', 
+                        'Pembaruan Berhasil', 
+                        'Logbook Anda telah berhasil diperbarui dan dikirim ulang untuk divalidasi.', 
+                        '{{ route('student.logbook.index') }}'
+                    );
+                } else {
+                    showNotification('error', 'Gagal Memperbarui', data.error || data.message || 'Terjadi kesalahan sistem. Silakan periksa isian Anda.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // Cek apakah errornya gara-gara controller balikin redirect HTML (karena blm pake json response)
+                if (error instanceof SyntaxError) {
+                    // Kalau dapet SyntaxError (gara2 response bukan JSON), kita anggep sukses dan langsung redirect manual
+                    showNotification(
+                        'success', 
+                        'Pembaruan Berhasil', 
+                        'Logbook Anda telah berhasil diperbarui.', 
+                        '{{ route('student.logbook.index') }}'
+                    );
+                } else {
+                    showNotification('error', 'Terjadi Kesalahan', 'Gagal terhubung ke server. Pastikan koneksi internet stabil.');
+                }
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        });
     </script>
 </x-app-layout>

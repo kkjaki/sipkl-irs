@@ -44,6 +44,11 @@
                         <span class="flex-1 text-gray-900">{{ $student->schoolSupervisor->name ?? '-' }}</span>
                     </div>
                     <div class="flex border-b py-2">
+                        <span class="w-44 font-medium text-gray-700">Mentor</span>
+                        <span class="mx-2">:</span>
+                        <span class="flex-1 text-gray-900">{{ $student->internshipProgram->mentor->user->name ?? '-' }}</span>
+                    </div>
+                    <div class="flex border-b py-2">
                         <span class="w-44 font-medium text-gray-700">Telepon</span>
                         <span class="mx-2">:</span>
                         <span class="flex-1 text-gray-900">{{ $student->phone ?? '-' }}</span>
@@ -105,7 +110,7 @@
                             <span class="w-44 font-medium text-gray-700">Periode</span>
                             <span class="mx-2">:</span>
                             <span class="flex-1 text-gray-900">
-                                {{ $start->format('d M Y') }} — {{ $end->format('d M Y') }}
+                                {{ $start->format('F d Y') }} - {{ $end->format('F d Y') }}
                             </span>
                         </div>
                         <div class="flex py-2">

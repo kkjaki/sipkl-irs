@@ -10,6 +10,7 @@
 
     <title>@yield('title', 'Dashboard') | {{ config('app.name', 'PKL Online') }}</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon2.png') }}">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link

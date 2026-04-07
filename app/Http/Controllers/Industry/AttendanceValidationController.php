@@ -14,18 +14,32 @@ class AttendanceValidationController extends BaseController
         $this->middleware('auth');
     }
 
-    public function index()
-    {
-        $user = Auth::user();
+   public function index()
+{
+    $user = Auth::user();
 
-        if (!in_array($user->role, ['owner', 'mentor'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $schools = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
-
-        return view('industry.attendance-validation.index', compact('schools'));
+    if (!in_array($user->role, ['owner', 'mentor'])) {
+        abort(403, 'Unauthorized action.');
     }
+
+    $industryId = $user->industry_id;
+
+    // Jika Owner, tampilkan semua sekolah di industrinya
+    if ($user->role === 'owner') {
+        $schools = School::where('industry_id', $industryId)->get();
+    } 
+    // 🔥 Jika Mentor (Tanu), filter hanya sekolah yang ada siswa bimbingannya
+    else {
+        $schools = School::where('industry_id', $industryId)
+            ->whereHas('students', function ($query) use ($user) {
+                $query->whereHas('internshipProgram', function ($q) use ($user) {
+                    $q->where('mentor_id', $user->mentor->id);
+                });
+            })->get();
+    }
+
+    return view('industry.attendance-validation.index', compact('schools'));
+}
 
     public function show($id)
     {

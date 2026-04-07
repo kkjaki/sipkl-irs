@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Attendance;
 use App\Models\AttendanceSession;
+use Illuminate\Support\Facades\Validator;
 
 class AttendanceController extends Controller
 {
@@ -83,7 +84,7 @@ class AttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'attendance_session_id' => 'required|exists:attendance_sessions,id',
             'status' => 'required|in:hadir,izin,sakit',
             'image' => 'required|image|max:5120', // Max 5MB
@@ -91,6 +92,10 @@ class AttendanceController extends Controller
             'latitude' => 'required_if:status,hadir|nullable|numeric',
             'longitude' => 'required_if:status,hadir|nullable|numeric'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
 
         $user = Auth::user();
         $student = $user->student;
@@ -139,7 +144,7 @@ class AttendanceController extends Controller
             $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
             $distance = $earthRadius * $c;
 
-            $maxRadius = 250; // Edit sesuai kebutuhan, dalam meter
+            $maxRadius = 250; // Edit batas radius sesuai kebutuhan (dalam meter)
 
             if ($distance > $maxRadius) {
                 $jarakBulat = round($distance);
@@ -148,7 +153,6 @@ class AttendanceController extends Controller
 
         }
 
-        // Check if already attended
         $existingAttendance = Attendance::where('attendance_session_id', $request->attendance_session_id)
             ->where('student_id', $student->id)
             ->first();
@@ -157,7 +161,6 @@ class AttendanceController extends Controller
             return response()->json(['error' => 'Anda sudah melakukan presensi untuk sesi ini.'], 400);
         }
 
-        // Handle image upload
         $imagePath = null;
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -165,7 +168,6 @@ class AttendanceController extends Controller
             $imagePath = $image->storeAs('attendances', $imageName, 'public');
         }
 
-        // Create attendance record
         Attendance::create([
             'attendance_session_id' => $request->attendance_session_id,
             'student_id' => $student->id,

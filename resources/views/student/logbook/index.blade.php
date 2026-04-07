@@ -1,328 +1,237 @@
 <x-app-layout>
-@section('title', 'Daftar Logbook')
-    <div class="min-h-screen bg-brand-bg px-10">
+    @section('title', 'Daftar Logbook')
+
+    <div class="min-h-screen bg-brand-bg px-10 pb-10" x-data="{
+        activeFilter: 'all',
+        tempFilter: 'all',
+        showFilterModal: false,
+        sortDesc: true,
+        showDetailModal: false,
+        detailLogbook: null,
+    
+        // AMBIL DATA DARI BACKEND
+        logbooks: @js($logbooks->items()),
+    
+        // FUNGSI SORTING REAL-TIME
+        get sortedLogbooks() {
+            let filtered = this.logbooks.filter(l => this.activeFilter === 'all' || l.status.toLowerCase() === this.activeFilter);
+            return this.sortDesc ?
+                filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) :
+                filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        },
+    
+        openDetail(id) {
+            this.detailLogbook = this.logbooks.find(l => l.id === id);
+            this.showDetailModal = true;
+        },
+    
+        formatDate(dateStr) {
+            // GANTI BAGIAN DALAM KURUNG INI
+            return new Date(dateStr).toLocaleDateString('en-US', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        },
+    
+        formatTime(dateStr) {
+            return new Date(dateStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+        }
+    }">
+
         {{-- Header --}}
         <header>
             <div class="w-full py-6 flex justify-between items-center">
                 <div>
-                    <h2 class="font-extrabold text-3xl text-gray-800 leading-tight">
-                        {{ __('Daftar Logbook') }}
-                    </h2>
+                    <h2 class="font-extrabold text-3xl text-gray-800 leading-tight">Daftar Logbook</h2>
                     <p class="text-gray-600 mt-2">Riwayat logbook Anda</p>
                 </div>
                 <a href="{{ route('student.logbook.harian') }}"
-                   class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center gap-2">
-                    <i class="fas fa-plus"></i>
-                    Tambah Logbook
+                    class="bg-teal-500 hover:bg-teal-600 active:scale-95 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-teal-100 transition-all flex items-center gap-2">
+                    <x-heroicon-s-plus class="w-5 h-5" /> Tambah Logbook
                 </a>
             </div>
         </header>
 
-        {{-- Session Success --}}
-        @if(session('success'))
-            <div class="mb-4 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3" role="alert">
-                <i class="fas fa-check-circle text-green-500 text-lg"></i>
-                <p class="text-green-800 font-medium text-sm">{{ session('success') }}</p>
-            </div>
-        @endif
-
         {{-- Card Container --}}
-        <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 mb-8 overflow-hidden relative flex flex-col">
+        <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 mb-8 flex flex-col relative">
 
-            {{-- HEADER CARD --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex flex-wrap gap-3 justify-between items-center text-white font-bold text-lg rounded-t-xl">
-                <span>Daftar Logbook</span>
+            {{-- HEADER WADAH --}}
+            <div
+                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white relative rounded-t-xl">
+                <div class="flex items-center gap-2.5">
+                    <x-heroicon-o-book-open class="w-6 h-6 shrink-0 opacity-90" />
+                    <h2 class="font-bold text-lg m-0">Daftar Riwayat PKL</h2>
+                </div>
 
                 <div class="flex items-center gap-3">
-                    {{-- SORT --}}
-                    <button id="sortBtn" class="hover:opacity-80" title="Urutkan">
-                        <i class="fa fa-sort"></i>
+                    {{-- TOMBOL SORT --}}
+                    <button @click="sortDesc = !sortDesc"
+                        class="p-2 rounded-lg transition-all hover:bg-teal-700 focus:outline-none flex items-center gap-1.5"
+                        :class="!sortDesc ? 'bg-teal-800 shadow-inner' : ''">
+                        <x-heroicon-s-arrows-up-down class="w-5 h-5" />
+                        <span class="text-xs font-bold" x-text="sortDesc ? 'Terbaru' : 'Terlama'"></span>
                     </button>
 
                     {{-- FILTER --}}
-                    <button id="filterBtn"
-                        class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center gap-2">
-                        <i class="fa fa-sliders"></i>
-                        Filter
-                    </button>
-                </div>
-            </div>
-
-            {{-- FILTER POPUP --}}
-            <div id="filterPopup"
-                class="hidden absolute right-6 top-20 bg-white shadow-lg border rounded-lg w-64 p-4 z-20">
-
-                <div class="flex justify-between items-center mb-3">
-                    <h4 class="font-semibold text-gray-700">Filter</h4>
-                    <button id="closeFilter" class="text-gray-400 hover:text-gray-600">✕</button>
-                </div>
-
-                <p class="text-sm text-gray-500 mb-2">Status</p>
-
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <button class="filter-pill px-3 py-1 text-xs rounded-full bg-gray-200" data-filter="approved">Disetujui</button>
-                    <button class="filter-pill px-3 py-1 text-xs rounded-full bg-gray-200" data-filter="rejected">Ditolak</button>
-                    <button class="filter-pill px-3 py-1 text-xs rounded-full bg-gray-200" data-filter="pending">Pending</button>
-                </div>
-
-                <div class="flex justify-between">
-                    <button id="resetFilter" class="text-sm text-gray-500 hover:underline">Hapus</button>
-                    <button id="applyFilter" class="bg-teal-400 text-white px-3 py-1 rounded text-sm">Simpan</button>
-                </div>
-
-            </div>
-
-            {{-- LIST LOGBOOK --}}
-            <div id="logbookList" class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-                @forelse($logbooks as $logbook)
-
-                <div class="logbook-card border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition"
-                    data-status="{{ $logbook->status }}">
-
-                    {{-- HEADER CARD --}}
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <p class="font-semibold text-gray-800">
-                                {{ \Carbon\Carbon::parse($logbook->created_at)->translatedFormat('l, d-m-Y') }}
-                            </p>
-                            <p class="text-xs text-gray-400 mt-0.5">
-                                {{ \Carbon\Carbon::parse($logbook->created_at)->format('H:i') }} WIB
-                            </p>
-                        </div>
-
-                        {{-- STATUS BADGE --}}
-                        @if($logbook->status === 'approved')
-                            <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap">
-                                <i class="fas fa-check-circle mr-1"></i>Disetujui
-                            </span>
-                        @elseif($logbook->status === 'rejected')
-                            <span class="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap">
-                                <i class="fas fa-times-circle mr-1"></i>Ditolak
-                            </span>
-                        @else
-                            <span class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap">
-                                <i class="fas fa-clock mr-1"></i>Pending
-                            </span>
-                        @endif
-                    </div>
-
-                    {{-- MENTOR --}}
-                    <p class="text-xs text-gray-500 mb-1">
-                        <i class="fas fa-user-tie mr-1"></i>
-                        {{ $logbook->mentor->name ?? '-' }}
-                    </p>
-
-                    {{-- CATATAN MENTOR (hanya jika ada feedback) --}}
-                    @if($logbook->feedback)
-                        <div class="bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3 flex items-start gap-2">
-                            <i class="fas fa-info-circle text-red-400 mt-0.5 text-xs shrink-0"></i>
-                            <div>
-                                <span class="text-xs font-semibold text-red-700 block">Catatan Mentor:</span>
-                                <span class="text-xs text-red-600 leading-relaxed">{{ \Illuminate\Support\Str::limit($logbook->feedback, 100) }}</span>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- DESKRIPSI KEGIATAN --}}
-                    <div class="mb-4">
-                        <p class="text-sm font-medium text-gray-700 mb-1">Kegiatan:</p>
-                        <p class="text-sm text-gray-600 leading-relaxed line-clamp-3">
-                            {{ \Illuminate\Support\Str::limit($logbook->notes, 120) }}
-                        </p>
-                    </div>
-
-                    {{-- DOKUMEN + AKSI --}}
-                    <div class="flex flex-wrap gap-2 mt-auto pt-3 border-t border-gray-100">
-
-                        {{-- DOKUMEN --}}
-                        @if($logbook->documentation_file)
-                            <a href="{{ asset('storage/' . $logbook->documentation_file) }}"
-                               target="_blank"
-                               class="inline-flex items-center gap-1.5 text-xs border border-gray-300 text-gray-600 px-3 py-1.5 rounded hover:bg-gray-50 transition">
-                                <i class="fas fa-file-download"></i> Dokumen
-                            </a>
-                        @endif
-
-                        {{-- LIHAT DETAIL --}}
-                        <button onclick="openDetailModal({{ $logbook->id }})"
-                            class="inline-flex items-center gap-1.5 text-xs border border-blue-300 text-blue-600 px-3 py-1.5 rounded hover:bg-blue-50 transition">
-                            <i class="fas fa-eye"></i> Detail
+                    <div class="relative flex items-center" @click.away="showFilterModal = false">
+                        <button @click="showFilterModal = !showFilterModal"
+                            class="flex items-center gap-2 px-4 py-1.5 bg-white hover:bg-teal-50 text-teal-700 rounded-lg text-sm font-bold transition-all shadow-sm">
+                            <x-heroicon-o-funnel class="w-4 h-4" />
+                            <span>Filter Status</span>
                         </button>
 
-                        {{-- EDIT (hanya jika rejected) --}}
-                        @if($logbook->status === 'rejected')
-                            <a href="{{ route('student.logbook.edit', $logbook->id) }}"
-                               class="inline-flex items-center gap-1.5 text-xs bg-yellow-400 text-white hover:bg-yellow-500 font-semibold px-3 py-1.5 rounded transition">
-                                <i class="fas fa-pencil-alt"></i> Edit
-                            </a>
-                        @endif
-
+                        <div x-show="showFilterModal" x-cloak x-transition
+                            class="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 text-gray-800 overflow-hidden">
+                            <div class="p-4 border-b border-gray-50 text-xs font-black uppercase text-gray-400">Pilih
+                                Status</div>
+                            <div class="p-5 flex flex-wrap gap-2">
+                                @foreach (['pending' => 'Pending', 'approved' => 'Disetujui', 'rejected' => 'Ditolak'] as $val => $label)
+                                    <button @click="tempFilter = '{{ $val }}'"
+                                        :class="tempFilter === '{{ $val }}' ? 'bg-teal-600 text-white shadow-md' :
+                                            'bg-gray-50 text-gray-600'"
+                                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all">{{ $label }}</button>
+                                @endforeach
+                            </div>
+                            <div class="p-4 bg-gray-50 flex justify-between items-center gap-3">
+                                <button @click="tempFilter = 'all'; activeFilter = 'all'; showFilterModal = false"
+                                    class="flex-1 text-xs font-bold text-gray-500">Reset</button>
+                                <button @click="activeFilter = tempFilter; showFilterModal = false"
+                                    class="flex-1 py-2 bg-teal-600 text-white rounded-lg text-xs font-bold shadow-md">Terapkan</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                @empty
+            {{-- LIST LOGBOOK (LOOPING DARI GETTER ALPINE) --}}
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                {{-- EMPTY STATE --}}
-                <div class="col-span-1 md:col-span-2 xl:col-span-3 flex flex-col items-center justify-center py-16 text-center">
-                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-book-open text-3xl text-gray-300"></i>
+                    <template x-for="logbook in sortedLogbooks" :key="logbook.id">
+                        <div
+                            class="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between bg-white shadow-sm hover:shadow-md transition-all">
+
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <p class="font-black text-gray-800 text-lg" x-text="formatDate(logbook.created_at)">
+                                    </p>
+                                    <p class="text-sm font-bold text-gray-400 flex items-center gap-1.5 mt-1">
+                                        <x-heroicon-o-clock class="w-4 h-4 text-teal-500" />
+                                        <span x-text="formatTime(logbook.created_at)"></span>
+                                    </p>
+                                </div>
+
+                                {{-- Status Badge --}}
+                                <span
+                                    class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border flex items-center gap-1.5 shadow-sm"
+                                    :class="{
+                                        'bg-green-50 text-green-600 border-green-100': logbook.status === 'approved',
+                                        'bg-rose-50 text-rose-600 border-rose-100': logbook.status === 'rejected',
+                                        'bg-amber-50 text-amber-600 border-amber-100': logbook.status === 'pending'
+                                    }">
+                                    <span class="w-1.5 h-1.5 rounded-full"
+                                        :class="{
+                                            'bg-green-600': logbook.status === 'approved',
+                                            'bg-rose-600': logbook.status === 'rejected',
+                                            'bg-amber-600': logbook.status === 'pending'
+                                        }"></span>
+                                    <span
+                                        x-text="logbook.status === 'approved' ? 'Disetujui' : (logbook.status === 'rejected' ? 'Ditolak' : 'Pending')"></span>
+                                </span>
+                            </div>
+
+                            <div class="mb-4 text-sm text-gray-600 font-medium flex items-center gap-2">
+                                <x-heroicon-s-user-circle class="w-5 h-5 text-gray-400" />
+                                <span x-text="logbook.mentor?.user?.name || '-'"></span>
+                            </div>
+
+                            <div class="mb-6 flex-1 text-sm text-gray-700 leading-relaxed line-clamp-3 font-medium"
+                                x-text="logbook.notes"></div>
+
+                            <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-100 mt-auto">
+                                <button @click="openDetail(logbook.id)"
+                                    class="flex-1 text-center inline-flex justify-center items-center gap-1.5 text-[10px] uppercase font-black border border-teal-200 text-teal-600 bg-teal-50 px-3 py-2 rounded-xl hover:bg-teal-600 hover:text-white transition-all">
+                                    <x-heroicon-s-eye class="w-4 h-4" /> Detail
+                                </button>
+
+                                <template x-if="logbook.status === 'pending' || logbook.status === 'rejected'">
+                                    <a :href="'/student/logbook/' + logbook.id + '/edit'"
+                                        class="flex-1 text-center inline-flex justify-center items-center gap-1.5 text-[10px] uppercase font-black border border-amber-200 text-amber-600 bg-amber-50 px-3 py-2 rounded-xl hover:bg-amber-500 hover:text-white transition-all">
+                                        <x-heroicon-s-pencil-square class="w-4 h-4" /> Edit
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- Empty State --}}
+                    <div x-show="sortedLogbooks.length === 0"
+                        class="col-span-full py-20 text-center font-bold text-gray-400 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                        Tidak ada logbook dengan status tersebut.
                     </div>
-                    <p class="text-gray-500 font-medium text-lg">Belum ada logbook</p>
-                    <p class="text-gray-400 text-sm mt-1">Mulai buat logbook Anda untuk mencatat kegiatan PKL.</p>
-                    <a href="{{ route('student.logbook.harian') }}"
-                       class="mt-5 inline-flex items-center px-5 py-2.5 bg-brand-primary hover:bg-teal-600 text-white font-bold rounded-lg transition">
-                        <i class="fas fa-plus mr-2"></i>
-                        Buat Logbook Pertama
-                    </a>
                 </div>
-
-                @endforelse
-
             </div>
 
-            {{-- PAGINATION --}}
-            @if($logbooks->hasPages())
-            <div class="px-6 pb-6 border-t border-gray-100 pt-4">
-                {{ $logbooks->links() }}
-            </div>
+            @if ($logbooks->hasPages())
+                <div class="px-6 pb-6 pt-4 border-t border-gray-100">
+                    {{ $logbooks->links() }}
+                </div>
             @endif
-
         </article>
-    </div>
 
-
-    {{-- =================== DETAIL MODAL =================== --}}
-    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="bg-brand-primary text-white p-4 font-bold text-lg rounded-t-xl flex justify-between items-center">
-                <span>Detail Logbook</span>
-                <button onclick="closeDetailModal()" class="text-white hover:text-gray-200">
-                    <x-heroicon-m-x-mark class="w-6 h-6" />
-                </button>
+        {{-- MODAL DETAIL --}}
+        <div x-cloak x-show="showDetailModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div x-show="showDetailModal" x-transition.opacity class="fixed inset-0 bg-black/60 backdrop-blur-sm"
+                @click="showDetailModal = false"></div>
+            <div x-show="showDetailModal" x-transition:enter="transition ease-out duration-300 transform scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden">
+                <div
+                    class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white shrink-0">
+                    <h3 class="font-bold text-lg">Detail Logbook</h3>
+                    <button @click="showDetailModal = false"
+                        class="bg-white/10 hover:bg-white/20 rounded-full p-1.5"><x-heroicon-m-x-mark
+                            class="w-5 h-5" /></button>
+                </div>
+                <div class="p-8 overflow-y-auto" x-show="detailLogbook">
+                    <template x-if="detailLogbook">
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-2 gap-6 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase mb-1">Tanggal</p>
+                                    <p class="font-bold text-gray-800" x-text="formatDate(detailLogbook.created_at)">
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase mb-1">Waktu</p>
+                                    <p class="font-bold text-gray-800" x-text="formatTime(detailLogbook.created_at)">
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-gray-400 uppercase mb-3">Kegiatan</p>
+                                <div class="bg-gray-50 border border-gray-100 rounded-2xl p-5 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap font-medium"
+                                    x-text="detailLogbook.notes"></div>
+                            </div>
+                            <template x-if="detailLogbook.documentation_file">
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase mb-3">Dokumentasi</p>
+                                    <a :href="'/storage/' + detailLogbook.documentation_file" target="_blank"
+                                        class="inline-flex items-center gap-2 px-5 py-3 bg-teal-50 text-teal-700 hover:bg-teal-600 hover:text-white border border-teal-200 rounded-xl font-bold text-sm transition-all">Lihat
+                                        File</a>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
             </div>
-            <div id="detailContent" class="p-6"></div>
         </div>
     </div>
-
-
-    <script>
-        const logbooksData = @json($logbooks->items());
-
-        // =================== DETAIL MODAL ===================
-        function openDetailModal(id) {
-            const logbook = logbooksData.find(l => l.id === id);
-            if (!logbook) return;
-
-            let statusBadge = '';
-            if (logbook.status === 'pending') {
-                statusBadge = '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-800"><i class="fas fa-clock mr-1"></i>Menunggu</span>';
-            } else if (logbook.status === 'approved') {
-                statusBadge = '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Disetujui</span>';
-            } else {
-                statusBadge = '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i>Ditolak</span>';
-            }
-
-            const formatDate = (d) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            const formatTime = (d) => new Date(d).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
-            document.getElementById('detailContent').innerHTML = `
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <span class="text-gray-500 text-sm block mb-1">Tanggal</span>
-                            <span class="font-medium text-gray-900">${formatDate(logbook.created_at)}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500 text-sm block mb-1">Waktu</span>
-                            <span class="font-medium text-gray-900">${formatTime(logbook.created_at)} WIB</span>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-gray-500 text-sm block mb-1">Mentor</span>
-                        <span class="font-medium text-gray-900">${logbook.mentor ? logbook.mentor.name : '-'}</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-500 text-sm block mb-1">Status</span>
-                        ${statusBadge}
-                    </div>
-                    <div>
-                        <span class="text-gray-500 text-sm block mb-2">Kegiatan</span>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <p class="text-gray-800 whitespace-pre-wrap text-sm">${logbook.notes}</p>
-                        </div>
-                    </div>
-                    ${logbook.documentation_file ? `
-                    <div>
-                        <span class="text-gray-500 text-sm block mb-2">Dokumentasi</span>
-                        <a href="/storage/${logbook.documentation_file}" target="_blank"
-                           class="inline-flex items-center px-4 py-2 bg-brand-primary hover:bg-teal-600 text-white font-medium rounded-lg transition text-sm">
-                            <i class="fas fa-download mr-2"></i>Unduh Dokumen
-                        </a>
-                    </div>
-                    ` : ''}
-                    ${logbook.status === 'rejected' ? `
-                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded mt-2">
-                        <p class="text-sm text-red-700">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Logbook ini ditolak oleh mentor. Silakan edit dan kirim ulang.
-                        </p>
-                        <a href="${window.location.origin}/student/logbook/${logbook.id}/edit"
-                           class="mt-3 inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition text-sm">
-                            <i class="fas fa-edit mr-2"></i>Edit Logbook
-                        </a>
-                    </div>
-                    ` : ''}
-                </div>
-            `;
-
-            document.getElementById('detailModal').classList.remove('hidden');
+    <style>
+        [x-cloak] {
+            display: none !important;
         }
-
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-        }
-
-        document.getElementById('detailModal').addEventListener('click', function (e) {
-            if (e.target === this) closeDetailModal();
-        });
-
-        // =================== FILTER ===================
-        const filterBtn = document.getElementById('filterBtn');
-        const popup = document.getElementById('filterPopup');
-        const pills = document.querySelectorAll('.filter-pill');
-        let selectedFilter = null;
-
-        filterBtn.onclick = () => popup.classList.toggle('hidden');
-        document.getElementById('closeFilter').onclick = () => popup.classList.add('hidden');
-
-        pills.forEach(p => {
-            p.onclick = () => {
-                pills.forEach(x => x.classList.remove('bg-teal-400', 'text-white'));
-                p.classList.add('bg-teal-400', 'text-white');
-                selectedFilter = p.dataset.filter;
-            };
-        });
-
-        document.getElementById('applyFilter').onclick = () => {
-            document.querySelectorAll('.logbook-card').forEach(card => {
-                card.style.display = (!selectedFilter || card.dataset.status === selectedFilter) ? 'flex' : 'none';
-            });
-            popup.classList.add('hidden');
-        };
-
-        document.getElementById('resetFilter').onclick = () => {
-            selectedFilter = null;
-            pills.forEach(x => x.classList.remove('bg-teal-400', 'text-white'));
-            document.querySelectorAll('.logbook-card').forEach(card => card.style.display = 'flex');
-        };
-
-        // =================== SORT ===================
-        document.getElementById('sortBtn').onclick = () => {
-            const list = document.getElementById('logbookList');
-            const items = Array.from(list.querySelectorAll('.logbook-card'));
-            items.reverse().forEach(el => list.appendChild(el));
-        };
-    </script>
-
+    </style>
 </x-app-layout>

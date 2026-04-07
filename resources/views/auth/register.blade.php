@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Register">
     <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-8 border border-gray-100">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-black text-teal-600 tracking-tight">PKL ONLINE</h1>

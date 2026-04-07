@@ -64,7 +64,7 @@
                                 </div>
                                 <h3 class="font-black text-xl text-gray-800 mb-1 leading-tight">Presensi Harian</h3>
                                 <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">
-                                    {{ \Carbon\Carbon::parse($session->session_date)->translatedFormat('l, d F Y') }}
+                                    {{ \Carbon\Carbon::parse($session->session_date)->translatedFormat('l, F d Y') }}
                                 </p>
 
                                 <div class="space-y-2">
@@ -92,11 +92,11 @@
 
                                 <div class="flex items-center gap-1">
                                     {{-- Icon Mata: Lihat Data (Gunakan route show ke AttendanceController) --}}
-                                    <a href="{{ route('attendance.validate.show', $session->id) }}"
+                                    {{-- <a href="{{ route('attendance.validate.show', $session->id) }}"
                                         class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                                         title="Lihat Detail Presensi">
                                         <x-heroicon-o-eye class="w-5 h-5" />
-                                    </a>
+                                    </a> --}}
 
                                     {{-- Icon Trash: Hapus Sesi --}}
                                     <button @click="showDeleteModal = true"

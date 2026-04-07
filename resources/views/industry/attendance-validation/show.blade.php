@@ -36,19 +36,19 @@
         </section>
 
         {{-- Section 2: Daftar Siswa & Filter --}}
-        <article class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+        <article class="bg-white rounded-xl shadow-md border border-gray-200 ">
 
             {{-- Header Wadah dengan Filter --}}
             <div
-                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex justify-between items-center text-white relative">
+                class="bg-gradient-to-r rounded-t-xl from-teal-500 to-teal-600 px-6 py-3 flex justify-between items-center text-white relative">
                 <div class="flex items-center gap-2.5">
                     <x-heroicon-o-users class="w-6 h-6 shrink-0" />
                     <h2 class="font-bold text-lg m-0">Daftar Kehadiran</h2>
                 </div>
 
                 {{-- Dropdown Filter dengan Button Putih --}}
-                <div class="relative flex items-center">
-                    <button @click="showFilterModal = !showFilterModal" @click.away="showFilterModal = false"
+                <div class="relative flex items-center @click.away="showFilterModal = false">
+                    <button @click="showFilterModal = !showFilterModal" "
                         class="flex items-center gap-2 px-4 py-1.5 bg-white hover:bg-teal-50 text-teal-700 rounded-lg text-sm font-bold transition-all shadow-sm border border-transparent leading-none">
                         <x-heroicon-o-funnel class="w-4 h-4" />
                         <span>Filter Status</span>
@@ -64,7 +64,7 @@
                         </div>
 
                         <div class="p-5 flex flex-wrap gap-2">
-                            @foreach (['hadir', 'izin', 'sakit', 'alpa'] as $status)
+                            @foreach (['hadir', 'terlambat', 'izin', 'sakit', 'alpa'] as $status)
                                 <button @click="tempFilter = '{{ $status }}'"
                                     :class="tempFilter === '{{ $status }}' ?
                                         'bg-teal-600 text-white shadow-md shadow-teal-100' :
@@ -91,7 +91,28 @@
                         @php
                             $attendance = $student->attendances->first();
                             $statusRaw = $attendance ? strtolower($attendance->status) : 'alpa';
-                            $statusDisplay = $attendance ? ucfirst($attendance->status) : 'Belum Absen';
+
+                            // Logic Terlambat Otomatis
+                            if ($statusRaw === 'hadir' && $attendance && $attendance->check_in) {
+                                $checkIn = date('H:i', strtotime($attendance->check_in));
+
+                                // AMANNYA: Ambil deadline dari tabel attendance_session lewat relasi
+                                // Pastikan model Attendance punya relasi ke session. Kalau error, berarti di Controller lo harus pasing variabel $session
+                                $deadline = date('H:i', strtotime($attendance->session->on_time_deadline ?? '22:00'));
+
+                                if ($checkIn > $deadline) {
+                                    $statusRaw = 'terlambat';
+                                }
+                            }
+
+                            $statusDisplay = match ($statusRaw) {
+                                'hadir' => 'Hadir',
+                                'terlambat' => 'Terlambat',
+                                'izin' => 'Izin',
+                                'sakit' => 'Sakit',
+                                'alpa' => 'Belum Absen',
+                                default => 'Belum Absen',
+                            };
                         @endphp
 
                         <section

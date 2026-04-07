@@ -1,6 +1,6 @@
 <x-app-layout>
 @section('title', 'Tambah Logbook')
-    <div class="min-h-screen bg-brand-bg px-10">
+    <div class="min-h-screen bg-brand-bg px-10 relative">
         {{-- Header --}}
         <header>
             <div class="w-full py-6 flex justify-between items-center">
@@ -9,7 +9,7 @@
                         {{ __('Tambah Logbook') }}
                     </h2>
                     <p class="text-gray-600 mt-2">
-                        {{ now()->translatedFormat('l, d F Y') }}
+                        {{ now()->translatedFormat('l, F d Y') }}
                     </p>
                 </div>
                 <a href="{{ route('student.logbook.index') }}"
@@ -68,7 +68,7 @@
                     {{-- Documentation File Upload --}}
                     <div>
                         <label class="block text-gray-700 font-semibold mb-2">
-                            Dokumentasi (Opsional)
+                            Dokumentasi <span class="text-red-500">(Opsional)</span>
                         </label>
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-primary transition">
                             <input type="file"
@@ -122,6 +122,21 @@
                     </div>
                 </form>
         </article>
+
+        {{-- CUSTOM NOTIFICATION MODAL (TAILWIND) --}}
+        <div id="notificationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[70] flex items-center justify-center p-4 transition-opacity">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-transform" id="notificationContent">
+                <div id="notifIconContainer" class="mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-6">
+                    <i id="notifIcon" class="fas text-4xl"></i>
+                </div>
+                <h3 id="notifTitle" class="text-2xl font-black text-gray-900 mb-2 tracking-tight"></h3>
+                <p id="notifMessage" class="text-sm text-gray-500 font-medium mb-8 leading-relaxed"></p>
+                <button id="notifButton" class="w-full py-4 text-white font-bold rounded-2xl shadow-md transition-all active:scale-95 uppercase tracking-widest text-xs">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
     </div>
 
     {{-- Loading Overlay --}}
@@ -136,6 +151,44 @@
     </div>
 
     <script>
+        // FUNGSI ALERT CUSTOM
+        function showNotification(type, title, message, redirectUrl = null) {
+            const modal = document.getElementById('notificationModal');
+            const iconContainer = document.getElementById('notifIconContainer');
+            const icon = document.getElementById('notifIcon');
+            const btn = document.getElementById('notifButton');
+
+            document.getElementById('notifTitle').textContent = title;
+            document.getElementById('notifMessage').textContent = message;
+
+            iconContainer.className = 'mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-6';
+            icon.className = 'fas text-4xl';
+            btn.className = 'w-full py-4 text-white font-black rounded-2xl shadow-lg transition-all active:scale-95 uppercase tracking-widest text-xs';
+
+            if (type === 'success') {
+                iconContainer.classList.add('bg-green-100');
+                icon.classList.add('fa-check', 'text-green-600');
+                btn.classList.add('bg-teal-500', 'hover:bg-teal-600', 'shadow-teal-100');
+            } else if (type === 'warning') {
+                iconContainer.classList.add('bg-amber-100');
+                icon.classList.add('fa-exclamation-triangle', 'text-amber-600');
+                btn.classList.add('bg-amber-500', 'hover:bg-amber-600', 'shadow-amber-100');
+            } else {
+                iconContainer.classList.add('bg-rose-100');
+                icon.classList.add('fa-times', 'text-rose-600');
+                btn.classList.add('bg-rose-600', 'hover:bg-rose-700', 'shadow-rose-100');
+            }
+
+            modal.classList.remove('hidden');
+
+            btn.onclick = function() {
+                modal.classList.add('hidden');
+                if(redirectUrl) {
+                    window.location.href = redirectUrl; 
+                }
+            }
+        }
+
         function handleFileSelect(input) {
             const fileInfo = document.getElementById('fileInfo');
             const fileName = document.getElementById('fileName');
@@ -144,7 +197,8 @@
                 const file = input.files[0];
 
                 if (file.size > 10 * 1024 * 1024) {
-                    alert('File terlalu besar! Maksimal 10MB.');
+                    // GANTI ALERT FILE KEBESARAN
+                    showNotification('warning', 'Ukuran Dokumen Melebihi Batas', 'Mohon unggah dokumen dengan ukuran maksimal 10MB.');
                     input.value = '';
                     return;
                 }
@@ -197,14 +251,21 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('Logbook berhasil dikirim! Menunggu validasi mentor.');
-                    window.location.href = '{{ route('student.logbook.index') }}';
+                    // GANTI ALERT SUKSES
+                    showNotification(
+                        'success', 
+                        'Logbook Terkirim', 
+                        'Laporan kegiatan Anda telah berhasil diserahkan dan saat ini sedang menunggu proses validasi dari mentor terkait.', 
+                        '{{ route('student.logbook.index') }}'
+                    );
                 } else {
-                    alert(data.error || 'Terjadi kesalahan. Silakan coba lagi.');
+                    // GANTI ALERT ERROR DARI BACKEND
+                    showNotification('error', 'Gagal Mengirim', data.error || 'Terjadi kesalahan sistem. Silakan coba lagi.');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
+                // GANTI ALERT CATCH ERROR
+                showNotification('error', 'Terjadi Kesalahan', 'Gagal terhubung ke server. Pastikan koneksi internet Anda stabil lalu coba kembali.');
             } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
                 submitBtn.disabled = false;

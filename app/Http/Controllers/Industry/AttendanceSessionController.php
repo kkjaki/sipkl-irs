@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceSessionController extends BaseController
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Filter industry_id agar data tidak bocor antar perusahaan.
      */
@@ -29,11 +24,11 @@ class AttendanceSessionController extends BaseController
             $industryId = $user->mentor->industry_id ?? null;
         }
 
-        // Ambil data sesi milik industri tersebut
         $attendanceSessions = $industryId
             ? AttendanceSession::where('industry_id', $industryId)
+            ->where('session_date', '>=', now()->toDateString())
             ->with('user')
-            ->orderBy('session_date', 'desc') // Urutkan berdasarkan tanggal terbaru
+            ->orderBy('session_date', 'desc') 
             ->orderBy('created_at', 'desc')
             ->paginate(15)
             : new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
@@ -51,7 +46,6 @@ class AttendanceSessionController extends BaseController
      */
     public function store(Request $request)
     {
-        // Validasi HANYA untuk jam (Karena nama dan tanggal di-generate otomatis)
         $validated = $request->validate([
             'on_time_deadline' => 'required',
             'closed_at' => 'required',
@@ -59,7 +53,6 @@ class AttendanceSessionController extends BaseController
 
         $user = Auth::user();
 
-        // Cek identitas: Dia ini Bos atau Mentor?
         $industryId = null;
         if ($user->role === 'owner') {
             $industryId = $user->industry->id ?? null;
@@ -71,10 +64,8 @@ class AttendanceSessionController extends BaseController
             return redirect()->back()->withErrors(['error' => 'Industri tidak ditemukan pada akun Anda.'])->withInput();
         }
 
-        // Set tanggal hari ini secara otomatis
         $sessionDate = now()->toDateString();
 
-        // Cek sesi ganda: Jangan sampai ada sesi dengan jam buka yang SAMA di hari yang SAMA
         $exists = \App\Models\AttendanceSession::where('industry_id', $industryId)
             ->where('session_date', $sessionDate)
             ->where('on_time_deadline', $validated['on_time_deadline'])
@@ -84,7 +75,6 @@ class AttendanceSessionController extends BaseController
             return redirect()->back()->withErrors(['on_time_deadline' => 'Sesi di jam ini untuk hari ini sudah ada.'])->withInput();
         }
 
-        // Simpan ke database (Tanpa kolom 'name')
         \App\Models\AttendanceSession::create([
             'industry_id' => $industryId,
             'opened_by_user_id' => $user->id,
@@ -94,7 +84,6 @@ class AttendanceSessionController extends BaseController
             'is_open' => true,
         ]);
 
-        // Kembali ke halaman index dengan pesan sukses
         return redirect()->route('attendance-sessions.index')
             ->with('success', 'Sesi presensi berhasil dibuka!');
     }

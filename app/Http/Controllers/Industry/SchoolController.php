@@ -21,18 +21,34 @@ class SchoolController extends BaseController
     /**
      * Display the school management page for an industry owner.
      */
-    public function management()
-    {
-        $user = Auth::user();
-        
-        if (!in_array($user->role, ['owner', 'mentor'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $schools = $user->industry_id ? School::where('industry_id', $user->industry_id)->get() : collect();
-
-        return view('industry.schools.management', compact('schools'));
+   public function management()
+{
+    $user = Auth::user();
+    
+    if (!in_array($user->role, ['owner', 'mentor'])) {
+        abort(403, 'Unauthorized action.');
     }
+
+    $industryId = $user->industry_id;
+
+    if (!$industryId) {
+        return view('industry.schools.management', ['schools' => collect()]);
+    }
+
+    // JIKA OWNER: Liat semua sekolah di industrinya
+    if ($user->role === 'owner') {
+        $schools = School::where('industry_id', $industryId)->get();
+    } 
+    // 🔥 JIKA MENTOR (TANU): Cuma sekolah yang ada murid bimbingannya dia
+    else {
+        $schools = School::where('industry_id', $industryId)
+            ->whereHas('students.internshipProgram', function ($query) use ($user) {
+                $query->where('mentor_id', $user->mentor->id);
+            })->get();
+    }
+
+    return view('industry.schools.management', compact('schools'));
+}
 
     /**
      * Display a listing of the schools for an industry owner.

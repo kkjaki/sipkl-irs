@@ -1,3 +1,4 @@
+@props(['title' => 'Login'])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -6,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'PKL ONLINE') }}</title>
+   <title>{{ $title }} | {{ config('app.name', 'PKL Online') }}</title>
+
+    <link rel="icon" type="image/png" href="{{ asset('favicon2.png') }}">
+
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -20,11 +24,11 @@
 
 <body class="font-sans antialiased text-gray-900 bg-slate-50">
 
-<div class="min-h-screen flex items-center justify-center p-4">
-    
-    {{ $slot }}
+    <div class="min-h-screen flex items-center justify-center p-4">
 
-</div>
+        {{ $slot }}
+
+    </div>
 
 </body>
 

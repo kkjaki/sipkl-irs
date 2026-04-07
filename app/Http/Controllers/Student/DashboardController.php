@@ -61,14 +61,12 @@ class DashboardController extends Controller
 
                 $sessionIds = $sessions->pluck('id');
 
-                // Sesi yang sudah lewat tapi siswa tidak punya data presensi sama sekali
                 $totalSudahAbsen = \App\Models\Attendance::where('student_id', $student->id)
                     ->whereIn('attendance_session_id', $sessionIds)
                     ->count();
 
                 $sesiTidakAbsen = $sessions->count() - $totalSudahAbsen;
 
-                // Alpha = sesi tidak diabsen + baris dengan status 'alpa'
                 $alphaCount = $sesiTidakAbsen + $tidakHadirFromStatus;
 
                 // ── Discipline Points ──────────────────────────────────────────

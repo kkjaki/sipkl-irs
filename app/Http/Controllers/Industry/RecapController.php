@@ -6,19 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\School;
 use App\Models\Student;
+use Illuminate\Support\Facades\Auth;
 
 class RecapController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
+
+        $mentor = Auth::user()->mentor;
         
         $schools = School::where('industry_id', $user->industry_id)
             ->orderBy('name')
             ->get();
 
-        $query = Student::where('industry_id', $user->industry_id)
-            ->with(['user', 'school'])
+        $query = Student::with(['user', 'school'])
             ->withCount([
                 'attendances as hadir_count' => function ($q) {
                     $q->where('status', 'hadir');
@@ -45,6 +47,16 @@ class RecapController extends Controller
 
         if ($request->filled('school_id')) {
             $query->where('school_id', $request->school_id);
+        }
+
+        if ($mentor) {
+            $query->whereHas('internshipProgram', function ($q) use ($mentor) {
+                $q->where('mentor_id', $mentor->id);
+            });
+        }
+
+        if (Auth::user()->role === 'owner') {
+            $query->where('industry_id', $user->industry_id);
         }
 
         $students = $query->paginate(12)->withQueryString();

@@ -1,5 +1,5 @@
 <x-app-layout>
-@section('title', 'Presensi Harian')
+    @section('title', 'Presensi Harian')
     <div class="min-h-screen bg-brand-bg px-10">
         {{-- Header --}}
         <header>
@@ -8,7 +8,7 @@
                     {{ __('Presensi Harian') }}
                 </h2>
                 <p class="text-gray-600 mt-2">
-                    {{ date('d F Y', strtotime(now())) }}
+                    {{ date('F d Y', strtotime(now())) }}
                 </p>
             </div>
         </header>
@@ -33,7 +33,7 @@
                                     <span class="w-40 font-medium text-gray-700">Tanggal</span>
                                     <span class="mx-2">:</span>
                                     <span class="flex-1 text-gray-900">
-                                        {{ date('d F Y', strtotime($session->session_date)) }}
+                                        {{ date('F d Y', strtotime($session->session_date)) }}
                                     </span>
                                 </div>
                                 <div class="flex border-b py-2">
@@ -235,7 +235,7 @@
                         class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition flex justify-center items-center">
                         <i class="fas fa-upload mr-2"></i>Pilih File Surat
                     </button>
-                    <p class="text-xs text-gray-500 mt-2 text-center">Format: JPG, PNG, PDF (Maks 2MB)</p>
+                    <p class="text-xs text-gray-500 mt-2 text-center">Format: JPG (< 5MB)</p>
                 </div>
 
                 <input type="file" id="imageInput" name="image" accept="image/*,.pdf" class="hidden"
@@ -275,10 +275,64 @@
             <span class="text-gray-800 font-semibold">Menyimpan presensi...</span>
         </div>
     </div>
+    {{-- Custom Alert Modal --}}
+    <div id="notificationModal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[70] flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-transform"
+            id="notificationContent">
+            <div id="notifIconContainer" class="mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-6">
+                <i id="notifIcon" class="fas text-4xl"></i>
+            </div>
+            <h3 id="notifTitle" class="text-2xl font-black text-gray-900 mb-2 tracking-tight"></h3>
+            <p id="notifMessage" class="text-sm text-gray-500 font-medium mb-8 leading-relaxed"></p>
+            <button id="notifButton"
+                class="w-full py-4 text-white font-bold rounded-2xl shadow-md transition-all active:scale-95 uppercase tracking-widest text-xs">
+                Mengerti
+            </button>
+        </div>
+    </div>
 
     <script>
         let mediaStream = null;
         let photoDataUrl = null;
+
+        // FUNGSI PEMANGGIL ALERT CUSTOM
+        function showNotification(type, title, message, reloadOnClose = false) {
+            const modal = document.getElementById('notificationModal');
+            const iconContainer = document.getElementById('notifIconContainer');
+            const icon = document.getElementById('notifIcon');
+            const btn = document.getElementById('notifButton');
+
+            document.getElementById('notifTitle').textContent = title;
+            document.getElementById('notifMessage').textContent = message;
+
+            // Reset Kelas CSS
+            iconContainer.className = 'mx-auto flex items-center justify-center h-20 w-20 rounded-full mb-6';
+            icon.className = 'fas text-4xl';
+            btn.className =
+                'w-full py-4 text-white font-black rounded-2xl shadow-lg transition-all active:scale-95 uppercase tracking-widest text-xs';
+
+            if (type === 'success') {
+                iconContainer.classList.add('bg-green-100');
+                icon.classList.add('fa-check', 'text-green-600');
+                btn.classList.add('bg-teal-500', 'hover:bg-teal-600', 'shadow-teal-100');
+            } else if (type === 'warning') {
+                iconContainer.classList.add('bg-amber-100');
+                icon.classList.add('fa-exclamation-triangle', 'text-amber-600');
+                btn.classList.add('bg-amber-500', 'hover:bg-amber-600', 'shadow-amber-100');
+            } else {
+                iconContainer.classList.add('bg-rose-100');
+                icon.classList.add('fa-times', 'text-rose-600');
+                btn.classList.add('bg-rose-600', 'hover:bg-rose-700', 'shadow-rose-100');
+            }
+
+            modal.classList.remove('hidden');
+
+            btn.onclick = function() {
+                modal.classList.add('hidden');
+                if (reloadOnClose) window.location.reload();
+            }
+        }
 
         function openAttendanceModal(sessionId) {
             document.getElementById('attendanceModal').classList.remove('hidden');
@@ -307,8 +361,10 @@
                 document.getElementById('captureBtn').classList.remove('hidden');
                 errorMsg.classList.add('hidden');
             } catch (err) {
-                errorMsg.textContent = 'Tidak dapat mengakses kamera. Silakan izinkan akses kamera.';
-                errorMsg.classList.remove('hidden');
+                // ALERT 1: KAMERA TIDAK DIIZINKAN
+                showNotification('warning', 'Akses Kamera Ditolak',
+                    'Kamera belum diaktifkan. Mohon izinkan akses kamera pada peramban (browser) Anda untuk melanjutkan proses presensi.'
+                    );
             }
         }
 
@@ -335,7 +391,6 @@
                         const lat = position.coords.latitude.toFixed(8);
                         const lon = position.coords.longitude.toFixed(8);
 
-                        // 🔥 FIX 1: INJECT KORDINAT KE HIDDEN INPUT BUAT BACKEND
                         document.getElementById('latitude_input').value = lat;
                         document.getElementById('longitude_input').value = lon;
 
@@ -358,8 +413,6 @@
 
                         const dataURL = canvas.toDataURL('image/jpeg', 0.8);
                         photoPreview.src = dataURL;
-
-                        // 🔥 FIX 2: SIMPAN DATA URL BIAR LOLOS VALIDASI SUBMIT
                         photoDataUrl = dataURL;
 
                         video.classList.add('hidden');
@@ -368,14 +421,18 @@
                         document.getElementById('retakeBtn').classList.remove('hidden');
                     },
                     function(error) {
-                        alert("Silahkan Izinkan akses GPS untuk melakukan presensi dengan foto selfie.");
+                        // ALERT 2: LOKASI TIDAK DIIZINKAN
+                        showNotification('warning', 'Akses Lokasi Ditolak',
+                            'Akses lokasi (GPS) tidak ditemukan. Mohon aktifkan layanan lokasi pada perangkat Anda untuk memvalidasi area presensi.'
+                            );
                     }, {
                         enableHighAccuracy: true,
                         timeout: 5000
                     }
                 );
             } else {
-                alert("Browser tidak mendukung GPS.");
+                showNotification('error', 'Fitur Tidak Didukung',
+                    'Peramban (browser) yang Anda gunakan saat ini tidak mendukung layanan pelacakan lokasi (GPS).');
             }
         }
 
@@ -385,11 +442,8 @@
             document.getElementById('retakeBtn').classList.add('hidden');
             document.getElementById('captureBtn').classList.remove('hidden');
             photoDataUrl = null;
-
-            // Hapus value kordinat karena foto diulang
             document.getElementById('latitude_input').value = '';
             document.getElementById('longitude_input').value = '';
-
             startCamera();
         }
 
@@ -421,12 +475,20 @@
             document.getElementById('attendanceForm').reset();
         }
 
-        // Form submission
         document.getElementById('attendanceForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // ALERT 3: VALIDASI FOTO BELUM DIISI (Dibedakan teksnya berdasarkan status)
             if (!photoDataUrl && !document.getElementById('imageInput').value) {
-                alert('Silakan ambil foto selfie atau upload surat terlebih dahulu.');
+                const statusVal = document.querySelector('input[name="status"]:checked').value;
+                if (statusVal === 'hadir') {
+                    showNotification('warning', 'Dokumentasi Tidak Lengkap',
+                        'Mohon ambil foto selfie Anda terlebih dahulu sebelum mengirimkan data presensi.');
+                } else {
+                    showNotification('warning', 'Dokumen Tidak Lengkap',
+                        'Mohon unggah foto surat keterangan (Sakit/Izin) terlebih dahulu sebelum mengirimkan data.'
+                        );
+                }
                 return;
             }
 
@@ -445,7 +507,6 @@
                     body: formData,
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        // 🔥 FIX 3: PENAWAR ERROR 302, BIAR ALERT GEOFENCING LO MUNCUL!
                         'Accept': 'application/json'
                     }
                 });
@@ -453,21 +514,22 @@
                 const data = await response.json();
 
                 if (response.ok || data.success) {
-                    alert('Presensi berhasil disimpan!');
+                    // ALERT 4: PRESENSI SUKSES
                     closeAttendanceModal();
-                    window.location.reload();
+                    showNotification('success', 'Presensi Berhasil',
+                        'Data kehadiran Anda telah sukses terekam di dalam sistem.', true);
                 } else {
-                    // 🔥 FIX 4: TANGKAP PESAN ERROR DARI BACKEND LO (Jarak 200m)
-                    let errorMsg = 'Terjadi kesalahan. Silakan coba lagi.';
+                    // ALERT 5: DITOLAK BACKEND (Contoh: Jarak Geofencing Terlalu Jauh)
+                    let errorMsg = 'Terjadi kesalahan sistem. Silakan coba beberapa saat lagi.';
                     if (data.error) errorMsg = data.error;
                     else if (data.message) errorMsg = data.message;
                     else if (data.errors) errorMsg = Object.values(data.errors)[0][0];
 
-                    alert(errorMsg);
+                    showNotification('error', 'Presensi Ditolak', errorMsg);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal menghubungi server. Pastikan koneksi internet stabil.');
+                console.log('Error:', error);
+                showNotification('error', 'Terjadi Kesalahan', 'Gagal terhubung ke server: ' + error.message);
             } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }

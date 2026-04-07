@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Register">
 
 <div class="min-h-screen flex bg-gray-200">
 

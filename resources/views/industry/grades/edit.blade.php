@@ -9,11 +9,45 @@
             <h3 class="text-lg font-bold m-0 leading-none">Tambah Penilaian Siswa</h3>
         </div>
 
-        @if (session('success'))
-            <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
-                {{ session('success') }}
+      {{-- MODAL ALERT SUKSES --}}
+@if (session('success'))
+    <div x-data="{ show: true }" 
+         x-show="show" 
+         x-cloak 
+         class="fixed inset-0 z-[10002] flex items-center justify-center px-4">
+        
+        {{-- Backdrop Blur --}}
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="show = false"></div>
+        
+        {{-- Container Modal (Ukuran max-w-sm biar nggak kekurusan/kegendutan) --}}
+        <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-gray-100"
+            x-transition:enter="transition ease-out duration-300 transform"
+            x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100">
+            
+            {{-- Icon Centang Gede --}}
+            <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-100 mb-6">
+                <x-heroicon-s-check-circle class="h-12 w-12 text-green-600" />
             </div>
-        @endif
+            
+            <h3 class="text-2xl font-black text-gray-900 mb-2">Berhasil!</h3>
+            <p class="text-sm text-gray-500 font-medium leading-relaxed mb-8">
+                {{ session('success') }}
+            </p>
+            
+            {{-- Tombol Mantap (w-full biar gagah) --}}
+            <button @click="show = false" 
+                class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95">
+                Mantap!
+            </button>
+        </div>
+    </div>
+@endif
+
+{{-- Pastikan CSS x-cloak ada biar gak kedip --}}
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 
         <div class="bg-white p-8 rounded-b-xl shadow-sm border-x border-b border-gray-100 mb-10">
             <form method="POST" action="{{ route('grades.schools.update', [$school->id, $student->id]) }}">

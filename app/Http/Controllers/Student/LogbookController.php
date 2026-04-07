@@ -12,7 +12,7 @@ use App\Models\Mentor;
 class LogbookController extends Controller
 {
     /**
-     * Display the daily logbook creation form.
+     * how logbook form for daily logbook entry
      */
     public function logbookHarian()
     {
@@ -24,10 +24,10 @@ class LogbookController extends Controller
                 ->with('error', 'Data siswa tidak ditemukan.');
         }
 
-        // Get active mentors from the same industry
-        $mentors = Mentor::whereHas('user', function ($query) {
-            $query->where('is_active', true);
-        })
+        $mentors = Mentor::where('id', $student->internshipProgram->mentor_id)
+            ->whereHas('user', function ($query) {
+                $query->where('is_active', true);
+            })
             ->with('user')
             ->get();
 
@@ -35,14 +35,14 @@ class LogbookController extends Controller
     }
 
     /**
-     * Store a new logbook entry.
+     * Save new logbook entry
      */
     public function store(Request $request)
     {
         $request->validate([
             'mentor_id' => 'required|exists:users,id,role,mentor',
             'notes' => 'required|string|min:10|max:2000',
-            'documentation_file' => 'nullable|file|mimes:pdf,doc,docx,zip,rar|max:10240', // Max 10MB
+            'documentation_file' => 'nullable|file|mimes:pdf,doc,docx,zip,rar|max:10240',
         ]);
 
         $user = Auth::user();
@@ -52,15 +52,11 @@ class LogbookController extends Controller
             return response()->json(['error' => 'Data siswa tidak ditemukan.'], 404);
         }
 
-        // Verify mentor belongs to student's industry
-        $mentor = Mentor::where('user_id', $request->mentor_id)
-            ->first();
-
-        if (!$mentor) {
-            return response()->json(['error' => 'Mentor tidak valid.'], 403);
+        $assignedMentorUserId = $student->internshipProgram->mentor->user_id;
+        if ($request->mentor_id != $assignedMentorUserId) {
+            return response()->json(['error' => 'Gagal! Anda hanya boleh mengirim logbook ke mentor pendamping Anda.'], 403);
         }
 
-        // Handle documentation file upload
         $filePath = null;
         if ($request->hasFile('documentation_file')) {
             $file = $request->file('documentation_file');
@@ -68,7 +64,6 @@ class LogbookController extends Controller
             $filePath = $file->storeAs('logbooks', $fileName, 'public');
         }
 
-        // Create logbook entry
         Logbook::create([
             'student_id' => $student->id,
             'mentor_id' => $request->mentor_id,
@@ -84,7 +79,7 @@ class LogbookController extends Controller
     }
 
     /**
-     * Display the logbook list page.
+     * Show logbook index
      */
     public function index()
     {
@@ -105,7 +100,7 @@ class LogbookController extends Controller
     }
 
     /**
-     * Show the form for editing a logbook.
+     * Form edit logbook.
      */
     public function edit($id)
     {
@@ -121,16 +116,15 @@ class LogbookController extends Controller
                 ->with('error', 'Logbook tidak ditemukan.');
         }
 
-        // Only allow editing if status is rejected
-        if ($logbook->status !== 'rejected') {
+        if (!in_array($logbook->status, ['rejected', 'pending'])) {
             return redirect()->route('student.logbook.index')
-                ->with('error', 'Hanya logbook yang ditolak yang dapat diedit.');
+                ->with('error', 'Logbook yang sudah disetujui tidak dapat diedit.');
         }
 
-        $mentors = Mentor::where('industry_id', $student->internshipProgram->industry_id)
+        $mentors = Mentor::where('id', $student->internshipProgram->mentor_id)
             ->whereHas('user', function ($query) {
-            $query->where('is_active', true);
-        })
+                $query->where('is_active', true);
+            })
             ->with('user')
             ->get();
 
@@ -138,7 +132,7 @@ class LogbookController extends Controller
     }
 
     /**
-     * Update a logbook entry.
+     * Update logbook entry. Only allowed if status is 'pending' or 'rejected'.
      */
     public function update(Request $request, $id)
     {
@@ -159,23 +153,17 @@ class LogbookController extends Controller
             return response()->json(['error' => 'Logbook tidak ditemukan.'], 404);
         }
 
-        if ($logbook->status !== 'rejected') {
-            return response()->json(['error' => 'Hanya logbook yang ditolak yang dapat diedit.'], 403);
+        if (!in_array($logbook->status, ['rejected', 'pending'])) {
+            return response()->json(['error' => 'Hanya logbook Pending atau Ditolak yang dapat diperbarui.'], 403);
         }
 
-        // Verify mentor belongs to student's industry
-        $mentor = Mentor::where('user_id', $request->mentor_id)
-            ->where('industry_id', $student->internshipProgram->industry_id)
-            ->first();
-
-        if (!$mentor) {
-            return response()->json(['error' => 'Mentor tidak valid.'], 403);
+        $assignedMentorUserId = $student->internshipProgram->mentor->user_id;
+        if ($request->mentor_id != $assignedMentorUserId) {
+            return response()->json(['error' => 'Mentor tidak valid untuk program Anda.'], 403);
         }
 
-        // Handle documentation file upload
         $filePath = $logbook->documentation_file;
         if ($request->hasFile('documentation_file')) {
-            // Delete old file if exists
             if ($logbook->documentation_file) {
                 Storage::disk('public')->delete($logbook->documentation_file);
             }
@@ -185,15 +173,16 @@ class LogbookController extends Controller
             $filePath = $file->storeAs('logbooks', $fileName, 'public');
         }
 
-        // Update logbook entry
         $logbook->update([
             'mentor_id' => $request->mentor_id,
             'notes' => $request->notes,
             'documentation_file' => $filePath,
-            'status' => 'pending', // Reset to pending when resubmitting
+            'status' => 'pending', 
         ]);
 
-        return redirect()->route('student.logbook.index')
-            ->with('success', 'Logbook berhasil diperbarui dan menunggu validasi mentor!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Logbook berhasil diperbarui dan dikirim ulang untuk divalidasi!'
+        ]);
     }
 }

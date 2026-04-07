@@ -52,7 +52,7 @@ class ProfileController extends Controller
             'longitude' => 'required|string',
         ]);
         
-        $user = auth()->user();
+        $user = Auth::user();
 
         if($user->role !== 'owner') {
             abort(403, 'Unauthorized action.');

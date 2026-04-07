@@ -145,18 +145,37 @@ class MentorController extends BaseController
      * Remove the specified mentor from storage.
      */
     public function destroy(Mentor $mentor)
-    {
-        $user = Auth::user();
-        // Deny access if user is not an owner or the mentor is not in their industry.
-        if ($user->role !== 'owner' || $mentor->industry_id !== ($user->industry->id ?? null)) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        // The associated user record is deleted automatically by the model's deleting event.
-        $mentor->delete();
-
-        return redirect()->route('mentors.index')->with('success', 'Mentor berhasil dihapus.');
+{
+    $user = Auth::user();
+    
+    // Validasi akses Owner
+    if ($user->role !== 'owner' || $mentor->industry_id !== ($user->industry->id ?? null)) {
+        abort(403, 'Unauthorized action.');
     }
+
+    // 1. Ambil data User-nya dulu sebelum Mentor-nya dihapus
+    $associatedUser = $mentor->user;
+
+    // 2. Hapus data Mentor (pake forceDelete kalau di model ada SoftDeletes)
+    // Kalau di model Mentor.php GAK ADA SoftDeletes, pake delete() aja cukup.
+    // Tapi buat jaga-jaga kita pake forceDelete biar beneran ilang dari SQL.
+    if (method_exists($mentor, 'forceDelete')) {
+        $mentor->forceDelete();
+    } else {
+        $mentor->delete();
+    }
+
+    // 3. Hapus data User-nya juga biar emailnya bisa didaftarin lagi nanti
+    if ($associatedUser) {
+        if (method_exists($associatedUser, 'forceDelete')) {
+            $associatedUser->forceDelete();
+        } else {
+            $associatedUser->delete();
+        }
+    }
+
+    return redirect()->route('mentors.index')->with('success', 'Mentor dan akun login berhasil dihapus permanen.');
+}
 
     /**
      * Deactivates the specified mentor's account.
