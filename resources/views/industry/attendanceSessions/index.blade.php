@@ -16,15 +16,22 @@
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
 
             {{-- Header Card Teal --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex justify-between items-center text-white">
+            <div
+                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 sm:gap-0 text-white">
+
+                {{-- Bagian Judul --}}
                 <div class="flex items-center gap-2.5">
-                    <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
+                    <x-heroicon-o-clipboard-document-list class="w-6 h-6 shrink-0" />
                     <h2 class="font-bold text-lg m-0 leading-none">Riwayat Sesi Presensi</h2>
                 </div>
+
+                {{-- Bagian Tombol --}}
                 <a href="{{ route('attendance-sessions.create') }}"
-                    class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm">
-                    <x-heroicon-o-plus class="w-4 h-4" /> Buka Sesi Baru
+                    class="w-full sm:w-auto flex justify-center items-center gap-2 bg-white hover:bg-teal-50 text-teal-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent leading-none">
+                    <x-heroicon-o-plus class="w-4 h-4 shrink-0" />
+                    <span>Buka Sesi Baru</span>
                 </a>
+
             </div>
 
             <div class="p-8">
@@ -44,22 +51,26 @@
                             {{-- Badge Status --}}
                             <div class="absolute top-6 right-6">
                                 @if ($isToday && $session->is_open)
-                                    <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-lg text-[10px] font-black tracking-widest border border-green-100 uppercase">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-lg text-[10px] font-black tracking-widest border border-green-100 uppercase">
                                         <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Hari Ini
                                     </span>
                                 @elseif($isArchived)
-                                    <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-black tracking-widest border border-gray-200 uppercase">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-500 px-3 py-1 rounded-lg text-[10px] font-black tracking-widest border border-gray-200 uppercase">
                                         Arsip
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 px-3 py-1 rounded-lg text-[10px] font-black tracking-widest border border-rose-100 uppercase">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 px-3 py-1 rounded-lg text-[10px] font-black tracking-widest border border-rose-100 uppercase">
                                         Tutup
                                     </span>
                                 @endif
                             </div>
 
                             <div class="mb-6">
-                                <div class="p-3 {{ $isToday ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-400' }} w-fit rounded-xl mb-4 shadow-sm">
+                                <div
+                                    class="p-3 {{ $isToday ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-400' }} w-fit rounded-xl mb-4 shadow-sm">
                                     <x-heroicon-o-calendar class="w-6 h-6" />
                                 </div>
                                 <h3 class="font-black text-xl text-gray-800 mb-1 leading-tight">Presensi Harian</h3>
@@ -68,13 +79,17 @@
                                 </p>
 
                                 <div class="space-y-2">
-                                    <div class="flex items-center justify-between text-[10px] bg-blue-50/50 text-blue-700 p-3 rounded-xl border border-blue-100">
+                                    <div
+                                        class="flex items-center justify-between text-[10px] bg-blue-50/50 text-blue-700 p-3 rounded-xl border border-blue-100">
                                         <span class="font-black uppercase tracking-widest">Batas Tepat Waktu:</span>
-                                        <span class="font-black text-sm">{{ \Carbon\Carbon::parse($session->on_time_deadline)->format('H:i') }}</span>
+                                        <span
+                                            class="font-black text-sm">{{ \Carbon\Carbon::parse($session->on_time_deadline)->format('H:i') }}</span>
                                     </div>
-                                    <div class="flex items-center justify-between text-[10px] bg-rose-50/50 text-rose-700 p-3 rounded-xl border border-rose-100">
+                                    <div
+                                        class="flex items-center justify-between text-[10px] bg-rose-50/50 text-rose-700 p-3 rounded-xl border border-rose-100">
                                         <span class="font-black uppercase tracking-widest">Jam Tutup Sesi:</span>
-                                        <span class="font-black text-sm">{{ \Carbon\Carbon::parse($session->closed_at)->format('H:i') }}</span>
+                                        <span
+                                            class="font-black text-sm">{{ \Carbon\Carbon::parse($session->closed_at)->format('H:i') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -85,9 +100,11 @@
                                     {{-- Toggle Status --}}
                                     <button type="button" @click="{{ !$isArchived ? 'showStatusModal = true' : '' }}"
                                         class="{{ $session->is_open ? 'bg-teal-500' : 'bg-gray-300' }} relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none {{ $isArchived ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer' }}">
-                                        <span class="{{ $session->is_open ? 'translate-x-5' : 'translate-x-0' }} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200"></span>
+                                        <span
+                                            class="{{ $session->is_open ? 'translate-x-5' : 'translate-x-0' }} pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200"></span>
                                     </button>
-                                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</span>
+                                    <span
+                                        class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</span>
                                 </div>
 
                                 <div class="flex items-center gap-1">
@@ -108,28 +125,48 @@
                             </div>
 
                             {{-- MODAL KONFIRMASI STATUS --}}
-                            <div x-cloak x-show="showStatusModal" class="fixed inset-0 z-[9999] overflow-y-auto" style="display: none;">
+                            <div x-cloak x-show="showStatusModal" class="fixed inset-0 z-[9999] overflow-y-auto"
+                                style="display: none;">
                                 <div class="flex items-center justify-center min-h-screen p-4">
-                                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showStatusModal = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"></div>
-                                    <div class="bg-white rounded-2xl p-8 w-full max-w-md relative z-[10000] shadow-2xl text-center" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95">
-                                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full {{ $session->is_open ? 'bg-rose-100 text-rose-600' : 'bg-teal-100 text-teal-600' }} mb-6">
+                                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showStatusModal = false"
+                                        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                                        x-transition:enter-end="opacity-100"></div>
+                                    <div class="bg-white rounded-2xl p-8 w-full max-w-md relative z-[10000] shadow-2xl text-center"
+                                        x-transition:enter="ease-out duration-300"
+                                        x-transition:enter-start="opacity-0 scale-95">
+                                        <div
+                                            class="mx-auto flex items-center justify-center h-16 w-16 rounded-full {{ $session->is_open ? 'bg-rose-100 text-rose-600' : 'bg-teal-100 text-teal-600' }} mb-6">
                                             <x-heroicon-o-exclamation-triangle class="w-10 h-10" />
                                         </div>
-                                        <h3 class="text-xl font-black text-gray-900 mb-2 uppercase tracking-tight">Konfirmasi Sesi</h3>
-                                        <p class="text-sm text-gray-500 mb-8 font-medium">Apakah Anda ingin <strong>{{ $session->is_open ? 'MENUTUP' : 'MEMBUKA' }}</strong> sesi presensi ini?</p>
+                                        <h3 class="text-xl font-black text-gray-900 mb-2 uppercase tracking-tight">
+                                            Konfirmasi Sesi</h3>
+                                        <p class="text-sm text-gray-500 mb-8 font-medium">Apakah Anda ingin
+                                            <strong>{{ $session->is_open ? 'MENUTUP' : 'MEMBUKA' }}</strong> sesi presensi
+                                            ini?</p>
                                         <div class="flex gap-3">
-                                            <button @click="showStatusModal = false" class="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">Batal</button>
-                                            <form method="POST" action="{{ $session->is_open ? route('attendance-sessions.close', $session->id) : route('attendance-sessions.update', $session->id) }}" class="flex-1">
+                                            <button @click="showStatusModal = false"
+                                                class="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">Batal</button>
+                                            <form method="POST"
+                                                action="{{ $session->is_open ? route('attendance-sessions.close', $session->id) : route('attendance-sessions.update', $session->id) }}"
+                                                class="flex-1">
                                                 @csrf
-                                                @if($session->is_open) @method('PATCH') @else @method('PUT') @endif
+                                                @if ($session->is_open)
+                                                    @method('PATCH')
+                                                @else
+                                                    @method('PUT')
+                                                @endif
                                                 {{-- Logic Reopen --}}
-                                                @if(!$session->is_open)
-                                                    <input type="hidden" name="session_date" value="{{ $session->session_date }}">
-                                                    <input type="hidden" name="on_time_deadline" value="{{ \Carbon\Carbon::parse($session->on_time_deadline)->format('H:i') }}">
-                                                    <input type="hidden" name="closed_at" value="{{ \Carbon\Carbon::parse($session->closed_at)->format('H:i') }}">
+                                                @if (!$session->is_open)
+                                                    <input type="hidden" name="session_date"
+                                                        value="{{ $session->session_date }}">
+                                                    <input type="hidden" name="on_time_deadline"
+                                                        value="{{ \Carbon\Carbon::parse($session->on_time_deadline)->format('H:i') }}">
+                                                    <input type="hidden" name="closed_at"
+                                                        value="{{ \Carbon\Carbon::parse($session->closed_at)->format('H:i') }}">
                                                     <input type="hidden" name="is_open" value="1">
                                                 @endif
-                                                <button type="submit" class="w-full px-4 py-3 text-xs font-black uppercase tracking-widest text-white {{ $session->is_open ? 'bg-rose-600' : 'bg-teal-600' }} rounded-xl shadow-lg transition-all">Konfirmasi</button>
+                                                <button type="submit"
+                                                    class="w-full px-4 py-3 text-xs font-black uppercase tracking-widest text-white {{ $session->is_open ? 'bg-rose-600' : 'bg-teal-600' }} rounded-xl shadow-lg transition-all">Konfirmasi</button>
                                             </form>
                                         </div>
                                     </div>
@@ -137,20 +174,33 @@
                             </div>
 
                             {{-- MODAL HAPUS --}}
-                            <div x-cloak x-show="showDeleteModal" class="fixed inset-0 z-[9999] overflow-y-auto" style="display: none;">
+                            <div x-cloak x-show="showDeleteModal" class="fixed inset-0 z-[9999] overflow-y-auto"
+                                style="display: none;">
                                 <div class="flex items-center justify-center min-h-screen p-4">
-                                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showDeleteModal = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"></div>
-                                    <div class="bg-white rounded-2xl p-8 w-full max-w-md relative z-[10000] shadow-2xl text-center" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95">
-                                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 text-rose-600 mb-6">
+                                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showDeleteModal = false"
+                                        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0">
+                                    </div>
+                                    <div class="bg-white rounded-2xl p-8 w-full max-w-md relative z-[10000] shadow-2xl text-center"
+                                        x-transition:enter="ease-out duration-300"
+                                        x-transition:enter-start="opacity-0 scale-95">
+                                        <div
+                                            class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 text-rose-600 mb-6">
                                             <x-heroicon-o-trash class="w-10 h-10" />
                                         </div>
                                         <h3 class="text-xl font-black text-gray-900 mb-2 uppercase">Hapus Sesi?</h3>
-                                        <p class="text-sm text-gray-500 mb-8 leading-relaxed">Menghapus sesi akan menghilangkan seluruh riwayat absen siswa pada hari ini. Tindakan ini tidak dapat dibatalkan.</p>
+                                        <p class="text-sm text-gray-500 mb-8 leading-relaxed">Menghapus sesi akan
+                                            menghilangkan seluruh riwayat absen siswa pada hari ini. Tindakan ini tidak
+                                            dapat dibatalkan.</p>
                                         <div class="flex gap-3">
-                                            <button @click="showDeleteModal = false" class="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest text-gray-500 bg-gray-100 rounded-xl">Batal</button>
-                                            <form method="POST" action="{{ route('attendance-sessions.destroy', $session->id) }}" class="flex-1">
+                                            <button @click="showDeleteModal = false"
+                                                class="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest text-gray-500 bg-gray-100 rounded-xl">Batal</button>
+                                            <form method="POST"
+                                                action="{{ route('attendance-sessions.destroy', $session->id) }}"
+                                                class="flex-1">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="w-full px-4 py-3 text-xs font-black uppercase tracking-widest text-white bg-rose-600 rounded-xl shadow-lg shadow-rose-100 transition-all">Ya, Hapus</button>
+                                                <button type="submit"
+                                                    class="w-full px-4 py-3 text-xs font-black uppercase tracking-widest text-white bg-rose-600 rounded-xl shadow-lg shadow-rose-100 transition-all">Ya,
+                                                    Hapus</button>
                                             </form>
                                         </div>
                                     </div>
@@ -159,9 +209,11 @@
 
                         </section>
                     @empty
-                        <div class="col-span-full py-24 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-                             <x-heroicon-o-clock class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                             <p class="text-gray-500 font-black uppercase tracking-widest">Belum ada sesi presensi ditemukan</p>
+                        <div
+                            class="col-span-full py-24 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                            <x-heroicon-o-clock class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                            <p class="text-gray-500 font-black uppercase tracking-widest">Belum ada sesi presensi ditemukan
+                            </p>
                         </div>
                     @endforelse
                 </div>
@@ -173,5 +225,9 @@
         </article>
     </main>
 
-    <style> [x-cloak] { display: none !important; } </style>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 @endsection

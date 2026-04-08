@@ -15,25 +15,33 @@
 
         {{-- Container Utama --}}
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-            
+
             {{-- Header Card Teal --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex justify-between items-center text-white">
+            <div
+                class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 sm:gap-0 text-white">
+
+                {{-- Bagian Judul --}}
                 <div class="flex items-center gap-2.5">
-                    <x-heroicon-o-building-library class="w-6 h-6" />
-                    <h2 class="font-bold text-lg m-0">Data Sekolah</h2>
+                    <x-heroicon-o-building-library class="w-6 h-6 shrink-0" />
+                    <h2 class="font-bold text-lg m-0 leading-none">Data Sekolah</h2>
                 </div>
+
+                {{-- Bagian Tombol --}}
                 <a href="{{ route('schools.create') }}"
-                    class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent flex items-center gap-2">
-                    <x-heroicon-o-plus class="w-4 h-4" /> Tambah Sekolah
+                    class="w-full sm:w-auto flex justify-center items-center gap-2 bg-white hover:bg-teal-50 text-teal-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent leading-none">
+                    <x-heroicon-o-plus class="w-4 h-4 shrink-0" />
+                    <span>Tambah Sekolah</span>
                 </a>
+
             </div>
 
             {{-- Grid Konten --}}
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse ($schools as $school)
-                        <section class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col h-full group">
-                            
+                        <section
+                            class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col h-full group">
+
                             <div class="flex items-start gap-3 mb-4">
                                 <div class="p-2 bg-teal-50 rounded-lg group-hover:bg-teal-100 transition-colors">
                                     <x-heroicon-s-building-library class="w-6 h-6 text-teal-600 shrink-0" />
@@ -44,7 +52,8 @@
                             <div class="flex flex-col gap-3 mb-6 flex-1">
                                 <div class="flex items-start gap-3">
                                     <x-heroicon-o-map-pin class="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
-                                    <span class="text-sm text-gray-600 leading-relaxed">{{ $school->address ?: 'Alamat belum diatur' }}</span>
+                                    <span
+                                        class="text-sm text-gray-600 leading-relaxed">{{ $school->address ?: 'Alamat belum diatur' }}</span>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <x-heroicon-o-phone class="w-5 h-5 text-gray-400 shrink-0" />
@@ -82,7 +91,9 @@
                                         <div class="text-center px-4">
                                             <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Sekolah?</h3>
                                             <p class="text-gray-500 text-sm leading-relaxed">
-                                                Anda akan menghapus <span class="font-bold text-gray-800">{{ $school->name }}</span> secara permanen dari sistem.
+                                                Anda akan menghapus <span
+                                                    class="font-bold text-gray-800">{{ $school->name }}</span> secara
+                                                permanen dari sistem.
                                             </p>
                                         </div>
 
@@ -92,7 +103,8 @@
                                                 Batal
                                             </button>
 
-                                            <form action="{{ route('schools.destroy', $school->id) }}" method="POST" class="flex-1 m-0">
+                                            <form action="{{ route('schools.destroy', $school->id) }}" method="POST"
+                                                class="flex-1 m-0">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
@@ -106,7 +118,8 @@
                             </div>
                         </section>
                     @empty
-                        <div class="col-span-full w-full text-center py-16 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+                        <div
+                            class="col-span-full w-full text-center py-16 rounded-xl bg-gray-50 border border-dashed border-gray-300">
                             <x-heroicon-o-document-magnifying-glass class="w-12 h-12 text-gray-300 mx-auto mb-3" />
                             <p class="text-gray-500 font-medium">Tidak ada data sekolah ditemukan.</p>
                         </div>

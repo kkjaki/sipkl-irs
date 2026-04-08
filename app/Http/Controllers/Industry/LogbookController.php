@@ -40,33 +40,36 @@ class LogbookController extends Controller
     /**
      *  Mengambil data logbook yang perlu divalidasi
      */
-    public function index(Request $request) // Tambahin Request $request
-    {
-        $user = Auth::user();
-        $schoolId = $request->get('school_id'); // Ambil ID sekolah dari URL
+  public function index(Request $request)
+{
+    $user = Auth::user();
+    $schoolId = $request->get('school_id');
 
-        // 1. Ambil daftar sekolah buat ditampilin di Dropdown Filter
-        // (Cuma sekolah yang ada anak bimbingan si Tanu)
-        $schools = \App\Models\School::whereHas('students.internshipProgram', function ($q) use ($user) {
-            $q->where('mentor_id', $user->mentor->id);
-        })->get();
+    $mentor = $user->mentor;
 
-        // 2. Modifikasi Query Logbook buat dukung filter
-        $query = $this->getLogbookBaseQuery()
-            ->with(['student.user', 'student.school']);
-
-        // JIKA ada filter sekolah, saring datanya
-        if ($schoolId) {
-            $query->whereHas('student', function ($q) use ($schoolId) {
-                $q->where('school_id', $schoolId);
-            });
-        }
-
-        $logbooks = $query->latest()->paginate(30);
-
-        // Kirim variabel $schools juga ke view biar dropdown-nya muncul isi
+    if (!$mentor) {
+        $logbooks = collect();
+        $schools = collect();
         return view('industry.logbooks.index', compact('logbooks', 'schools'));
     }
+
+    $schools = \App\Models\School::whereHas('students.internshipProgram', function ($q) use ($mentor) {
+        $q->where('mentor_id', $mentor->id);
+    })->get();
+
+    $query = $this->getLogbookBaseQuery()
+        ->with(['student.user', 'student.school']);
+
+    if ($schoolId) {
+        $query->whereHas('student', function ($q) use ($schoolId) {
+            $q->where('school_id', $schoolId);
+        });
+    }
+
+    $logbooks = $query->latest()->paginate(30);
+
+    return view('industry.logbooks.index', compact('logbooks', 'schools'));
+}
 
     /**
      * 2. Memproses validasi (Approve atau Reject)

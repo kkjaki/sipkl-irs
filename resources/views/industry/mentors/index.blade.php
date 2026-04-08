@@ -14,33 +14,44 @@
 
         {{-- Container Utama --}}
         <article class="w-full bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-            
+
             {{-- Header Data --}}
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 flex justify-between items-center text-white rounded-t-xl">
+            <div
+                class="bg-gradient-to-r from-teal-500 to-teal-600 px-5 py-4 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 sm:gap-0 text-white rounded-t-xl">
+
+                {{-- Bagian Judul --}}
                 <div class="flex items-center gap-2.5">
-                    <x-heroicon-o-users class="w-6 h-6" />
-                    <h2 class="font-bold text-lg m-0">Data Pendamping</h2>
+                    <x-heroicon-o-users class="w-6 h-6 shrink-0" />
+                    <h2 class="font-bold text-lg m-0 leading-none">Data Pendamping</h2>
                 </div>
+
+                {{-- Bagian Tombol --}}
                 <a href="{{ route('mentors.create') }}"
-                    class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent leading-none flex items-center gap-2">
-                    <x-heroicon-o-plus class="w-4 h-4" /> Tambah Pendamping
+                    class="w-full sm:w-auto flex justify-center items-center gap-2 bg-white hover:bg-teal-50 text-teal-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent leading-none">
+                    <x-heroicon-o-plus class="w-4 h-4 shrink-0" />
+                    <span>Tambah Pendamping</span>
                 </a>
+
             </div>
 
             {{-- Grid Konten --}}
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse ($mentors as $mentor)
-                        <section class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col h-full group">
-                            
+                        <section
+                            class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col h-full group">
+
                             <div class="flex justify-between items-start mb-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center text-teal-700 font-bold border border-teal-100 group-hover:bg-teal-100 transition-colors shadow-sm">
+                                    <div
+                                        class="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center text-teal-700 font-bold border border-teal-100 group-hover:bg-teal-100 transition-colors shadow-sm">
                                         {{ strtoupper(substr($mentor->user->name, 0, 1)) }}
                                     </div>
                                     <div class="flex flex-col">
-                                        <h3 class="text-lg font-bold text-gray-800 leading-tight">{{ $mentor->user->name }}</h3>
-                                        <span class="text-xs text-teal-600 font-semibold uppercase tracking-wider">{{ $mentor->position }}</span>
+                                        <h3 class="text-lg font-bold text-gray-800 leading-tight">{{ $mentor->user->name }}
+                                        </h3>
+                                        <span
+                                            class="text-xs text-teal-600 font-semibold uppercase tracking-wider">{{ $mentor->position }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -82,7 +93,9 @@
                                         <div class="text-center px-4">
                                             <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Mentor?</h3>
                                             <p class="text-gray-500 text-sm leading-relaxed">
-                                                Aksi ini akan menghapus permanen data <span class="font-bold text-gray-800">{{ $mentor->user->name }}</span>. Akses mentor tersebut ke sistem akan dicabut.
+                                                Aksi ini akan menghapus permanen data <span
+                                                    class="font-bold text-gray-800">{{ $mentor->user->name }}</span>. Akses
+                                                mentor tersebut ke sistem akan dicabut.
                                             </p>
                                         </div>
 
@@ -92,7 +105,8 @@
                                                 Batal
                                             </button>
 
-                                            <form action="{{ route('mentors.destroy', $mentor->id) }}" method="POST" class="flex-1 m-0">
+                                            <form action="{{ route('mentors.destroy', $mentor->id) }}" method="POST"
+                                                class="flex-1 m-0">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
@@ -106,7 +120,8 @@
                             </div>
                         </section>
                     @empty
-                        <div class="col-span-full w-full text-center py-16 rounded-xl bg-gray-50 border border-dashed border-gray-300">
+                        <div
+                            class="col-span-full w-full text-center py-16 rounded-xl bg-gray-50 border border-dashed border-gray-300">
                             <x-heroicon-o-user-minus class="w-12 h-12 text-gray-300 mx-auto mb-3" />
                             <p class="text-gray-500 font-medium">Tidak ada data pendamping industri ditemukan.</p>
                         </div>

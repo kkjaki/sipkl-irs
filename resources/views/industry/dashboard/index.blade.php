@@ -24,24 +24,24 @@
                         <div class="p-6 overflow-x-auto">
                             <div class="space-y-0 sm:space-y-2">
                                 <div class="flex flex-col sm:flex-row border-b py-3 border-gray-100">
-                                    <span class="w-full sm:w-40 font-medium text-gray-700 mb-1 sm:mb-0">Nama Industri</span>
+                                    <span class="w-full sm:w-40 font-medium text-gray-700 mb-1 sm:mb-0">Nama Industri:</span>
                                     <span class="hidden sm:inline mx-2">:</span>
-                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">{{ $industry->name ?? 'Belum Diatur' }}</span>
+                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">: {{ $industry->name ?? 'Belum Diatur' }}</span>
                                 </div>
                                 <div class="flex flex-col sm:flex-row border-b py-3 border-gray-100">
-                                    <span class="w-full sm:w-40 font-medium text-gray-700 mb-1 sm:mb-0">Alamat Industri</span>
+                                    <span class="w-full sm:w-40 font-medium text-gray-700 mb-1 sm:mb-0">Alamat Industri:</span>
                                     <span class="hidden sm:inline mx-2">:</span>
-                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">{{ $industry->address ?? '-' }}</span>
+                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">: {{ $industry->address ?? '-' }}</span>
                                 </div>
                                 <div class="flex flex-col sm:flex-row border-b py-3 border-gray-100">
-                                    <span class="w-full sm:w-40 font-medium text-gray-700 mb-1 sm:mb-0">Kontak Industri</span>
+                                    <span class="w-full sm:w-40 font-medium text-gray-700 mb-1 sm:mb-0">Kontak Industri:</span>
                                     <span class="hidden sm:inline mx-2">:</span>
-                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">{{ $industry->phone ?? '-' }}</span>
+                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">: {{ $industry->phone ?? '-' }}</span>
                                 </div>
                                 <div class="flex flex-col sm:flex-row border-b py-3 border-gray-100">
                                     <span class="w-full sm:w-40 font-medium text-gray-700 mb-1 sm:mb-0">Pemilik Industri</span>
                                     <span class="hidden sm:inline mx-2">:</span>
-                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">{{ $industry->user->name ?? '-' }}</span>
+                                    <span class="flex-1 text-gray-900 break-words whitespace-normal">: {{ $industry->user->name ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>

@@ -16,15 +16,21 @@
         <!-- Container & Header Data -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
             <div
-                class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 flex justify-between items-center relative rounded-t-xl text-white">
+                class="bg-gradient-to-r from-teal-500 to-teal-600 p-4 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 sm:gap-0 relative rounded-t-xl text-white">
+
+                {{-- Bagian Judul --}}
                 <div class="flex items-center gap-2.5 text-white">
-                    <x-heroicon-o-briefcase class="w-6 h-6" />
-                    <h2 class="font-bold text-lg m-0">Data Program PKL</h2>
+                    <x-heroicon-o-briefcase class="w-6 h-6 shrink-0" />
+                    <h2 class="font-bold text-lg m-0 leading-none">Data Program PKL</h2>
                 </div>
+
+                {{-- Bagian Tombol --}}
                 <a href="{{ route('internship-programs.create') }}"
-                   class="bg-white hover:bg-teal-50 text-teal-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent flex items-center gap-2">
-                    <x-heroicon-o-plus class="w-4 h-4" /> Buat Program
+                    class="w-full sm:w-auto flex justify-center items-center gap-2 bg-white hover:bg-teal-50 text-teal-700 px-4 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-all border border-transparent leading-none">
+                    <x-heroicon-o-plus class="w-4 h-4 shrink-0" />
+                    <span>Buat Program</span>
                 </a>
+
             </div>
 
             <!-- Grid Cards Container -->
@@ -110,7 +116,7 @@
 
                         <div class="mt-auto flex border-t divide-x divide-gray-100 bg-gray-50 rounded-b-lg"
                             x-data="{ openProgram: false }">
-                           
+
                             {{-- Tombol Edit --}}
                             <a href="{{ route('internship-programs.edit', $program->id) }}"
                                 class="w-1/2 flex justify-center items-center gap-2 py-3 text-blue-600 hover:bg-blue-100 transition-colors font-medium rounded-bl-lg">
@@ -123,11 +129,11 @@
                             </button>
 
                             <div x-show="openProgram" x-transition:enter="transition ease-out duration-300"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-200"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                    class="fixed inset-0 flex items-center justify-center bg-black/50 z-[9999] px-4"
-                                    style="display: none;">
+                                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                                x-transition:leave-end="opacity-0"
+                                class="fixed inset-0 flex items-center justify-center bg-black/50 z-[9999] px-4"
+                                style="display: none;">
                                 <div @click.away="openProgram = false"
                                     class="w-full max-w-md px-6 py-8 bg-white rounded-2xl shadow-2xl flex flex-col justify-center items-center gap-6">
 

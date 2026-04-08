@@ -27,10 +27,10 @@
                 <div class="flex-shrink-0 flex items-center gap-2">
                     <!-- Custom Icon Logo -->
                     <div
-                        class="w-8 h-8 bg-gradient-to-br from-teal-400 to-teal-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                        class="w-8 h-8 bg-gradient-to-br from-teal-400 to-teal-600 rounded-lg flex items-center justify-center text-white font-bold text-xl cursor-pointer">
                         P
                     </div>
-                    <span class="font-black text-xl tracking-tight text-gray-900">PKL ONLINE</span>
+                    <span class="font-black text-xl tracking-tight text-gray-900 cursor-pointer">PKL ONLINE</span>
                 </div>
 
                 <div class="flex items-center space-x-4">
