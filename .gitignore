@@ -23,6 +23,7 @@ Homestead.json
 .phpunit.result.cache
 
 .claude
+stubs
 /storage/pail
 .env.backup
 .env.production

@@ -29,7 +29,7 @@ class FullDataSeeder extends Seeder
         $industriesData = [
             [
                 'owner' => ['name' => 'Budi Santoso', 'email' => 'budi@industry.com'],
-                'industry' => ['name' => 'PT Teknologi Nusantara', 'address' => 'Jl. Sudirman No. 10, Jakarta', 'phone' => '021123456'],
+                'industry' => ['name' => 'PT Teknologi Nusantara', 'address' => 'Jl. Sudirman No. 10, Jakarta', 'phone' => '021123456', 'latitude' => '-6.208763', 'longitude' => '106.845599'],
             ],
         ];
 
